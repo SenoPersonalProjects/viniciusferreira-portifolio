@@ -1,25 +1,46 @@
+import { ExperienceToggle } from "@/components/layout/ExperienceToggle";
+
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#home" className="text-sm font-semibold tracking-wide text-white">
+        <a
+          href="#home"
+          className="text-sm font-semibold tracking-wide text-[var(--color-foreground)]"
+        >
           Vinicius Ferreira
         </a>
 
-        <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
-          <a href="#about" className="transition hover:text-white">
-            Sobre
-          </a>
-          <a href="#stack" className="transition hover:text-white">
-            Stack
-          </a>
-          <a href="#projects" className="transition hover:text-white">
-            Projetos
-          </a>
-          <a href="#contact" className="transition hover:text-white">
-            Contato
-          </a>
-        </nav>
+        <div className="flex items-center gap-6">
+          <nav className="hidden items-center gap-6 text-sm text-[var(--color-muted)] md:flex">
+            <a
+              href="#about"
+              className="transition hover:text-[var(--color-foreground)]"
+            >
+              Sobre
+            </a>
+            <a
+              href="#stack"
+              className="transition hover:text-[var(--color-foreground)]"
+            >
+              Stack
+            </a>
+            <a
+              href="#projects"
+              className="transition hover:text-[var(--color-foreground)]"
+            >
+              Projetos
+            </a>
+            <a
+              href="#contact"
+              className="transition hover:text-[var(--color-foreground)]"
+            >
+              Contato
+            </a>
+          </nav>
+
+          <ExperienceToggle />
+        </div>
       </div>
     </header>
   );
