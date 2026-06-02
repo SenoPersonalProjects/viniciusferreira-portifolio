@@ -1,0 +1,7 @@
+export const siteConfig = {
+  name: "Vinicius Ferreira Portifólio",
+  description:
+    "Portfólio pessoal de Vinicius Ferreira, desenvolvedor full stack.",
+  url: "http://localhost:3000",
+  author: "Vinicius Ferreira"
+};
