@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { ExperienceProvider } from "@/components/providers/ExperienceProvider";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,10 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-[var(--color-background)] text-[var(--color-foreground)]">
+        <ExperienceProvider>{children}</ExperienceProvider>
+      </body>
     </html>
   );
 }

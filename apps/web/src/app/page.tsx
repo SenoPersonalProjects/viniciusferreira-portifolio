@@ -8,7 +8,7 @@ import { StackSection } from "@/components/sections/StackSection";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] transition-colors duration-300">
       <Header />
 
       <main>
