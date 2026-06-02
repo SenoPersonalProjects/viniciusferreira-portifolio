@@ -1,0 +1,23 @@
+{
+  "name": "viniciusferreira-portifolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portfólio pessoal gerenciável desenvolvido com Next.js e NestJS.",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api start:dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "portfolio",
+    "nextjs",
+    "nestjs",
+    "typescript"
+  ],
+  "author": "Vinicius Ferreira",
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.1"
+}
