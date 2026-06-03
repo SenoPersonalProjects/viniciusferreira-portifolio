@@ -7,35 +7,38 @@ export function Header() {
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-3 md:px-10">
         <a
           href="#home"
-          className="vintage-logo vintage-flicker font-[var(--font-display)] text-2xl leading-none text-[var(--color-foreground)] md:text-3xl"
+          className="vintage-logo vintage-flicker group relative flex items-center gap-2 font-[var(--font-display)] text-2xl leading-none text-[var(--color-foreground)] md:text-3xl"
         >
+          <span className="font-[var(--font-accent)] text-[0.8em] text-[var(--color-primary)]">
+            v
+          </span>
           V.F.S.
         </a>
 
-        <nav className="hidden justify-self-center md:flex md:items-center md:gap-8">
+        <nav className="hidden justify-self-center md:flex md:items-center md:gap-10">
           <a
             href="#home"
-            className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-foreground)]"
+            className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-foreground)]"
           >
             Home
           </a>
           <a
             href="#projects"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Projetos
+            Archive
           </a>
           <a
             href="#about"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Sobre
+            Intel
           </a>
           <a
             href="#contact"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Contato
+            Terminal
           </a>
         </nav>
 
