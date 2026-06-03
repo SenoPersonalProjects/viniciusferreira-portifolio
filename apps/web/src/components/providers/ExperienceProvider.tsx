@@ -3,6 +3,7 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -50,21 +51,21 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
   const resolvedColorMode: ResolvedColorMode =
     colorModePreference === "system" ? systemColorMode : colorModePreference;
 
-  function setExperience(experienceValue: Experience) {
+  const setExperience = useCallback((experienceValue: Experience) => {
     setExperienceState(experienceValue);
     window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, experienceValue);
-  }
+  }, []);
 
-  function toggleExperience() {
+  const toggleExperience = useCallback(() => {
     setExperience(experience === "modern" ? "vintage" : "modern");
-  }
+  }, [experience, setExperience]);
 
-  function setColorModePreference(mode: ColorModePreference) {
+  const setColorModePreference = useCallback((mode: ColorModePreference) => {
     setColorModePreferenceState(mode);
     window.localStorage.setItem(COLOR_MODE_STORAGE_KEY, mode);
-  }
+  }, []);
 
-  function cycleColorMode() {
+  const cycleColorMode = useCallback(() => {
     if (colorModePreference === "system") {
       setColorModePreference("light");
       return;
@@ -76,40 +77,43 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
     }
 
     setColorModePreference("system");
-  }
+  }, [colorModePreference, setColorModePreference]);
 
   useEffect(() => {
-    const storedExperience = window.localStorage.getItem(
-      EXPERIENCE_STORAGE_KEY,
-    ) as Experience | null;
-
-    const storedColorMode = window.localStorage.getItem(
-      COLOR_MODE_STORAGE_KEY,
-    ) as ColorModePreference | null;
-
-    if (storedExperience === "modern" || storedExperience === "vintage") {
-      setExperienceState(storedExperience);
-    }
-
-    if (
-      storedColorMode === "system" ||
-      storedColorMode === "light" ||
-      storedColorMode === "dark"
-    ) {
-      setColorModePreferenceState(storedColorMode);
-    }
-
-    setSystemColorMode(getSystemColorMode());
-
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = () => {
       setSystemColorMode(mediaQuery.matches ? "dark" : "light");
     };
 
+    const hydrationTimer = window.setTimeout(() => {
+      const storedExperience = window.localStorage.getItem(
+        EXPERIENCE_STORAGE_KEY,
+      ) as Experience | null;
+
+      const storedColorMode = window.localStorage.getItem(
+        COLOR_MODE_STORAGE_KEY,
+      ) as ColorModePreference | null;
+
+      if (storedExperience === "modern" || storedExperience === "vintage") {
+        setExperienceState(storedExperience);
+      }
+
+      if (
+        storedColorMode === "system" ||
+        storedColorMode === "light" ||
+        storedColorMode === "dark"
+      ) {
+        setColorModePreferenceState(storedColorMode);
+      }
+
+      setSystemColorMode(getSystemColorMode());
+    }, 0);
+
     mediaQuery.addEventListener("change", handleChange);
 
     return () => {
+      window.clearTimeout(hydrationTimer);
       mediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
@@ -132,7 +136,15 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
       setColorModePreference,
       cycleColorMode,
     }),
-    [experience, colorModePreference, resolvedColorMode],
+    [
+      experience,
+      setExperience,
+      toggleExperience,
+      colorModePreference,
+      resolvedColorMode,
+      setColorModePreference,
+      cycleColorMode,
+    ],
   );
 
   return (

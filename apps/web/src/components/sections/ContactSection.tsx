@@ -1,6 +1,11 @@
+"use client";
+
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { profile } from "@/data/profile";
 
 export function ContactSection() {
+  const { dictionary } = useLanguage();
+
   return (
     <section
       id="contact"
@@ -12,15 +17,18 @@ export function ContactSection() {
             <div className="halftone-bg h-full w-full opacity-10" />
           </div>
 
-          <p className="section-eyebrow">Transmission</p>
+          <p className="section-eyebrow">{dictionary.contact.eyebrow}</p>
 
           <h2 className="section-title mt-8 max-w-4xl text-5xl md:text-7xl">
-            Established a <span className="text-[var(--color-primary)]">Connection</span>?
+            {dictionary.contact.titleStart}{" "}
+            <span className="text-[var(--color-primary)]">
+              {dictionary.contact.titleHighlight}
+            </span>
+            ?
           </h2>
 
           <p className="mt-8 max-w-2xl font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl">
-            Open for tech discussions, product engineering, or new
-            opportunities. The line is open.
+            {dictionary.contact.copy}
           </p>
 
           <div className="mt-14 flex flex-col gap-6 sm:flex-row sm:flex-wrap">
@@ -29,7 +37,7 @@ export function ContactSection() {
                 href={`mailto:${profile.socialLinks.email}`}
                 className="primary-action h-14 min-w-[220px] text-[10px] font-bold uppercase tracking-[0.3em]"
               >
-                Send Message
+                {dictionary.contact.messageCta}
               </a>
             )}
 

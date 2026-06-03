@@ -1,7 +1,13 @@
+"use client";
+
 import { ColorModeToggle } from "@/components/layout/ColorModeToggle";
 import { ExperienceToggle } from "@/components/layout/ExperienceToggle";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function Header() {
+  const { dictionary } = useLanguage();
+
   return (
     <header className="vintage-header sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/90 backdrop-blur transition-colors duration-300">
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-3 md:px-10">
@@ -20,29 +26,30 @@ export function Header() {
             href="#home"
             className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-foreground)]"
           >
-            Home
+            {dictionary.header.nav.home}
           </a>
           <a
             href="#projects"
             className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Archive
+            {dictionary.header.nav.projects}
           </a>
           <a
             href="#about"
             className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Intel
+            {dictionary.header.nav.about}
           </a>
           <a
             href="#contact"
             className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
-            Terminal
+            {dictionary.header.nav.contact}
           </a>
         </nav>
 
         <div className="flex items-center justify-self-end gap-2">
+          <LanguageToggle />
           <ColorModeToggle />
           <ExperienceToggle />
         </div>
