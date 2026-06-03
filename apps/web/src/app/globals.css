@@ -436,3 +436,274 @@ body {
 :root[data-experience="vintage"][data-color-mode="dark"] .vintage-flicker {
   animation: vintage-flicker 6s infinite alternate;
 }
+
+/* Film Reel Projects */
+
+.vintage-header {
+  z-index: 100;
+}
+
+.film-reel {
+  position: relative;
+  z-index: 80;
+  cursor: grab;
+}
+
+.film-reel:active {
+  cursor: grabbing;
+}
+
+.film-reel-track {
+  --film-border: #111111;
+  --film-frame-border: rgba(244, 241, 234, 0.78);
+  --film-perforation: #f4f1ea;
+  --film-caption-bg: rgba(17, 17, 17, 0.96);
+  --film-splice: rgba(244, 241, 234, 0.18);
+
+  position: relative;
+  align-items: stretch;
+  width: max-content;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 0,
+      transparent 10%,
+      transparent 90%,
+      rgba(255, 255, 255, 0.018) 100%
+    ),
+    var(--film-border);
+  box-shadow: 14px 14px 0 var(--color-shadow);
+  padding-block: 68px;
+  will-change: transform;
+}
+
+.film-reel-track::before,
+.film-reel-track::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  height: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg width='52' height='30' viewBox='0 0 52 30' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='17' y='3' width='17' height='24' rx='2' fill='%23f4f1ea'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 52px 30px;
+}
+
+.film-reel-track::before {
+  top: 20px;
+}
+
+.film-reel-track::after {
+  bottom: 20px;
+}
+
+.film-reel-slide {
+  position: relative;
+  display: flex;
+  width: min(92vw, 520px);
+  flex: 0 0 auto;
+  align-items: stretch;
+  padding-inline: 10px;
+}
+
+@media (min-width: 768px) {
+  .film-reel-slide {
+    width: min(58vw, 560px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .film-reel-slide {
+    width: min(42vw, 560px);
+  }
+}
+
+.film-reel-slide::before {
+  content: "";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  top: -26px;
+  z-index: 5;
+  width: 5px;
+  background: var(--film-border);
+  opacity: 0.98;
+}
+
+.film-reel-slide::after {
+  content: "";
+  position: absolute;
+  bottom: -26px;
+  right: 0;
+  top: -26px;
+  z-index: 5;
+  width: 1px;
+  background: var(--film-splice);
+}
+
+.film-frame {
+  min-height: 100%;
+  width: 100%;
+}
+
+.film-frame-window {
+  height: 100%;
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+/* Vintage Light */
+
+:root[data-experience="vintage"][data-color-mode="light"] .film-reel-track {
+  --film-border: #111111;
+  --film-frame-border: #111111;
+  --film-perforation: #f4f1ea;
+  --film-caption-bg: #fffaf0;
+  --film-splice: rgba(17, 17, 17, 0.32);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 0,
+      transparent 10%,
+      transparent 90%,
+      rgba(255, 255, 255, 0.018) 100%
+    ),
+    var(--film-border);
+  box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.95);
+}
+
+/* Vintage Dark */
+
+:root[data-experience="vintage"][data-color-mode="dark"] .film-reel-track {
+  --film-border: #010101;
+  --film-frame-border: rgba(244, 241, 234, 0.72);
+  --film-perforation: #f4f1ea;
+  --film-caption-bg: rgba(10, 10, 10, 0.98);
+  --film-splice: rgba(244, 241, 234, 0.1);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.012) 0,
+      transparent 8%,
+      transparent 92%,
+      rgba(255, 255, 255, 0.01) 100%
+    ),
+    #010101;
+  box-shadow:
+    0 0 0 1px rgba(244, 241, 234, 0.05),
+    14px 14px 0 rgba(0, 0, 0, 0.86);
+}
+
+:root[data-experience="vintage"][data-color-mode="dark"]
+  .film-reel-slide::before {
+  background: #010101;
+}
+
+:root[data-experience="vintage"][data-color-mode="dark"]
+  .film-reel-slide::after {
+  background: rgba(244, 241, 234, 0.08);
+}
+
+/* Modern */
+
+:root[data-experience="modern"] .film-reel-track {
+  --film-border: #08111f;
+  --film-frame-border: rgba(34, 211, 238, 0.28);
+  --film-perforation: rgba(34, 211, 238, 0.22);
+  --film-caption-bg: rgba(8, 17, 31, 0.88);
+  --film-splice: rgba(34, 211, 238, 0.12);
+
+  border-radius: 24px;
+  padding-block: 54px;
+}
+
+:root[data-experience="modern"] .film-reel-track::before,
+:root[data-experience="modern"] .film-reel-track::after {
+  height: 26px;
+  background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='18' y='3' width='16' height='20' rx='2' fill='%2322d3ee' fill-opacity='0.22'/%3E%3C/svg%3E");
+  background-size: 52px 26px;
+}
+
+:root[data-experience="modern"] .film-reel-track::before {
+  top: 16px;
+}
+
+:root[data-experience="modern"] .film-reel-track::after {
+  bottom: 16px;
+}
+
+:root[data-experience="modern"] .film-frame-window {
+  border-radius: 14px;
+}
+
+.film-image {
+  filter: grayscale(1) contrast(1.35) sepia(0.18);
+  transition:
+    transform 0.7s ease,
+    filter 0.3s ease,
+    opacity 0.2s ease;
+}
+
+.film-frame:hover .film-image,
+.film-frame:focus-within .film-image {
+  transform: scale(1.05);
+  filter: grayscale(1) contrast(1.55) sepia(0.24);
+}
+
+.film-image-vignette {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 38%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+}
+
+.film-image-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: film-grain-shift 0.22s infinite steps(2);
+}
+
+.film-preview-label {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  border: 1px solid var(--film-frame-border);
+  background: rgba(0, 0, 0, 0.72);
+  padding: 6px 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f4f1ea;
+}
+
+@keyframes film-grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(-2%, -2%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-image,
+  .film-image-grain {
+    animation: none;
+    transition: none;
+  }
+}

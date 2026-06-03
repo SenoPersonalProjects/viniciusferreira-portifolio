@@ -14,7 +14,7 @@ export default function Home() {
 
       <Header />
 
-      <main className="relative z-10">
+      <main className="relative">
         <HeroSection />
         <AboutSection />
         <StackSection />

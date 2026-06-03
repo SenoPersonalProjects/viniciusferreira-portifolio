@@ -1,0 +1,5 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#111"/>
+  <circle cx="600" cy="400" r="220" fill="#f4f1ea"/>
+  <text x="600" y="420" text-anchor="middle" fill="#111" font-family="serif" font-size="72">HOME</text>
+</svg>
