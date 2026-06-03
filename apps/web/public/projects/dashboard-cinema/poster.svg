@@ -1,0 +1,14 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+    <radialGradient id="vignette" cx="50%" cy="45%" r="70%"><stop offset="40%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.65"/></radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#171717"/>
+  <rect x="72" y="70" width="1056" height="660" fill="#222"/>
+  <rect x="108" y="106" width="984" height="588" fill="none" stroke="#f4f1ea" stroke-width="8" opacity="0.82"/>
+  <rect x="260" y="250" width="90" height="260" fill="#f4f1ea" opacity="0.9"/><rect x="420" y="310" width="90" height="200" fill="#f4f1ea" opacity="0.76"/><rect x="580" y="210" width="90" height="300" fill="#f4f1ea" opacity="0.9"/><rect x="740" y="350" width="90" height="160" fill="#f4f1ea" opacity="0.76"/>
+  <text x="600" y="620" text-anchor="middle" fill="#f4f1ea" font-family="serif" font-size="70" font-weight="700">DASHBOARD CINEMA</text>
+  <text x="600" y="670" text-anchor="middle" fill="#d9d5ce" font-family="monospace" font-size="24" letter-spacing="8">METRICAS · GRAFICOS · RELATORIOS</text>
+  <rect width="1200" height="800" filter="url(#noise)" opacity="0.12"/>
+  <rect width="1200" height="800" fill="url(#vignette)"/>
+</svg>

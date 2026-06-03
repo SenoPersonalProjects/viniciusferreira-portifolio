@@ -1,0 +1,5 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#181818"/>
+  <polygon points="600,120 980,680 220,680" fill="#f4f1ea"/>
+  <text x="600" y="530" text-anchor="middle" fill="#111" font-family="serif" font-size="72">PROJETOS</text>
+</svg>

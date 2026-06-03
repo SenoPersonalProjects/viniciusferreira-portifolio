@@ -1,0 +1,5 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#111"/>
+  <rect x="120" y="120" width="960" height="560" fill="none" stroke="#f4f1ea" stroke-width="18"/>
+  <text x="600" y="420" text-anchor="middle" fill="#f4f1ea" font-family="serif" font-size="72">CONTATO</text>
+</svg>
