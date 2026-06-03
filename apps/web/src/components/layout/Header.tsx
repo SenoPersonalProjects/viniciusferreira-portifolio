@@ -1,44 +1,46 @@
+import { ColorModeToggle } from "@/components/layout/ColorModeToggle";
 import { ExperienceToggle } from "@/components/layout/ExperienceToggle";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="vintage-header sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/90 backdrop-blur transition-colors duration-300">
+      <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-3 md:px-10">
         <a
           href="#home"
-          className="text-sm font-semibold tracking-wide text-[var(--color-foreground)]"
+          className="vintage-logo vintage-flicker font-[var(--font-display)] text-2xl leading-none text-[var(--color-foreground)] md:text-3xl"
         >
-          Vinicius Ferreira
+          V.F.S.
         </a>
 
-        <div className="flex items-center gap-6">
-          <nav className="hidden items-center gap-6 text-sm text-[var(--color-muted)] md:flex">
-            <a
-              href="#about"
-              className="transition hover:text-[var(--color-foreground)]"
-            >
-              Sobre
-            </a>
-            <a
-              href="#stack"
-              className="transition hover:text-[var(--color-foreground)]"
-            >
-              Stack
-            </a>
-            <a
-              href="#projects"
-              className="transition hover:text-[var(--color-foreground)]"
-            >
-              Projetos
-            </a>
-            <a
-              href="#contact"
-              className="transition hover:text-[var(--color-foreground)]"
-            >
-              Contato
-            </a>
-          </nav>
+        <nav className="hidden justify-self-center md:flex md:items-center md:gap-8">
+          <a
+            href="#home"
+            className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-foreground)]"
+          >
+            Home
+          </a>
+          <a
+            href="#projects"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+          >
+            Projetos
+          </a>
+          <a
+            href="#about"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+          >
+            Sobre
+          </a>
+          <a
+            href="#contact"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+          >
+            Contato
+          </a>
+        </nav>
 
+        <div className="flex items-center justify-self-end gap-2">
+          <ColorModeToggle />
           <ExperienceToggle />
         </div>
       </div>
