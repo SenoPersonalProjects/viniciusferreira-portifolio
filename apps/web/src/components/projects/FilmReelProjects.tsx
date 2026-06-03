@@ -62,28 +62,30 @@ export function FilmReelProjects() {
   }
 
   return (
-    <div className="mt-12">
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <p className="max-w-2xl text-lg leading-8 text-[var(--color-muted)]">
-          Cada frame apresenta um projeto em formato de película. Passe o mouse
-          sobre um frame para assistir uma prévia visual com estética noir.
-        </p>
+    <div className="mt-14">
+      <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <p className="font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)]">
+            Each frame showcases a project in a film strip format. Hover over a
+            frame to trigger a cinematic preview with Noir aesthetics.
+          </p>
+        </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <button
             type="button"
             onClick={scrollPrevious}
-            className="secondary-action px-4 py-2 font-[var(--font-mono)] text-xs font-bold uppercase tracking-[0.18em]"
+            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em]"
           >
-            Anterior
+            Previous
           </button>
 
           <button
             type="button"
             onClick={scrollNext}
-            className="secondary-action px-4 py-2 font-[var(--font-mono)] text-xs font-bold uppercase tracking-[0.18em]"
+            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em]"
           >
-            Próximo
+            Next
           </button>
         </div>
       </div>

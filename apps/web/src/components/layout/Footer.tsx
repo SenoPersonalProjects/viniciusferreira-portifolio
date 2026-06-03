@@ -2,24 +2,26 @@ import { profile } from "@/data/profile";
 
 export function Footer() {
   return (
-    <footer className="section-border relative z-40 bg-[var(--color-background)] px-6 py-8 transition-colors duration-300 md:px-10">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="font-[var(--font-display)] text-3xl text-[var(--color-foreground)]">
+    <footer className="section-border relative z-40 bg-[var(--color-background)] px-6 py-12 transition-colors duration-300 md:px-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2 font-[var(--font-display)] text-3xl text-[var(--color-foreground)]">
+          <span className="font-[var(--font-accent)] text-[0.8em] text-[var(--color-primary)]">
+            v
+          </span>
           V.F.S.
         </div>
 
-        <div className="border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-foreground)]">
-          © {new Date().getFullYear()} Vinicius Ferreira dos Santos. Todos os
-          direitos reservados.
+        <div className="border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-6 py-3 font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--color-muted)]">
+          © {new Date().getFullYear()} Vinicius Ferreira. All Rights Reserved.
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-8">
           {profile.socialLinks.linkedin && (
             <a
               href={profile.socialLinks.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="font-[var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
+              className="font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
             >
               LinkedIn
             </a>
@@ -30,18 +32,9 @@ export function Footer() {
               href={profile.socialLinks.github}
               target="_blank"
               rel="noreferrer"
-              className="font-[var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
+              className="font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
             >
               GitHub
-            </a>
-          )}
-
-          {profile.socialLinks.email && (
-            <a
-              href={`mailto:${profile.socialLinks.email}`}
-              className="font-[var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
-            >
-              E-mail
             </a>
           )}
         </div>
