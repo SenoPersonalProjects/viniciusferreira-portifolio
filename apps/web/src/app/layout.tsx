@@ -9,6 +9,7 @@ import {
 } from "next/font/google";
 
 import { ExperienceProvider } from "@/components/providers/ExperienceProvider";
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 import "./globals.css";
 
@@ -46,9 +47,9 @@ const specialElite = Special_Elite({
 });
 
 export const metadata: Metadata = {
-  title: "Vinicius Ferreira | Portifólio",
+  title: "Vinicius Ferreira | Portfolio",
   description:
-    "Portfólio pessoal de Vinicius Ferreira, desenvolvedor full stack.",
+    "Portfolio pessoal e personal portfolio de Vinicius Ferreira, desenvolvedor full stack.",
 };
 
 export default function RootLayout({
@@ -63,7 +64,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[var(--color-background)] text-[var(--color-foreground)]">
-        <ExperienceProvider>{children}</ExperienceProvider>
+        <LanguageProvider>
+          <ExperienceProvider>{children}</ExperienceProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

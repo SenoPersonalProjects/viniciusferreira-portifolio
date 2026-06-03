@@ -1,8 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type { Project } from "@/data/projects";
+
+import { FilmPreviewEffects } from "./FilmPreviewEffects";
 
 type FilmFrameProps = {
   project: Project;
@@ -10,6 +14,7 @@ type FilmFrameProps = {
 };
 
 export function FilmFrame({ project, index }: FilmFrameProps) {
+  const { dictionary } = useLanguage();
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
 
@@ -22,11 +27,18 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
     ? previewImages[previewIndex]
     : project.posterImage;
 
+  function startPreview() {
+    setPreviewIndex(0);
+    setIsPreviewing(true);
+  }
+
+  function stopPreview() {
+    setIsPreviewing(false);
+    setPreviewIndex(0);
+  }
+
   useEffect(() => {
-    if (!isPreviewing) {
-      setPreviewIndex(0);
-      return;
-    }
+    if (!isPreviewing) return;
 
     const interval = window.setInterval(() => {
       setPreviewIndex((current) => (current + 1) % previewImages.length);
@@ -38,28 +50,30 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
   return (
     <article
       className="film-frame group relative h-full min-w-0"
-      onMouseEnter={() => setIsPreviewing(true)}
-      onMouseLeave={() => setIsPreviewing(false)}
-      onFocus={() => setIsPreviewing(true)}
-      onBlur={() => setIsPreviewing(false)}
+      onMouseEnter={startPreview}
+      onMouseLeave={stopPreview}
+      onFocus={startPreview}
+      onBlur={stopPreview}
     >
       <div className="film-frame-window relative h-full overflow-hidden border border-[var(--film-frame-border)] bg-[var(--color-surface)]">
-        <div className="film-image-wrap relative aspect-[16/10] overflow-hidden">
-          <img
+        <div className="film-image-wrap relative aspect-[16/10] overflow-hidden bg-black">
+          <Image
             src={currentImage}
-            alt={`Prévia do projeto ${project.title}`}
-            className="film-image h-full w-full object-cover"
+            alt={`${dictionary.filmFrame.previewAltPrefix} ${project.title}`}
+            fill
+            sizes="(min-width: 1280px) 560px, (min-width: 768px) 48vw, 86vw"
+            className="film-image object-cover"
             draggable={false}
           />
 
           <div className="film-image-vignette" />
 
-          {isPreviewing && <div className="film-image-grain" />}
+          {isPreviewing && <FilmPreviewEffects />}
 
           {isPreviewing && (
             <div className="film-preview-label animate-[vintage-flicker_0.15s_infinite] bg-black/80 backdrop-blur-sm">
               <span className="mr-2 h-1.5 w-1.5 animate-pulse rounded-full bg-red-600" />
-              Projecting...
+              {dictionary.filmFrame.previewLabel}
             </div>
           )}
         </div>
@@ -73,7 +87,8 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
             <div className="h-[1px] flex-1 bg-[var(--film-frame-border)] opacity-20" />
 
             <span className="font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)]">
-              Frame {String(index + 1).padStart(2, "0")}
+              {dictionary.filmFrame.frameLabel}{" "}
+              {String(index + 1).padStart(2, "0")}
             </span>
           </div>
 
@@ -104,7 +119,7 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
                 rel="noreferrer"
                 className="secondary-action h-10 text-[10px] font-bold uppercase tracking-widest"
               >
-                Code
+                {dictionary.filmFrame.code}
               </a>
             )}
 
@@ -115,11 +130,11 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
                 rel="noreferrer"
                 className="primary-action h-10 text-[10px] font-bold uppercase tracking-widest"
               >
-                Exhibit
+                {dictionary.filmFrame.live}
               </a>
             ) : (
               <div className="secondary-action h-10 cursor-not-allowed opacity-40 text-[10px] font-bold uppercase tracking-widest">
-                Classified
+                {dictionary.filmFrame.unavailable}
               </div>
             )}
           </div>

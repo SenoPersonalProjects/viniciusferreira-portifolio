@@ -1,6 +1,11 @@
+"use client";
+
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { profile } from "@/data/profile";
 
 export function Footer() {
+  const { dictionary } = useLanguage();
+
   return (
     <footer className="section-border relative z-40 bg-[var(--color-background)] px-6 py-12 transition-colors duration-300 md:px-10">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 md:flex-row md:items-center md:justify-between">
@@ -12,7 +17,8 @@ export function Footer() {
         </div>
 
         <div className="border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-6 py-3 font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--color-muted)]">
-          © {new Date().getFullYear()} Vinicius Ferreira. All Rights Reserved.
+          © {new Date().getFullYear()} Vinicius Ferreira.{" "}
+          {dictionary.footer.rights}
         </div>
 
         <div className="flex flex-wrap items-center gap-8">

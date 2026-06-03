@@ -1,17 +1,29 @@
+"use client";
+
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import { stack } from "@/data/stack";
 
 export function StackSection() {
+  const { dictionary } = useLanguage();
+  const localizedStack = stack.map((group, index) => ({
+    ...group,
+    category: dictionary.stack.categories[index] ?? group.category,
+  }));
+
   return (
     <section id="stack" className="section-border px-6 py-20 md:px-10 md:py-24">
       <div className="mx-auto max-w-7xl">
-        <p className="section-eyebrow">Arsenal</p>
+        <p className="section-eyebrow">{dictionary.stack.eyebrow}</p>
 
         <h2 className="section-title mt-6 text-5xl md:text-7xl">
-          Technical <span className="text-[var(--color-primary)]">Manifest</span>
+          {dictionary.stack.titleStart}{" "}
+          <span className="text-[var(--color-primary)]">
+            {dictionary.stack.titleHighlight}
+          </span>
         </h2>
 
         <div className="mt-14 grid gap-8 md:grid-cols-2">
-          {stack.map((group) => (
+          {localizedStack.map((group) => (
             <article
               key={group.category}
               className="section-card relative overflow-hidden p-8 md:p-10"
