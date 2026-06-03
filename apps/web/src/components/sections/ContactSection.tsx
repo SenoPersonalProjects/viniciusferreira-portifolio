@@ -4,48 +4,48 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="border-t border-[var(--color-border)] px-6 py-24 transition-colors duration-300"
+      className="section-border px-6 py-20 md:px-10 md:py-24"
     >
-      <div className="mx-auto max-w-6xl rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-8 transition-colors duration-300 md:p-12">
-        <p className="text-sm font-medium uppercase tracking-[0.35em] text-[var(--color-primary)]">
-          Contato
-        </p>
+      <div className="mx-auto max-w-7xl">
+        <div className="section-card p-8 md:p-12">
+          <p className="section-eyebrow">Contato</p>
 
-        <h2 className="mt-4 max-w-3xl text-3xl font-bold text-[var(--color-foreground)] md:text-5xl">
-          Vamos conversar sobre tecnologia, produto ou novas oportunidades?
-        </h2>
+          <h2 className="section-title mt-5 max-w-4xl text-4xl md:text-5xl">
+            Vamos conversar sobre tecnologia, produto ou novas oportunidades?
+          </h2>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-          {profile.socialLinks.email && (
-            <a
-              href={`mailto:${profile.socialLinks.email}`}
-              className="rounded-full bg-[var(--color-primary)] px-6 py-3 text-center text-sm font-semibold text-[var(--color-background)] transition hover:opacity-80"
-            >
-              Enviar e-mail
-            </a>
-          )}
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+            {profile.socialLinks.email && (
+              <a
+                href={`mailto:${profile.socialLinks.email}`}
+                className="primary-action squash-stretch px-6 py-3 text-center text-sm font-semibold"
+              >
+                Enviar e-mail
+              </a>
+            )}
 
-          {profile.socialLinks.github && (
-            <a
-              href={profile.socialLinks.github}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-[var(--color-border)] px-6 py-3 text-center text-sm font-semibold text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-            >
-              GitHub
-            </a>
-          )}
+            {profile.socialLinks.github && (
+              <a
+                href={profile.socialLinks.github}
+                target="_blank"
+                rel="noreferrer"
+                className="secondary-action squash-stretch px-6 py-3 text-center text-sm font-semibold"
+              >
+                GitHub
+              </a>
+            )}
 
-          {profile.socialLinks.linkedin && (
-            <a
-              href={profile.socialLinks.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-[var(--color-border)] px-6 py-3 text-center text-sm font-semibold text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-            >
-              LinkedIn
-            </a>
-          )}
+            {profile.socialLinks.linkedin && (
+              <a
+                href={profile.socialLinks.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="secondary-action squash-stretch px-6 py-3 text-center text-sm font-semibold"
+              >
+                LinkedIn
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </section>

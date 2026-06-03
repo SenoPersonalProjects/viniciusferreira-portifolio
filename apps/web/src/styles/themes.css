@@ -1,22 +1,83 @@
-:root,
-:root[data-experience="modern"] {
+:root {
+  --font-display: var(--font-geist-sans);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-background: #0b1020;
+  --color-foreground: #f8fafc;
+  --color-primary: #22d3ee;
+  --color-secondary: #a855f7;
+  --color-muted: #94a3b8;
+  --color-surface: #111827;
+  --color-surface-soft: rgba(255, 255, 255, 0.04);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-shadow: rgba(34, 211, 238, 0.2);
+}
+
+/* MODERN LIGHT */
+:root[data-experience="modern"][data-color-mode="light"] {
+  --font-display: var(--font-geist-sans);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-background: #f8fbff;
+  --color-foreground: #09111f;
+  --color-primary: #0891b2;
+  --color-secondary: #7c3aed;
+  --color-muted: #475569;
+  --color-surface: #ffffff;
+  --color-surface-soft: rgba(8, 145, 178, 0.05);
+  --color-border: rgba(9, 17, 31, 0.12);
+  --color-shadow: rgba(8, 145, 178, 0.16);
+}
+
+/* MODERN DARK */
+:root[data-experience="modern"][data-color-mode="dark"] {
+  --font-display: var(--font-geist-sans);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
   --color-background: #030712;
   --color-foreground: #f8fafc;
   --color-primary: #22d3ee;
   --color-secondary: #a855f7;
   --color-muted: #94a3b8;
   --color-surface: #111827;
-  --color-surface-soft: rgba(255, 255, 255, 0.03);
-  --color-border: rgba(255, 255, 255, 0.1);
+  --color-surface-soft: rgba(255, 255, 255, 0.04);
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-shadow: rgba(34, 211, 238, 0.18);
 }
 
-:root[data-experience="vintage"] {
-  --color-background: #f5f1e8;
+/* VINTAGE LIGHT */
+:root[data-experience="vintage"][data-color-mode="light"] {
+  --font-display: var(--font-rye);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-background: #f4f1ea;
   --color-foreground: #111111;
   --color-primary: #111111;
-  --color-secondary: #4b4b4b;
-  --color-muted: #5f5f5f;
+  --color-secondary: #3b3b3b;
+  --color-muted: #303030;
   --color-surface: #fffaf0;
-  --color-surface-soft: rgba(17, 17, 17, 0.03);
-  --color-border: rgba(17, 17, 17, 0.2);
+  --color-surface-soft: rgba(17, 17, 17, 0.04);
+  --color-border: #111111;
+  --color-shadow: rgba(17, 17, 17, 0.95);
+}
+
+/* VINTAGE DARK - inspirado na referência */
+:root[data-experience="vintage"][data-color-mode="dark"] {
+  --font-display: var(--font-rye);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-background: #1b1b1b;
+  --color-foreground: #f0ece5;
+  --color-primary: #f0ece5;
+  --color-secondary: #d4cfc7;
+  --color-muted: #d1cbc3;
+  --color-surface: #232323;
+  --color-surface-soft: rgba(255, 255, 255, 0.035);
+  --color-border: rgba(240, 236, 229, 0.82);
+  --color-shadow: rgba(0, 0, 0, 0.78);
 }

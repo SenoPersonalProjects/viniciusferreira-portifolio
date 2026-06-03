@@ -8,10 +8,13 @@ import { StackSection } from "@/components/sections/StackSection";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] transition-colors duration-300">
+    <div className="portfolio-shell text-[var(--color-foreground)] transition-colors duration-300">
+      <div className="vintage-vignette" />
+      <div className="vintage-grain" />
+
       <Header />
 
-      <main>
+      <main className="relative z-10">
         <HeroSection />
         <AboutSection />
         <StackSection />

@@ -9,52 +9,128 @@ import {
   useState,
 } from "react";
 
-import type { Experience } from "@/types/experience";
+type Experience = "modern" | "vintage";
+type ColorModePreference = "system" | "light" | "dark";
+type ResolvedColorMode = "light" | "dark";
 
 type ExperienceContextValue = {
   experience: Experience;
-  toggleExperience: () => void;
   setExperience: (experience: Experience) => void;
+  toggleExperience: () => void;
+  colorModePreference: ColorModePreference;
+  resolvedColorMode: ResolvedColorMode;
+  setColorModePreference: (mode: ColorModePreference) => void;
+  cycleColorMode: () => void;
 };
 
 const ExperienceContext = createContext<ExperienceContextValue | null>(null);
 
-const STORAGE_KEY = "portfolio-experience";
+const EXPERIENCE_STORAGE_KEY = "portfolio-experience";
+const COLOR_MODE_STORAGE_KEY = "portfolio-color-mode";
+
+function getSystemColorMode(): ResolvedColorMode {
+  if (typeof window === "undefined") {
+    return "dark";
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
 
 export function ExperienceProvider({ children }: { children: ReactNode }) {
-  const [experience, setExperienceState] = useState<Experience>("modern");
+  const [experience, setExperienceState] = useState<Experience>("vintage");
+  const [colorModePreference, setColorModePreferenceState] =
+    useState<ColorModePreference>("system");
+  const [systemColorMode, setSystemColorMode] =
+    useState<ResolvedColorMode>("dark");
+
+  const resolvedColorMode: ResolvedColorMode =
+    colorModePreference === "system" ? systemColorMode : colorModePreference;
 
   function setExperience(experienceValue: Experience) {
     setExperienceState(experienceValue);
-    document.documentElement.dataset.experience = experienceValue;
-    window.localStorage.setItem(STORAGE_KEY, experienceValue);
+    window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, experienceValue);
   }
 
   function toggleExperience() {
     setExperience(experience === "modern" ? "vintage" : "modern");
   }
 
+  function setColorModePreference(mode: ColorModePreference) {
+    setColorModePreferenceState(mode);
+    window.localStorage.setItem(COLOR_MODE_STORAGE_KEY, mode);
+  }
+
+  function cycleColorMode() {
+    if (colorModePreference === "system") {
+      setColorModePreference("light");
+      return;
+    }
+
+    if (colorModePreference === "light") {
+      setColorModePreference("dark");
+      return;
+    }
+
+    setColorModePreference("system");
+  }
+
   useEffect(() => {
     const storedExperience = window.localStorage.getItem(
-      STORAGE_KEY,
+      EXPERIENCE_STORAGE_KEY,
     ) as Experience | null;
 
-    const initialExperience =
-      storedExperience === "vintage" || storedExperience === "modern"
-        ? storedExperience
-        : "modern";
+    const storedColorMode = window.localStorage.getItem(
+      COLOR_MODE_STORAGE_KEY,
+    ) as ColorModePreference | null;
 
-    setExperienceState(initialExperience);
-    document.documentElement.dataset.experience = initialExperience;
+    if (storedExperience === "modern" || storedExperience === "vintage") {
+      setExperienceState(storedExperience);
+    }
+
+    if (
+      storedColorMode === "system" ||
+      storedColorMode === "light" ||
+      storedColorMode === "dark"
+    ) {
+      setColorModePreferenceState(storedColorMode);
+    }
+
+    setSystemColorMode(getSystemColorMode());
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleChange = () => {
+      setSystemColorMode(mediaQuery.matches ? "dark" : "light");
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    root.setAttribute("data-experience", experience);
+    root.setAttribute("data-color-mode", resolvedColorMode);
+    root.setAttribute("data-color-mode-preference", colorModePreference);
+  }, [experience, resolvedColorMode, colorModePreference]);
 
   const value = useMemo(
     () => ({
       experience,
-      toggleExperience,
       setExperience,
+      toggleExperience,
+      colorModePreference,
+      resolvedColorMode,
+      setColorModePreference,
+      cycleColorMode,
     }),
-    [experience],
+    [experience, colorModePreference, resolvedColorMode],
   );
 
   return (
