@@ -24,25 +24,25 @@ export function Header() {
         <nav className="hidden justify-self-center md:flex md:items-center md:gap-10">
           <a
             href="#home"
-            className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-foreground)]"
+            className="border-b-2 border-[var(--color-primary)] pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--color-foreground)]"
           >
             {dictionary.header.nav.home}
           </a>
           <a
             href="#projects"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
             {dictionary.header.nav.projects}
           </a>
           <a
             href="#about"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
             {dictionary.header.nav.about}
           </a>
           <a
             href="#contact"
-            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+            className="border-b-2 border-transparent pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--color-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
           >
             {dictionary.header.nav.contact}
           </a>

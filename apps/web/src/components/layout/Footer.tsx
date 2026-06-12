@@ -16,7 +16,7 @@ export function Footer() {
           V.F.S.
         </div>
 
-        <div className="border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-6 py-3 font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--color-muted)]">
+        <div className="border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-6 py-3 font-[var(--font-industrial)] text-[9px] font-normal uppercase tracking-[0.28em] text-[var(--color-muted)]">
           © {new Date().getFullYear()} Vinicius Ferreira.{" "}
           {dictionary.footer.rights}
         </div>
@@ -27,7 +27,7 @@ export function Footer() {
               href={profile.socialLinks.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
+              className="font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.22em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
             >
               LinkedIn
             </a>
@@ -38,7 +38,7 @@ export function Footer() {
               href={profile.socialLinks.github}
               target="_blank"
               rel="noreferrer"
-              className="font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
+              className="font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.22em] text-[var(--color-foreground)] transition hover:text-[var(--color-primary)]"
             >
               GitHub
             </a>

@@ -29,12 +29,12 @@ export function StackSection() {
               className="section-card relative overflow-hidden p-8 md:p-10"
             >
               <div className="absolute right-4 top-4 opacity-10">
-                <p className="font-[var(--font-industrial)] text-4xl uppercase tracking-[0.2em]">
+                <p className="font-[var(--font-industrial)] text-4xl font-normal uppercase tracking-[0.16em]">
                   {group.category.substring(0, 3)}
                 </p>
               </div>
 
-              <h3 className="font-[var(--font-industrial)] text-xl font-bold uppercase tracking-[0.2em] text-[var(--color-foreground)] md:text-2xl">
+              <h3 className="font-[var(--font-industrial)] text-xl font-normal uppercase tracking-[0.18em] text-[var(--color-foreground)] md:text-2xl">
                 {group.category}
               </h3>
 

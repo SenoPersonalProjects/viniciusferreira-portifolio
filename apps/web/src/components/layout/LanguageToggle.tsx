@@ -9,7 +9,7 @@ export function LanguageToggle() {
     <button
       type="button"
       onClick={toggleLanguage}
-      className="flex h-9 items-center gap-1.5 rounded-none border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-2 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] sm:gap-2 sm:px-4 sm:tracking-[0.24em]"
+      className="flex h-9 items-center gap-1.5 rounded-none border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-2 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.14em] text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] sm:gap-2 sm:px-4 sm:tracking-[0.22em]"
       aria-label={dictionary.languageToggleLabel}
       title={dictionary.languageToggleLabel}
       data-testid="language-toggle"

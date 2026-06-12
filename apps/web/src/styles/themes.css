@@ -2,6 +2,10 @@
   --font-display: var(--font-geist-sans);
   --font-body: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-accent: var(--font-geist-sans);
+  --font-industrial: var(--font-jetbrains-mono);
+  --font-typewriter: var(--font-geist-mono);
+  --font-aged: var(--font-geist-mono);
 
   --color-background: #030712;
   --color-foreground: #f8fafc;
@@ -19,6 +23,10 @@
   --font-display: var(--font-geist-sans);
   --font-body: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
+  --font-accent: var(--font-geist-sans);
+  --font-industrial: var(--font-jetbrains-mono);
+  --font-typewriter: var(--font-geist-mono);
+  --font-aged: var(--font-geist-mono);
 
   --color-background: #f8fbff;
   --color-foreground: #09111f;
@@ -36,6 +44,10 @@
   --font-display: var(--font-geist-sans);
   --font-body: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
+  --font-accent: var(--font-geist-sans);
+  --font-industrial: var(--font-jetbrains-mono);
+  --font-typewriter: var(--font-geist-mono);
+  --font-aged: var(--font-geist-mono);
 
   --color-background: #030712;
   --color-foreground: #f8fafc;
@@ -50,11 +62,13 @@
 
 /* VINTAGE LIGHT */
 :root[data-experience="vintage"][data-color-mode="light"] {
-  --font-display: var(--font-rye);
+  --font-display: var(--font-limelight);
   --font-body: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
-  --font-accent: var(--font-sancreek);
-  --font-industrial: var(--font-special-elite);
+  --font-accent: var(--font-pinyon-script);
+  --font-industrial: var(--font-bebas-neue);
+  --font-typewriter: var(--font-courier-prime);
+  --font-aged: var(--font-special-elite);
 
   --color-background: #f4f1ea;
   --color-foreground: #111111;
@@ -69,11 +83,13 @@
 
 /* VINTAGE DARK */
 :root[data-experience="vintage"][data-color-mode="dark"] {
-  --font-display: var(--font-rye);
+  --font-display: var(--font-limelight);
   --font-body: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
-  --font-accent: var(--font-sancreek);
-  --font-industrial: var(--font-special-elite);
+  --font-accent: var(--font-pinyon-script);
+  --font-industrial: var(--font-bebas-neue);
+  --font-typewriter: var(--font-courier-prime);
+  --font-aged: var(--font-special-elite);
 
   --color-background: #0d0d0d;
   --color-foreground: #e8e4db;

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import {
+  Bebas_Neue,
+  Courier_Prime,
   Geist,
   Geist_Mono,
   JetBrains_Mono,
-  Rye,
-  Sancreek,
+  Limelight,
+  Pinyon_Script,
   Special_Elite,
 } from "next/font/google";
 
@@ -28,16 +30,28 @@ const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const rye = Rye({
-  variable: "--font-rye",
+const limelight = Limelight({
+  variable: "--font-limelight",
   subsets: ["latin"],
   weight: "400",
 });
 
-const sancreek = Sancreek({
-  variable: "--font-sancreek",
+const pinyonScript = Pinyon_Script({
+  variable: "--font-pinyon-script",
   subsets: ["latin"],
   weight: "400",
+});
+
+const bebasNeue = Bebas_Neue({
+  variable: "--font-bebas-neue",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const courierPrime = Courier_Prime({
+  variable: "--font-courier-prime",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const specialElite = Special_Elite({
@@ -60,7 +74,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} ${jetBrainsMono.variable} ${rye.variable} ${sancreek.variable} ${specialElite.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${jetBrainsMono.variable} ${limelight.variable} ${pinyonScript.variable} ${bebasNeue.variable} ${courierPrime.variable} ${specialElite.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[var(--color-background)] text-[var(--color-foreground)]">
