@@ -149,7 +149,7 @@ export function FilmReelProjects() {
           <button
             type="button"
             onClick={scrollPrevious}
-            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em]"
+            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.22em]"
           >
             {dictionary.filmReel.previous}
           </button>
@@ -157,7 +157,7 @@ export function FilmReelProjects() {
           <button
             type="button"
             onClick={scrollNext}
-            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-bold uppercase tracking-[0.25em]"
+            className="secondary-action h-11 px-6 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.22em]"
           >
             {dictionary.filmReel.next}
           </button>

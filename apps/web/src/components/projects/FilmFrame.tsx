@@ -61,6 +61,7 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
             src={currentImage}
             alt={`${dictionary.filmFrame.previewAltPrefix} ${project.title}`}
             fill
+            priority={index === 0}
             sizes="(min-width: 1280px) 560px, (min-width: 768px) 48vw, 86vw"
             className="film-image object-cover"
             draggable={false}
@@ -80,19 +81,19 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
 
         <div className="border-t border-[var(--film-frame-border)] bg-[var(--film-caption-bg)] p-5">
           <div className="mb-4 flex items-center justify-between gap-4">
-            <span className="font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)]">
+            <span className="font-[var(--font-industrial)] text-[9px] font-normal uppercase tracking-[0.24em] text-[var(--color-muted)]">
               {project.frameCode ?? `VF-${String(index + 1).padStart(3, "0")}`}
             </span>
 
             <div className="h-[1px] flex-1 bg-[var(--film-frame-border)] opacity-20" />
 
-            <span className="font-[var(--font-industrial)] text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--color-muted)]">
+            <span className="font-[var(--font-industrial)] text-[9px] font-normal uppercase tracking-[0.24em] text-[var(--color-muted)]">
               {dictionary.filmFrame.frameLabel}{" "}
               {String(index + 1).padStart(2, "0")}
             </span>
           </div>
 
-          <h3 className="font-[var(--font-display)] text-2xl uppercase leading-none tracking-tight text-[var(--color-foreground)] md:text-3xl">
+          <h3 className="font-[var(--font-display)] text-2xl uppercase leading-none tracking-normal text-[var(--color-foreground)] md:text-3xl">
             {project.title}
           </h3>
 
