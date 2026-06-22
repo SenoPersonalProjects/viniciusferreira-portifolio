@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import type { DossierContent } from "@/data/dossier";
+import type { DossierContent, DossierLocale } from "@/data/dossier";
 
 type DossierExperience = "modern" | "vintage";
 type DossierColorMode = "light" | "dark";
@@ -8,6 +8,7 @@ type DossierColorMode = "light" | "dark";
 type CreateFolderCoverTextureOptions = {
   experience?: DossierExperience;
   colorMode?: DossierColorMode;
+  locale?: DossierLocale;
   fontRevision?: number;
 };
 
@@ -17,6 +18,43 @@ type CoverPalette = {
   line: string;
   faint: string;
   stamp: string;
+};
+
+type CoverLabels = {
+  modernHeader: string;
+  modernSection: string;
+  vintageHeader: string;
+  vintageSection: string;
+  wantedLineOne: string;
+  wantedLineTwo: string;
+  wantedLineThree: string;
+  dossierPrefix: string;
+  investigation: string;
+};
+
+const labelsByLocale: Record<DossierLocale, CoverLabels> = {
+  pt: {
+    modernHeader: "INVESTIGACAO DIGITAL",
+    modernSection: "ARQUIVO / SUPERFICIE FRONT-END",
+    vintageHeader: "ARQUIVO DE INVESTIGACAO",
+    vintageSection: "SECAO: TECNOLOGIA / WEB",
+    wantedLineOne: "DESENVOLVEDOR",
+    wantedLineTwo: "FULL STACK",
+    wantedLineThree: "PROCURADO",
+    dossierPrefix: "DOSSIE",
+    investigation: "INVESTIGACAO DIGITAL",
+  },
+  en: {
+    modernHeader: "DIGITAL INVESTIGATION",
+    modernSection: "CASE FILE / FRONT-END SURFACE",
+    vintageHeader: "INVESTIGATION ARCHIVE",
+    vintageSection: "SECTION: TECHNOLOGY / WEB",
+    wantedLineOne: "FULL STACK",
+    wantedLineTwo: "DEVELOPER",
+    wantedLineThree: "WANTED",
+    dossierPrefix: "DOSSIER",
+    investigation: "DIGITAL INVESTIGATION",
+  },
 };
 
 const COVER_WIDTH = 1400;
@@ -74,7 +112,7 @@ function getPalette(
     muted: isDark ? "rgba(238,232,220,0.68)" : "rgba(23,22,21,0.68)",
     line: isDark ? "rgba(238,232,220,0.72)" : "rgba(23,22,21,0.76)",
     faint: isDark ? "rgba(238,232,220,0.16)" : "rgba(23,22,21,0.13)",
-    stamp: "#9b1d1d",
+    stamp: isDark ? "#c8c8c8" : "#303030",
   };
 }
 
@@ -178,6 +216,7 @@ function drawModernCover(
   ctx: CanvasRenderingContext2D,
   content: DossierContent,
   palette: CoverPalette,
+  labels: CoverLabels,
 ) {
   ctx.strokeStyle = palette.line;
   ctx.lineWidth = 5;
@@ -196,21 +235,21 @@ function drawModernCover(
 
   ctx.fillStyle = palette.muted;
   setIndustrialFont(ctx, 400, 32);
-  ctx.fillText("DIGITAL INVESTIGATION", 170, 272);
+  ctx.fillText(labels.modernHeader, 170, 272);
   setMonoFont(ctx, 700, 27);
-  ctx.fillText("CASE FILE / FRONT-END SURFACE", 170, 328);
+  ctx.fillText(labels.modernSection, 170, 328);
 
   ctx.fillStyle = palette.ink;
-  drawFittedText(ctx, "DESENVOLVEDOR", 170, 510, 980, 108, getIndustrialFont());
-  drawFittedText(ctx, "FULL STACK", 170, 636, 980, 108, getIndustrialFont());
-  drawFittedText(ctx, "PROCURADO", 170, 762, 980, 108, getIndustrialFont());
+  drawFittedText(ctx, labels.wantedLineOne, 170, 510, 980, 108, getIndustrialFont());
+  drawFittedText(ctx, labels.wantedLineTwo, 170, 636, 980, 108, getIndustrialFont());
+  drawFittedText(ctx, labels.wantedLineThree, 170, 762, 980, 108, getIndustrialFont());
 
   setMonoFont(ctx, 700, 42);
-  ctx.fillText(`DOSSI\u00ca ${content.fileId}`, 170, 868);
+  ctx.fillText(`${labels.dossierPrefix} ${content.fileId}`, 170, 868);
 
   setIndustrialFont(ctx, 400, 38);
   ctx.fillStyle = palette.muted;
-  ctx.fillText("INVESTIGA\u00c7\u00c3O DIGITAL", 170, 934);
+  ctx.fillText(labels.investigation, 170, 934);
 
   ctx.fillStyle = palette.faint;
   ctx.fillRect(170, 1025, 260, 28);
@@ -224,6 +263,7 @@ function drawVintageCover(
   ctx: CanvasRenderingContext2D,
   content: DossierContent,
   palette: CoverPalette,
+  labels: CoverLabels,
 ) {
   ctx.strokeStyle = palette.line;
   ctx.lineWidth = 8;
@@ -235,14 +275,14 @@ function drawVintageCover(
 
   ctx.fillStyle = palette.muted;
   setIndustrialFont(ctx, 400, 32);
-  ctx.fillText("ARQUIVO DE INVESTIGA\u00c7\u00c3O", 158, 278);
+  ctx.fillText(labels.vintageHeader, 158, 278);
   setMonoFont(ctx, 700, 27);
-  ctx.fillText("SE\u00c7\u00c3O: TECNOLOGIA / WEB", 158, 328);
+  ctx.fillText(labels.vintageSection, 158, 328);
 
   ctx.fillStyle = palette.ink;
-  drawFittedText(ctx, "DESENVOLVEDOR", 158, 520, 990, 92);
-  drawFittedText(ctx, "FULL STACK", 158, 654, 990, 100);
-  drawFittedText(ctx, "PROCURADO", 158, 794, 990, 100);
+  drawFittedText(ctx, labels.wantedLineOne, 158, 520, 990, 92);
+  drawFittedText(ctx, labels.wantedLineTwo, 158, 654, 990, 100);
+  drawFittedText(ctx, labels.wantedLineThree, 158, 794, 990, 100);
 
   ctx.strokeStyle = palette.line;
   ctx.lineWidth = 5;
@@ -252,11 +292,11 @@ function drawVintageCover(
   ctx.stroke();
 
   setMonoFont(ctx, 700, 44);
-  ctx.fillText(`DOSSI\u00ca ${content.fileId}`, 158, 930);
+  ctx.fillText(`${labels.dossierPrefix} ${content.fileId}`, 158, 930);
 
   setIndustrialFont(ctx, 400, 38);
   ctx.fillStyle = palette.muted;
-  ctx.fillText("INVESTIGA\u00c7\u00c3O DIGITAL", 158, 994);
+  ctx.fillText(labels.investigation, 158, 994);
 
   ctx.fillStyle = palette.faint;
   ctx.fillRect(158, 1072, 520, 36);
@@ -271,6 +311,7 @@ export function createFolderCoverTexture(
   {
     experience = "vintage",
     colorMode = "dark",
+    locale = "pt",
   }: CreateFolderCoverTextureOptions = {},
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
@@ -284,6 +325,7 @@ export function createFolderCoverTexture(
   }
 
   const palette = getPalette(experience, colorMode);
+  const labels = labelsByLocale[locale];
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.textBaseline = "alphabetic";
@@ -291,9 +333,9 @@ export function createFolderCoverTexture(
   drawTextureWear(ctx, palette, experience);
 
   if (experience === "modern") {
-    drawModernCover(ctx, content, palette);
+    drawModernCover(ctx, content, palette, labels);
   } else {
-    drawVintageCover(ctx, content, palette);
+    drawVintageCover(ctx, content, palette, labels);
   }
 
   const texture = new THREE.CanvasTexture(canvas);

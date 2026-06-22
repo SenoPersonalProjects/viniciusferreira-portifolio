@@ -5,7 +5,20 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { WebGPURenderer } from "three/webgpu";
 
-import type { DossierContent } from "@/data/dossier";
+import type { DossierContent, DossierLocale } from "@/data/dossier";
+import {
+  VINTAGE_DOSSIER_HERO_CALIBRATION,
+  VINTAGE_DOSSIER_TABLE_CALIBRATION,
+} from "@/components/three/calibration/modelCalibrationPresets";
+import {
+  getAppliedDossierTableCalibration,
+  getAppliedDeskCalibration,
+  type AppliedDeskCalibration,
+} from "@/components/three/calibration/modelCalibrationStorage";
+import {
+  prepareVintageDeskModel,
+  VINTAGE_DESK_PIVOT_MODE,
+} from "@/components/three/calibration/prepareVintageDeskModel";
 import { createDossierTexture } from "./createDossierTexture";
 import { createFolderCoverTexture } from "./createFolderCoverTexture";
 import { createImageTexture } from "./createImageTexture";
@@ -113,6 +126,7 @@ export type DossierThreeRuntimeOptions = {
   container: HTMLDivElement;
   root: HTMLDivElement;
   content: DossierContent;
+  locale: DossierLocale;
   experience: DossierExperience;
   resolvedColorMode: DossierColorMode;
   isNarrow: boolean;
@@ -316,28 +330,28 @@ function createMaterialKit(
   }
 
   return {
-    folderBack: buildSurfaceMaterial(isDark ? "#2c2b28" : "#aaa69c", {
+    folderBack: buildSurfaceMaterial(isDark ? "#30302d" : "#9a968c", {
       roughness: 0.96,
     }),
-    folderFront: buildSurfaceMaterial(isDark ? "#3a3935" : "#c4c0b7", {
+    folderFront: buildSurfaceMaterial(isDark ? "#41403b" : "#c2bbaa", {
       roughness: 0.94,
     }),
-    folderSpine: buildSurfaceMaterial(isDark ? "#171717" : "#868177", {
+    folderSpine: buildSurfaceMaterial(isDark ? "#171717" : "#777268", {
       roughness: 0.98,
     }),
-    folderTab: buildSurfaceMaterial(isDark ? "#4a4943" : "#d5d1c6", {
+    folderTab: buildSurfaceMaterial(isDark ? "#56544d" : "#d4cbb9", {
       roughness: 0.92,
     }),
-    paper: buildSurfaceMaterial(isDark ? "#d3cec2" : "#e5e0d3", {
+    paper: buildSurfaceMaterial(isDark ? "#d9d4c8" : "#ebe3d2", {
       roughness: 0.96,
     }),
-    paperStack: buildSurfaceMaterial(isDark ? "#b9b2a3" : "#cfc7b8", {
+    paperStack: buildSurfaceMaterial(isDark ? "#bdb7aa" : "#d1c7b6", {
       roughness: 0.98,
     }),
     photoBase: buildSurfaceMaterial("#111111", {
       roughness: 0.72,
     }),
-    polaroidFrame: buildSurfaceMaterial(isDark ? "#ded8cb" : "#ece6d8", {
+    polaroidFrame: buildSurfaceMaterial(isDark ? "#e0dacd" : "#f0e7d6", {
       roughness: 0.86,
     }),
   };
@@ -398,16 +412,8 @@ function getModelPoses(
   }
 
   return {
-    hero: {
-      position: [0.02, 0.18, 0.02],
-      rotation: [-0.28, 0.22, -0.12],
-      scale: 0.61,
-    },
-    table: {
-      position: [0.02, -0.1, 0.16],
-      rotation: [-0.88, 0.18, -0.16],
-      scale: 0.58,
-    },
+    hero: VINTAGE_DOSSIER_HERO_CALIBRATION,
+    table: VINTAGE_DOSSIER_TABLE_CALIBRATION,
   };
 }
 
@@ -477,6 +483,10 @@ function applyPose(target: THREE.Group, pose: ModelLayout) {
   target.scale.setScalar(pose.scale);
 }
 
+function getMotionScale(prefersReducedMotion: boolean) {
+  return prefersReducedMotion ? 0.32 : 1;
+}
+
 function setDataset(root: HTMLDivElement, name: string, value: string) {
   root.dataset[name] = value;
 }
@@ -485,6 +495,7 @@ export class DossierThreeRuntime {
   private readonly container: HTMLDivElement;
   private readonly root: HTMLDivElement;
   private readonly content: DossierContent;
+  private readonly locale: DossierLocale;
   private readonly experience: DossierExperience;
   private readonly colorMode: DossierColorMode;
   private readonly isNarrow: boolean;
@@ -531,14 +542,19 @@ export class DossierThreeRuntime {
   };
 
   private readonly poses: ModelPoses;
+  private readonly deskCalibration: AppliedDeskCalibration;
+  private readonly deskLayout: ModelLayout;
   private readonly motionGroup = new THREE.Group();
   private readonly pointerGroup = new THREE.Group();
   private readonly animationGroup = new THREE.Group();
+  private readonly deskGroup = new THREE.Group();
+  private deskModel: THREE.Object3D | null = null;
 
   constructor(options: DossierThreeRuntimeOptions) {
     this.container = options.container;
     this.root = options.root;
     this.content = options.content;
+    this.locale = options.locale;
     this.experience = options.experience;
     this.colorMode = options.resolvedColorMode;
     this.isNarrow = options.isNarrow;
@@ -549,16 +565,44 @@ export class DossierThreeRuntime {
     this.onInteractiveChange = options.onInteractiveChange;
     this.onRendererModeChange = options.onRendererModeChange;
     this.onToggle = options.onToggle;
-    this.poses = getModelPoses(options.experience, options.isNarrow);
+    const basePoses = getModelPoses(options.experience, options.isNarrow);
+    this.poses =
+      options.experience === "vintage" && !options.isNarrow
+        ? {
+            ...basePoses,
+            table: getAppliedDossierTableCalibration(),
+          }
+        : basePoses;
+    this.deskCalibration = getAppliedDeskCalibration(options.isNarrow);
+    this.deskLayout = this.deskCalibration.layout;
 
     this.motionGroup.add(this.pointerGroup);
     this.pointerGroup.add(this.animationGroup);
     this.scene.add(this.motionGroup);
+    this.scene.add(this.deskGroup);
+    applyPose(this.deskGroup, this.deskLayout);
     applyPose(
       this.motionGroup,
       this.state.prefersReducedMotion ? this.poses.hero : this.poses.table,
     );
     this.root.dataset.modelRotationY = "0.0000";
+    this.root.dataset.deskLoaded = "false";
+    this.root.dataset.deskModelLoaded = "false";
+    this.root.dataset.deskSource = this.experience === "vintage" ? "glb" : "none";
+    this.root.dataset.deskPivotMode =
+      this.experience === "vintage" ? VINTAGE_DESK_PIVOT_MODE : "none";
+    this.root.dataset.deskPivotReady = "false";
+    this.root.dataset.deskFitSize = this.deskCalibration.fitSize.toFixed(4);
+    this.root.dataset.deskLayoutX = this.deskLayout.position[0].toFixed(4);
+    this.root.dataset.deskLayoutY = this.deskLayout.position[1].toFixed(4);
+    this.root.dataset.deskLayoutZ = this.deskLayout.position[2].toFixed(4);
+    this.root.dataset.dossierTableX = this.poses.table.position[0].toFixed(4);
+    this.root.dataset.dossierTableY = this.poses.table.position[1].toFixed(4);
+    this.root.dataset.dossierTableZ = this.poses.table.position[2].toFixed(4);
+    this.root.dataset.deskParallaxX = "0.0000";
+    this.root.dataset.motionScale = getMotionScale(
+      this.state.prefersReducedMotion,
+    ).toFixed(2);
     this.root.dataset.hoverSource = "none";
     this.root.dataset.hoverBlockers = "renderer-pending";
   }
@@ -647,6 +691,13 @@ export class DossierThreeRuntime {
     this.scene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+
+        for (const material of materials) {
+          material.dispose();
+        }
       }
     });
     disposeMaterialKit(this.materialKit);
@@ -720,7 +771,7 @@ export class DossierThreeRuntime {
     this.camera.updateProjectionMatrix();
 
     const tweenOptions = {
-      duration: 0.58,
+      duration: 0.66,
       ease: "power3.out",
     };
 
@@ -885,11 +936,13 @@ export class DossierThreeRuntime {
     const dossierTexture = createDossierTexture(this.content, {
       experience: this.experience,
       colorMode: this.colorMode,
+      locale: this.locale,
       fontRevision: 1,
     });
     const folderCoverTexture = createFolderCoverTexture(this.content, {
       experience: this.experience,
       colorMode: this.colorMode,
+      locale: this.locale,
       fontRevision: 1,
     });
     const dossierMaterial = buildPrintedMaterial(dossierTexture);
@@ -917,6 +970,41 @@ export class DossierThreeRuntime {
     this.animationGroup.add(gltf.scene);
     this.mixer = new THREE.AnimationMixer(this.animationGroup);
     this.actions = gltf.animations.map((clip) => this.mixer!.clipAction(clip));
+
+    if (this.experience === "vintage") {
+      void this.loadDesk(loader);
+    }
+  }
+
+  private async loadDesk(loader: GLTFLoader) {
+    try {
+      const desk = (await loader.loadAsync(
+        "/models/hero/a_vintage_desk.glb",
+      )) as unknown as LoadedGLTF;
+
+      if (this.destroyed) {
+        return;
+      }
+
+      const model = desk.scene;
+      const prepared = prepareVintageDeskModel(model, {
+        fitSize: this.deskCalibration.fitSize,
+      });
+
+      if (!prepared) {
+        throw new Error("Nao foi possivel calcular o pivot da mesa");
+      }
+
+      this.deskModel = model;
+      this.deskGroup.add(model);
+      this.root.dataset.deskLoaded = "true";
+      this.root.dataset.deskModelLoaded = "true";
+      this.root.dataset.deskPivotReady = "true";
+    } catch (error) {
+      this.root.dataset.deskModelLoaded = "false";
+      this.root.dataset.deskPivotReady = "false";
+      console.warn("[Dossier3D] Falha ao carregar mesa vintage", error);
+    }
   }
 
   private applyMaterials(
@@ -1022,6 +1110,7 @@ export class DossierThreeRuntime {
       this.lastFrameAt = now;
       this.mixer?.update(delta);
       this.updatePointerGroup(delta);
+      this.updateDeskParallax(delta);
       this.updateHoverCamera();
       this.renderer?.render(this.scene, this.camera);
       this.frameId = window.requestAnimationFrame(tick);
@@ -1088,23 +1177,91 @@ export class DossierThreeRuntime {
     this.root.dataset.modelRotationY = this.pointerGroup.rotation.y.toFixed(4);
   }
 
+  private updateDeskParallax(delta: number) {
+    if (!this.deskModel) {
+      return;
+    }
+
+    const blockers = this.getHoverBlockers();
+    const shouldMove = blockers.length === 0;
+    const pointerX = shouldMove ? this.pointer.x : 0;
+    const pointerY = shouldMove ? this.pointer.y : 0;
+    const motionScale = getMotionScale(this.state.prefersReducedMotion);
+    const openDepthMultiplier = this.state.isOpen ? -0.45 : 1;
+    const positionX = pointerX * (this.state.isOpen ? 0.05 : 0.085) * motionScale;
+    const positionY =
+      -pointerY * (this.state.isOpen ? 0.025 : 0.04) * motionScale;
+    const rotationY =
+      pointerX * (this.state.isOpen ? 0.018 : 0.032) * motionScale;
+    const rotationX =
+      -pointerY * (this.state.isOpen ? 0.01 : 0.016) * motionScale;
+    const damp = this.state.isOpen ? 4.2 : 5.8;
+
+    const updateLayer = (group: THREE.Group, layout: ModelLayout) => {
+      group.position.x = THREE.MathUtils.damp(
+        group.position.x,
+        layout.position[0] + positionX * openDepthMultiplier,
+        damp,
+        delta,
+      );
+      group.position.y = THREE.MathUtils.damp(
+        group.position.y,
+        layout.position[1] + positionY * Math.abs(openDepthMultiplier),
+        damp,
+        delta,
+      );
+      group.position.z = THREE.MathUtils.damp(
+        group.position.z,
+        layout.position[2],
+        damp,
+        delta,
+      );
+      group.rotation.x = THREE.MathUtils.damp(
+        group.rotation.x,
+        layout.rotation[0] + rotationX * Math.abs(openDepthMultiplier),
+        damp,
+        delta,
+      );
+      group.rotation.y = THREE.MathUtils.damp(
+        group.rotation.y,
+        layout.rotation[1] + rotationY * openDepthMultiplier,
+        damp,
+        delta,
+      );
+      group.rotation.z = THREE.MathUtils.damp(
+        group.rotation.z,
+        layout.rotation[2],
+        damp,
+        delta,
+      );
+    };
+
+    updateLayer(this.deskGroup, this.deskLayout);
+    this.root.dataset.deskParallaxX = (
+      this.deskGroup.position.x - this.deskLayout.position[0]
+    ).toFixed(4);
+  }
+
   private updateHoverCamera() {
     const blockers = this.getHoverBlockers();
     const shouldHover = blockers.length === 0;
     const pointerX = shouldHover ? this.pointer.x : 0;
     const pointerY = shouldHover ? this.pointer.y : 0;
-    const zoomDelta = shouldHover ? (this.state.isOpen ? 1.15 : 0.85) : 0;
+    const motionScale = getMotionScale(this.state.prefersReducedMotion);
+    const zoomDelta = shouldHover
+      ? (this.state.isOpen ? 1.04 : 0.76) * motionScale
+      : 0;
     const cameraOffsetX = shouldHover
-      ? pointerX * (this.state.isOpen ? 0.55 : 0.42)
+      ? pointerX * (this.state.isOpen ? 0.5 : 0.38) * motionScale
       : 0;
     const cameraOffsetY = shouldHover
-      ? -pointerY * (this.state.isOpen ? 0.36 : 0.28)
+      ? -pointerY * (this.state.isOpen ? 0.32 : 0.25) * motionScale
       : 0;
     const targetOffsetX = shouldHover
-      ? pointerX * (this.state.isOpen ? 0.75 : 0.55)
+      ? pointerX * (this.state.isOpen ? 0.68 : 0.5) * motionScale
       : 0;
     const targetOffsetY = shouldHover
-      ? -pointerY * (this.state.isOpen ? 0.48 : 0.36)
+      ? -pointerY * (this.state.isOpen ? 0.43 : 0.32) * motionScale
       : 0;
 
     this.quickTween?.cameraX(this.cameraConfig.position[0] + cameraOffsetX);
@@ -1143,6 +1300,11 @@ export class DossierThreeRuntime {
     setDataset(this.root, "cameraTargetY", this.cameraLookTarget.y.toFixed(4));
     setDataset(this.root, "cameraTargetZ", this.cameraLookTarget.z.toFixed(4));
     setDataset(this.root, "reducedMotion", String(this.state.prefersReducedMotion));
+    setDataset(
+      this.root,
+      "motionScale",
+      getMotionScale(this.state.prefersReducedMotion).toFixed(2),
+    );
   }
 
   private getHoverBlockers() {

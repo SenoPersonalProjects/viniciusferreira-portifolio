@@ -95,9 +95,11 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
         COLOR_MODE_STORAGE_KEY,
       ) as ColorModePreference | null;
 
-      if (storedExperience === "modern" || storedExperience === "vintage") {
-        setExperienceState(storedExperience);
+      if (storedExperience !== "vintage") {
+        window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, "vintage");
       }
+
+      setExperienceState("vintage");
 
       if (
         storedColorMode === "system" ||

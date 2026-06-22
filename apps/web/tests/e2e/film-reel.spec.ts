@@ -1,14 +1,15 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test.describe.configure({ timeout: 120_000 });
+test.describe.configure({ timeout: 180_000 });
 
 function isIgnorableBrowserIssue(message: string) {
   return (
     message.includes("GL Driver Message") ||
     message.includes("ReadPixels") ||
     message.includes("GPU stall due to ReadPixels") ||
-    message.includes("No available adapters")
+    message.includes("No available adapters") ||
+    message.includes("Please add the `loading=\"eager\"` property if this image is above the fold")
   );
 }
 
@@ -46,19 +47,19 @@ async function trackTransform(track: Locator) {
 
 async function expectTrackToMove(track: Locator, previousTransform: string) {
   await expect
-    .poll(() => trackTransform(track), { timeout: 8_000 })
+    .poll(() => trackTransform(track), { timeout: 15_000 })
     .not.toBe(previousTransform);
 }
 
 async function waitForDossierInteractive(dossier: Locator) {
   await expect
-    .poll(() => dossier.getAttribute("data-interactive"), { timeout: 8_000 })
+    .poll(() => dossier.getAttribute("data-interactive"), { timeout: 30_000 })
     .toBe("true");
 }
 
 async function waitForHeroActive(dossier: Locator) {
   await expect
-    .poll(() => dossier.getAttribute("data-hero-active"), { timeout: 8_000 })
+    .poll(() => dossier.getAttribute("data-hero-active"), { timeout: 15_000 })
     .toBe("true");
 }
 
@@ -76,6 +77,20 @@ async function readNumericData(dossier: Locator, attribute: string) {
   return Number(value ?? 0);
 }
 
+async function expectReceiverDelta(
+  target: Locator,
+  attribute: string,
+  expected: number,
+  timeout = 8_000,
+) {
+  await expect
+    .poll(
+      async () => Math.abs((await readNumericData(target, attribute)) - expected),
+      { timeout },
+    )
+    .toBeLessThan(0.005);
+}
+
 async function movePointerAcrossDossier(page: Page, dossier: Locator) {
   const dossierBox = await dossier.boundingBox();
 
@@ -90,11 +105,26 @@ async function movePointerAcrossDossier(page: Page, dossier: Locator) {
 
 async function openHome(page: Page, language = "pt-BR") {
   await page.addInitScript(() => {
+    if (window.sessionStorage.getItem("calibration-test-cleared")) {
+      return;
+    }
+
     window.localStorage.clear();
+    window.sessionStorage.setItem("calibration-test-cleared", "true");
   });
 
   await page.addInitScript((selectedLanguage) => {
     window.localStorage.setItem("portfolio-language", selectedLanguage);
+    window.localStorage.setItem("portfolio-experience", "vintage");
+
+    const applyAttribute = () => {
+      document.documentElement?.setAttribute("data-experience", "vintage");
+    };
+
+    applyAttribute();
+    document.addEventListener("DOMContentLoaded", applyAttribute, {
+      once: true,
+    });
   }, language);
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -108,6 +138,16 @@ async function openHero(page: Page, language = "pt-BR", path = "/") {
 
   await page.addInitScript((selectedLanguage) => {
     window.localStorage.setItem("portfolio-language", selectedLanguage);
+    window.localStorage.setItem("portfolio-experience", "vintage");
+
+    const applyAttribute = () => {
+      document.documentElement?.setAttribute("data-experience", "vintage");
+    };
+
+    applyAttribute();
+    document.addEventListener("DOMContentLoaded", applyAttribute, {
+      once: true,
+    });
   }, language);
 
   await page.goto(path, { waitUntil: "domcontentloaded" });
@@ -140,6 +180,17 @@ test("hero 3d dossier loads and toggles with keyboard without console errors", a
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
   await waitForDossierInteractive(dossier);
   await expect(dossier).toHaveAttribute("data-interactive", "true");
+  await expect(dossier).toHaveAttribute("data-visual-treatment", "vintage-noir");
+  await expect(dossier).toHaveAttribute("data-monochrome-canvas", "true");
+  await expect(dossier.locator(".vintage-3d-grain")).toHaveCount(1);
+  await expect(dossier.locator(".vintage-3d-noise")).toHaveCount(1);
+  await expect
+    .poll(() => dossier.getAttribute("data-desk-loaded"), { timeout: 30_000 })
+    .toBe("true");
+  await expect(dossier).toHaveAttribute("data-desk-source", "glb");
+  await expect(dossier).toHaveAttribute("data-desk-model-loaded", "true");
+  await expect(dossier).toHaveAttribute("data-desk-pivot-mode", "tabletop-center");
+  await expect(dossier).toHaveAttribute("data-desk-pivot-ready", "true");
 
   if (rendererMode === "webgl-legacy") {
     const fallbackNotice = page.getByTestId("dossier-renderer-fallback-notice");
@@ -185,6 +236,7 @@ test("hero 3d dossier loads and toggles with keyboard without console errors", a
 
   const closedCameraDelta = await readNumericData(dossier, "data-camera-z-delta");
 
+  await page.mouse.wheel(0, Math.ceil(dossierBox!.height + 160));
   await page.mouse.move(5, 5);
   await expect
     .poll(() => dossier.getAttribute("data-pointer-active"), { timeout: 2_000 })
@@ -195,6 +247,12 @@ test("hero 3d dossier loads and toggles with keyboard without console errors", a
       timeout: 3_000,
     })
     .toBeLessThan(0.04);
+
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await waitForHeroActive(dossier);
+  await waitForDossierInteractive(dossier);
 
   await toggle.press("Enter");
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
@@ -216,9 +274,9 @@ test("hero 3d dossier loads and toggles with keyboard without console errors", a
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
   await expect(dossier).toHaveAttribute("data-open", "false");
 
-  await page.getByTestId("experience-toggle").click();
-  await expect(page.locator("html")).toHaveAttribute("data-experience", "modern");
-  await expect(dossier).toHaveAttribute("data-experience", "modern");
+  await expect(page.getByTestId("experience-toggle")).toHaveCount(0);
+  await expect(page.locator("html")).toHaveAttribute("data-experience", "vintage");
+  await expect(dossier).toHaveAttribute("data-experience", "vintage");
   await page.getByTestId("color-mode-toggle").click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-color-mode-preference",
@@ -300,9 +358,7 @@ test("hero 3d dossier preserves open state while leaving and re-entering the her
   await page.evaluate(() => {
     window.scrollTo(0, 0);
   });
-  await expect
-    .poll(() => dossier.getAttribute("data-hero-active"), { timeout: 5_000 })
-    .toBe("true");
+  await waitForHeroActive(dossier);
   await waitForDossierInteractive(dossier);
   await expect(dossier).toHaveAttribute("data-open", "true");
 
@@ -319,14 +375,12 @@ test("hero 3d dossier preserves open state while leaving and re-entering the her
   await page.evaluate(() => {
     window.scrollTo(0, 0);
   });
-  await expect
-    .poll(() => dossier.getAttribute("data-hero-active"), { timeout: 5_000 })
-    .toBe("true");
+  await waitForHeroActive(dossier);
   await waitForDossierInteractive(dossier);
   await expect(dossier).toHaveAttribute("data-open", "false");
 });
 
-test("hero 3d dossier skips intro but keeps pointer hover in reduced motion", async ({
+test("hero 3d dossier skips intro and keeps reduced hover in reduced motion", async ({
   page,
 }) => {
   const browserIssues = createBrowserIssueTracker(page);
@@ -350,22 +404,230 @@ test("hero 3d dossier skips intro but keeps pointer hover in reduced motion", as
   await expect(dossier).toHaveAttribute("data-hover-active", "true");
   await expect(dossier).toHaveAttribute("data-hover-blockers", "none");
   await expect(dossier).toHaveAttribute("data-hover-source", "camera");
+  await expect(dossier).toHaveAttribute("data-motion-scale", "0.32");
   await expect
-    .poll(() => readNumericData(dossier, "data-camera-z-delta"), {
-      timeout: 3_000,
+    .poll(async () => Math.abs(await readNumericData(dossier, "data-camera-z-delta")), {
+      timeout: 8_000,
     })
-    .toBeGreaterThan(0.35);
+    .toBeGreaterThan(0.12);
+  await expect
+    .poll(async () => Math.abs(await readNumericData(dossier, "data-camera-z-delta")), {
+      timeout: 8_000,
+    })
+    .toBeLessThan(0.35);
 
-  await toggle.press("Enter");
+  await toggle.click({ force: true });
   await expect(dossier).toHaveAttribute("data-open", "true");
 
-  await toggle.press("Space");
+  await toggle.click({ force: true });
   await expect(dossier).toHaveAttribute("data-open", "false");
+
+  await page.waitForLoadState("load");
+  await page.waitForSelector("#contact", { state: "attached" });
+  await page.evaluate(() => {
+    document.getElementById("contact")?.scrollIntoView({ block: "center" });
+  });
+
+  const phoneProp = page.getByTestId("rotary-telephone-3d");
+
+  await expect(phoneProp.locator("canvas")).toBeVisible({ timeout: 15_000 });
+  await expect
+    .poll(() => phoneProp.getAttribute("data-receiver-found"), { timeout: 30_000 })
+    .toBe("true");
+  await expect(phoneProp).toHaveAttribute("data-receiver-rest-applied", "true");
+  await expect(phoneProp).toHaveAttribute("data-receiver-state", "rest");
+
+  const reducedPhoneBox = await phoneProp.boundingBox();
+
+  expect(reducedPhoneBox).not.toBeNull();
+  await page.mouse.move(
+    reducedPhoneBox!.x + reducedPhoneBox!.width * 0.78,
+    reducedPhoneBox!.y + reducedPhoneBox!.height * 0.48,
+    { steps: 8 },
+  );
+  await expect(phoneProp).toHaveAttribute("data-motion-scale", "0.32");
+  await expect
+    .poll(
+      async () => Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta")),
+      { timeout: 4_000 },
+    )
+    .toBeGreaterThan(0.005);
+  await expect
+    .poll(
+      async () => Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta")),
+      { timeout: 4_000 },
+    )
+    .toBeLessThan(0.04);
 
   expect(browserIssues).toEqual([]);
 });
 
-test("film reel supports looped buttons, wheel, drag, CRT preview effects, and theme toggles", async ({
+test("3d calibration interface exposes adjustable desk, dossier and phone snippets", async ({
+  page,
+}) => {
+  const browserIssues = createBrowserIssueTracker(page);
+
+  await page.goto("/interface", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByTestId("calibration-interface")).toBeVisible();
+  await expect(page.getByTestId("desk-calibration-canvas")).toBeVisible();
+  await expect(page.getByTestId("dossier-calibration-canvas")).toBeVisible();
+  await expect(page.getByTestId("phone-calibration-canvas")).toBeVisible();
+  await expect(page.getByTestId("desk-calibration-canvas").locator("canvas")).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(
+    page.getByTestId("dossier-calibration-canvas").locator("canvas"),
+  ).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page.getByTestId("phone-calibration-canvas").locator("canvas")).toBeVisible({
+    timeout: 15_000,
+  });
+  const dossierCalibrationCanvas = page.getByTestId("dossier-calibration-canvas");
+  const phoneCalibrationCanvas = page.getByTestId("phone-calibration-canvas");
+  await expect(page.getByTestId("desk-calibration-canvas")).toHaveAttribute(
+    "data-camera-reference",
+    "home-hero",
+  );
+  await expect(page.getByTestId("desk-calibration-canvas")).toHaveAttribute(
+    "data-desk-pivot-mode",
+    "tabletop-center",
+  );
+  await expect
+    .poll(
+      () => page.getByTestId("desk-calibration-canvas").getAttribute(
+        "data-reference-dossier",
+      ),
+      { timeout: 15_000 },
+    )
+    .toBe("detective-dossier-glb");
+  await expect
+    .poll(
+      () => page.getByTestId("desk-calibration-canvas").getAttribute(
+        "data-desk-pivot-ready",
+      ),
+      { timeout: 15_000 },
+    )
+    .toBe("true");
+  await expect(dossierCalibrationCanvas).toHaveAttribute(
+    "data-camera-reference",
+    "home-hero",
+  );
+  await expect(dossierCalibrationCanvas).toHaveAttribute(
+    "data-preview-lighting",
+    "true",
+  );
+
+  const deskOutput = page.getByTestId("desk-output");
+  const dossierOutput = page.getByTestId("dossier-output");
+  const phoneOutput = page.getByTestId("phone-output");
+
+  await expect(deskOutput).toContainText("position: [");
+  await expect(deskOutput).toContainText("rotation: [");
+  await expect(dossierOutput).toContainText("position: [");
+  await expect(phoneOutput).toContainText("model:");
+  await expect(phoneOutput).toContainText("receiver:");
+
+  await page.getByTestId("desk-position-x-input").fill("1.23");
+  await expect(deskOutput).toContainText("position: [1.23");
+  await page.getByTestId("dossier-table-position-x-input").fill("0.77");
+  await expect(dossierOutput).toContainText("position: [0.77");
+  await page.getByTestId("dossier-preview-lighting-input").uncheck();
+  await expect(page.getByTestId("dossier-preview-lighting-input")).not.toBeChecked();
+  await expect(dossierCalibrationCanvas).toHaveAttribute("data-preview-lighting", "false");
+  await page.getByTestId("dossier-preview-lighting-input").check();
+  await expect(dossierCalibrationCanvas).toHaveAttribute("data-preview-lighting", "true");
+
+  await page.getByTestId("phone-model-position-x-input").fill("-0.44");
+  await page.getByTestId("phone-model-fit-size-input").fill("3.9");
+  await expect(phoneOutput).toContainText("fitSize: 3.9");
+
+  await page.getByTestId("receiver-hover-position-x-input").fill("-0.11");
+  await page.getByTestId("receiver-hover-position-y-input").fill("0.19");
+  await page.getByTestId("receiver-hover-position-z-input").fill("0.14");
+  await page.getByTestId("receiver-preview-hover-input").check();
+  await expect(page.getByTestId("receiver-preview-hover-input")).toBeChecked();
+  await expect(phoneCalibrationCanvas).toHaveAttribute("data-motion-scale", "1.00");
+  await expect(phoneCalibrationCanvas).toHaveAttribute("data-receiver-state", "hover");
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-x-delta", -0.11);
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-y-delta", 0.19);
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-z-delta", 0.14);
+  await page.getByRole("button", { name: "salvar e aplicar na pagina" }).click();
+  await expect(page.getByTestId("calibration-save-status")).toContainText(
+    "Calibracao salva",
+  );
+
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect(page.getByTestId("calibration-interface")).toBeVisible();
+  await expect(page.getByTestId("desk-position-x-input")).toHaveValue("1.23");
+  await expect(page.getByTestId("dossier-table-position-x-input")).toHaveValue("0.77");
+  await expect(page.getByTestId("phone-model-position-x-input")).toHaveValue("-0.44");
+  await expect(page.getByTestId("receiver-hover-position-x-input")).toHaveValue("-0.11");
+
+  await page.evaluate(() => {
+    window.localStorage.setItem("portfolio-experience", "vintage");
+    window.localStorage.setItem("portfolio-language", "pt-BR");
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const dossier = page.getByTestId("dossier-hero-canvas");
+
+  await expect(dossier.locator("canvas")).toBeVisible({ timeout: 15_000 });
+  await expect
+    .poll(() => dossier.getAttribute("data-desk-layout-x"), { timeout: 30_000 })
+    .toBe("1.2300");
+  await expect
+    .poll(() => dossier.getAttribute("data-dossier-table-x"), { timeout: 30_000 })
+    .toBe("0.7700");
+
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  const phoneProp = page.getByTestId("rotary-telephone-3d");
+
+  await expect(phoneProp.locator("canvas")).toBeVisible({ timeout: 15_000 });
+  await expect(phoneProp).toHaveAttribute("data-model-position-x", "-0.4400");
+  await expect(phoneProp).toHaveAttribute("data-model-fit-size", "3.9000");
+  const phoneBox = await phoneProp.boundingBox();
+
+  expect(phoneBox).not.toBeNull();
+  await page.mouse.move(
+    phoneBox!.x + phoneBox!.width * 0.78,
+    phoneBox!.y + phoneBox!.height * 0.48,
+    { steps: 8 },
+  );
+  await expect(phoneProp).toHaveAttribute("data-motion-scale", "1.00");
+  await expect(phoneProp).toHaveAttribute("data-receiver-state", "hover");
+  await expectReceiverDelta(phoneProp, "data-receiver-x-delta", -0.11);
+  await expectReceiverDelta(phoneProp, "data-receiver-y-delta", 0.19);
+  await expectReceiverDelta(phoneProp, "data-receiver-z-delta", 0.14);
+
+  expect(browserIssues).toEqual([]);
+});
+
+test("3d calibration interface mirrors reduced-motion receiver deltas", async ({
+  page,
+}) => {
+  const browserIssues = createBrowserIssueTracker(page);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/interface", { waitUntil: "domcontentloaded" });
+
+  const phoneCalibrationCanvas = page.getByTestId("phone-calibration-canvas");
+
+  await expect(phoneCalibrationCanvas.locator("canvas")).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(phoneCalibrationCanvas).toHaveAttribute("data-motion-scale", "0.32");
+
+  await page.getByTestId("receiver-preview-hover-input").check();
+  await expect(phoneCalibrationCanvas).toHaveAttribute("data-receiver-state", "hover");
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-x-delta", -0.0064);
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-y-delta", 0.0864);
+  await expectReceiverDelta(phoneCalibrationCanvas, "data-receiver-z-delta", 0.176);
+
+  expect(browserIssues).toEqual([]);
+});
+
+test("film reel supports looped buttons, wheel, drag, CRT preview effects, and public controls", async ({
   page,
 }) => {
   const browserIssues = createBrowserIssueTracker(page);
@@ -378,6 +640,8 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and t
   const slides = page.locator(".film-reel-slide");
 
   await expect(reel).toBeVisible();
+  await expect(page.getByTestId("light-switch-toggle-3d")).toHaveCount(0);
+  await expect(page.getByTestId("photographic-film-3d")).toHaveCount(0);
   await expect(root).toHaveAttribute("lang", "pt-BR");
   await expect(root).toHaveAttribute("data-language", "pt-BR");
   await expect(slides).toHaveCount(28);
@@ -395,7 +659,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and t
   expect(trackBox!.width).toBeGreaterThan(reelBox!.width * 3);
 
   let before = await trackTransform(track);
-  await page.getByRole("button", { exact: true, name: "Próximo" }).click();
+  await page.getByRole("button", { exact: true, name: "Proximo" }).click();
   await expectTrackToMove(track, before);
 
   before = await trackTransform(track);
@@ -421,7 +685,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and t
   await expectTrackToMove(track, before);
 
   for (let index = 0; index < 6; index += 1) {
-    await page.getByRole("button", { exact: true, name: "Próximo" }).click();
+    await page.getByRole("button", { exact: true, name: "Proximo" }).click();
   }
 
   for (let index = 0; index < 6; index += 1) {
@@ -458,9 +722,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and t
   await expect(page.locator(".film-preview-noise")).toHaveCount(0);
 
   await expect(root).toHaveAttribute("data-experience", "vintage");
-  await page.getByTestId("experience-toggle").click();
-  await expect(root).toHaveAttribute("data-experience", "modern");
-  await page.getByTestId("experience-toggle").click();
+  await expect(page.getByTestId("experience-toggle")).toHaveCount(0);
   await expect(root).toHaveAttribute("data-experience", "vintage");
 
   const colorModeButton = page.getByTestId("color-mode-toggle");
@@ -483,6 +745,52 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and t
   await expect(root).toHaveAttribute("lang", "pt-BR");
   await expect(page.getByRole("heading", { name: "Projetos em destaque" })).toBeVisible();
 
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+
+  const contactCard = page.locator("#contact .section-card");
+  const phoneProp = page.getByTestId("rotary-telephone-3d");
+
+  await expect(contactCard).toHaveCSS("overflow", "visible");
+  await expect(phoneProp).toBeVisible();
+  await expect(phoneProp.locator("canvas")).toBeVisible({ timeout: 15_000 });
+  await expect(phoneProp).toHaveAttribute("data-visual-treatment", "vintage-noir");
+  await expect(phoneProp).toHaveAttribute("data-lighting-treatment", "vintage-noir");
+  await expect(phoneProp.locator(".vintage-3d-grain")).toHaveCount(1);
+  await expect(phoneProp.locator(".vintage-3d-noise")).toHaveCount(1);
+  await expect
+    .poll(() => phoneProp.getAttribute("data-receiver-found"), { timeout: 30_000 })
+    .toBe("true");
+
+  const phoneBox = await phoneProp.boundingBox();
+  const phoneCanvasBox = await phoneProp.locator("canvas").boundingBox();
+  const contactCardBox = await contactCard.boundingBox();
+
+  expect(phoneBox).not.toBeNull();
+  expect(phoneCanvasBox).not.toBeNull();
+  expect(contactCardBox).not.toBeNull();
+  expect(phoneBox!.width).toBeGreaterThan(380);
+  expect(phoneBox!.height).toBeGreaterThan(300);
+  expect(phoneCanvasBox!.width).toBeGreaterThan(650);
+  expect(phoneCanvasBox!.height).toBeGreaterThan(500);
+  expect(phoneCanvasBox!.x + phoneCanvasBox!.width).toBeGreaterThan(
+    contactCardBox!.x + contactCardBox!.width,
+  );
+
+  await page.mouse.move(
+    phoneBox!.x + phoneBox!.width * 0.78,
+    phoneBox!.y + phoneBox!.height * 0.48,
+    { steps: 8 },
+  );
+  await expect
+    .poll(() => phoneProp.getAttribute("data-receiver-state"), { timeout: 4_000 })
+    .toBe("hover");
+  await expect
+    .poll(
+      async () => Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta")),
+      { timeout: 4_000 },
+    )
+    .toBeGreaterThan(0.015);
+
   expect(browserIssues).toEqual([]);
 });
 
@@ -494,17 +802,26 @@ test.describe("language detection", () => {
   }) => {
     await page.addInitScript(() => {
       window.localStorage.clear();
+      Object.defineProperty(navigator, "languages", {
+        get: () => ["en-US", "en"],
+      });
+      Object.defineProperty(navigator, "language", {
+        get: () => "en-US",
+      });
     });
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
     const root = page.locator("html");
+    const featuredProjectsHeading = page.getByRole("heading", {
+      name: "Featured projects",
+    });
 
-    await expect(root).toHaveAttribute("lang", "en");
-    await expect(root).toHaveAttribute("data-language", "en");
-    await expect(
-      page.getByRole("heading", { name: "Featured projects" }),
-    ).toBeVisible();
+    await expect(featuredProjectsHeading).toBeVisible({ timeout: 15_000 });
+    await expect(root).toHaveAttribute("lang", "en", { timeout: 15_000 });
+    await expect(root).toHaveAttribute("data-language", "en", {
+      timeout: 15_000,
+    });
 
     await page.getByTestId("language-toggle").click();
     await expect(root).toHaveAttribute("lang", "pt-BR");

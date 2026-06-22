@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id         String   @id @default(cuid())
+  name       String
+  rolePt     String
+  roleEn     String
+  headlinePt String
+  headlineEn String
+  summaryPt  String
+  summaryEn  String
+  locationPt String
+  locationEn String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ContactLink {
+  id        String   @id @default(cuid())
+  label     String
+  type      String
+  url       String
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Technology {
+  id         String   @id @default(cuid())
+  categoryPt String
+  categoryEn String
+  items      String[]
+  order      Int      @default(0)
+  visible    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  titlePt       String
+  titleEn       String
+  slug          String   @unique
+  descriptionPt String
+  descriptionEn String
+  stack         String[]
+  repositoryUrl String?
+  liveUrl       String?
+  featured      Boolean  @default(true)
+  frameCode     String?
+  posterImage   String
+  previewImages String[]
+  published     Boolean  @default(true)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model RoadmapItem {
+  id           String   @id @default(cuid())
+  startDate    String
+  endDate      String
+  titlePt      String
+  titleEn      String
+  type         String
+  summaryPt    String
+  summaryEn    String
+  detailsPt    String
+  detailsEn    String
+  technologies String[]
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteCopy {
+  id        String   @id @default(cuid())
+  key       String
+  locale    String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, locale])
+}

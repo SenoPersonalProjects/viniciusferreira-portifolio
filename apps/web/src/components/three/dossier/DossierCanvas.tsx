@@ -12,18 +12,17 @@ import {
 } from "react";
 
 import { useExperience } from "@/components/providers/ExperienceProvider";
-import type { DossierContent } from "@/data/dossier";
+import { subscribeAppliedModelCalibration } from "@/components/three/calibration/modelCalibrationStorage";
+import { getDossierCameraConfig, getDossierLightingConfig } from "./dossierSceneConfig";
+import type { DossierContent, DossierLocale } from "@/data/dossier";
 import {
   DossierThreeRuntime,
-  type CameraConfig,
-  type DossierColorMode,
-  type DossierExperience,
   type DossierRendererMode,
-  type LightingConfig,
 } from "./DossierThreeRuntime";
 
 type DossierCanvasProps = {
   content: DossierContent;
+  locale: DossierLocale;
   isHeroActive: boolean;
 };
 
@@ -197,75 +196,6 @@ function readDebugSnapshot(
   };
 }
 
-function getCameraConfig(
-  experience: DossierExperience,
-  isNarrow: boolean,
-): CameraConfig {
-  if (isNarrow) {
-    return {
-      position:
-        experience === "modern" ? [-0.06, 0.16, 7.55] : [0.08, 0.14, 7.68],
-      target: [0, -0.16, 0],
-      fov: experience === "modern" ? 37.2 : 38,
-    };
-  }
-
-  if (experience === "modern") {
-    return {
-      position: [-0.24, 0.4, 6.8],
-      target: [0.04, -0.16, 0],
-      fov: 31,
-    };
-  }
-
-  return {
-    position: [0.22, 0.4, 6.95],
-    target: [0, -0.12, 0],
-    fov: 31.5,
-  };
-}
-
-function getLightingConfig(
-  experience: DossierExperience,
-  colorMode: DossierColorMode,
-): LightingConfig {
-  const isDark = colorMode === "dark";
-
-  if (experience === "modern") {
-    return {
-      ambient: isDark ? 0.55 : 0.85,
-      ambientColor: isDark ? "#dbe7f0" : "#f7fbff",
-      keyColor: "#f4f8fb",
-      keyIntensity: isDark ? 1.85 : 1.55,
-      keyPosition: [4.8, 7.8, 5.8],
-      fillColor: "#aebdcc",
-      fillIntensity: isDark ? 0.42 : 0.58,
-      fillPosition: [-4.2, 3.4, 4.8],
-      rimColor: "#f5f8fa",
-      rimIntensity: isDark ? 0.52 : 0.36,
-      rimPosition: [-2.4, 3.2, -3.8],
-      shadowOpacity: isDark ? 0.3 : 0.22,
-      shadowPosition: [0, -3.18, 0],
-    };
-  }
-
-  return {
-    ambient: isDark ? 0.48 : 0.75,
-    ambientColor: isDark ? "#d6d1c7" : "#f4efe4",
-    keyColor: isDark ? "#f1eadc" : "#fff7e8",
-    keyIntensity: isDark ? 1.95 : 1.55,
-    keyPosition: [4.2, 7.6, 5.3],
-    fillColor: isDark ? "#8f8b84" : "#cfc7bb",
-    fillIntensity: isDark ? 0.28 : 0.46,
-    fillPosition: [-4.5, 2.8, 4.2],
-    rimColor: "#ffffff",
-    rimIntensity: isDark ? 0.36 : 0.24,
-    rimPosition: [-3, 3.2, -3.4],
-    shadowOpacity: isDark ? 0.34 : 0.24,
-    shadowPosition: [0, -3.12, 0],
-  };
-}
-
 function DossierFallbackNotice() {
   const [isOpen, setIsOpen] = useState(false);
   const tooltipId = useId();
@@ -387,7 +317,11 @@ function DossierDebugOverlay({
   );
 }
 
-export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
+export function DossierCanvas({
+  content,
+  locale,
+  isHeroActive,
+}: DossierCanvasProps) {
   const { experience, resolvedColorMode } = useExperience();
   const { isNarrow, isReady: isViewportReady } = useIsNarrowViewport();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -398,6 +332,7 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isInteractive, setIsInteractive] = useState(false);
   const [isPointerActive, setIsPointerActive] = useState(false);
+  const [calibrationVersion, setCalibrationVersion] = useState(0);
   const [debugSnapshot, setDebugSnapshot] = useState<DossierDebugSnapshot>(() =>
     readDebugSnapshot(null),
   );
@@ -414,17 +349,25 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
   });
 
   const camera = useMemo(
-    () => getCameraConfig(experience, isNarrow),
+    () => getDossierCameraConfig(experience, isNarrow),
     [experience, isNarrow],
   );
 
   const lighting = useMemo(
-    () => getLightingConfig(experience, resolvedColorMode),
+    () => getDossierLightingConfig(experience, resolvedColorMode),
     [experience, resolvedColorMode],
   );
 
   const rendererMode =
     actualRendererMode === "pending" ? preferredRendererMode : actualRendererMode;
+
+  useEffect(
+    () =>
+      subscribeAppliedModelCalibration(() => {
+        setCalibrationVersion((version) => version + 1);
+      }),
+    [],
+  );
 
   const playPaperSound = useCallback(() => {
     if (!audioRef.current) {
@@ -516,6 +459,7 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
       container,
       root,
       content,
+      locale,
       experience,
       resolvedColorMode,
       isNarrow,
@@ -546,8 +490,10 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
       runtime.destroy();
     };
   }, [
+    calibrationVersion,
     camera,
     content,
+    locale,
     experience,
     isNarrow,
     lighting,
@@ -676,7 +622,7 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
   return (
     <div
       ref={rootRef}
-      className="relative z-10 -mb-14 h-[calc(100svh+36px)] min-h-[640px] w-full min-w-full flex-none basis-full overflow-visible sm:-mb-20 sm:h-[calc(100dvh+72px)] sm:min-h-[780px] lg:-mb-24 lg:h-[calc(100dvh+110px)] lg:min-h-[880px]"
+      className="relative z-10 h-[calc(100svh-66px)] min-h-[600px] w-screen min-w-full flex-none basis-full overflow-hidden sm:min-h-[680px] lg:min-h-[720px]"
       data-experience={experience}
       data-open={isOpen}
       data-hero-active={isHeroActive}
@@ -698,9 +644,12 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
       data-camera-target-x={camera.target[0].toFixed(4)}
       data-camera-target-y={camera.target[1].toFixed(4)}
       data-model-rotation-y="0.0000"
+      data-motion-scale={prefersReducedMotion ? "0.32" : "1.00"}
       data-intro-state="pending"
       data-intro-duration-ms="0"
       data-renderer-mode={rendererMode}
+      data-visual-treatment={experience === "vintage" ? "vintage-noir" : "none"}
+      data-monochrome-canvas={experience === "vintage"}
       data-testid="dossier-hero-canvas"
       onPointerOverCapture={(event: ReactPointerEvent<HTMLDivElement>) => {
         if (event.pointerType === "mouse") {
@@ -748,6 +697,12 @@ export function DossierCanvas({ content, isHeroActive }: DossierCanvasProps) {
         data-testid="dossier-three-stage"
       />
 
+      {experience === "vintage" ? (
+        <>
+          <div className="vintage-3d-grain" aria-hidden="true" />
+          <div className="vintage-3d-noise" aria-hidden="true" />
+        </>
+      ) : null}
       {rendererMode === "webgl-legacy" ? <DossierFallbackNotice /> : null}
       {isDebugMode ? <DossierDebugOverlay snapshot={debugSnapshot} /> : null}
     </div>

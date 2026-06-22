@@ -1,7 +1,6 @@
 "use client";
 
 import { ColorModeToggle } from "@/components/layout/ColorModeToggle";
-import { ExperienceToggle } from "@/components/layout/ExperienceToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -51,7 +50,6 @@ export function Header() {
         <div className="flex items-center justify-self-end gap-2">
           <LanguageToggle />
           <ColorModeToggle />
-          <ExperienceToggle />
         </div>
       </div>
     </header>
