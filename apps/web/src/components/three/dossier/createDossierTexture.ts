@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import type { DossierContent } from "@/data/dossier";
+import type { DossierContent, DossierLocale } from "@/data/dossier";
 
 type DossierExperience = "modern" | "vintage";
 type DossierColorMode = "light" | "dark";
@@ -8,6 +8,7 @@ type DossierColorMode = "light" | "dark";
 type CreateDossierTextureOptions = {
   experience?: DossierExperience;
   colorMode?: DossierColorMode;
+  locale?: DossierLocale;
   fontRevision?: number;
 };
 
@@ -22,6 +23,64 @@ type DossierPalette = {
   redaction: string;
   grid: string;
   stamp: string;
+};
+
+type DossierTextureLabels = {
+  modernHeaderTitle: string;
+  modernHeaderSubtitle: string;
+  vintageHeaderTitle: string;
+  vintageHeaderSubtitle: string;
+  photoLabel: string;
+  photoEvidence: string;
+  classification: string;
+  project: string;
+  subject: string;
+  role: string;
+  status: string;
+  location: string;
+  stack: string;
+  notes: string;
+  attachments: string;
+  risk: string;
+};
+
+const labelsByLocale: Record<DossierLocale, DossierTextureLabels> = {
+  pt: {
+    modernHeaderTitle: "UNIDADE DE INVESTIGACAO DIGITAL",
+    modernHeaderSubtitle: "ARQUIVO / CASO ATIVO / PORTFOLIO",
+    vintageHeaderTitle: "UNIDADE DE INTELIGENCIA",
+    vintageHeaderSubtitle: "ARQUIVO CONFIDENCIAL / PERFIL OPERACIONAL",
+    photoLabel: "FOTO DE IDENTIFICACAO",
+    photoEvidence: "EVIDENCIA / 01",
+    classification: "CLASSIFICACAO",
+    project: "PROJETO",
+    subject: "ALVO",
+    role: "FUNCAO",
+    status: "STATUS",
+    location: "LOCALIZACAO",
+    stack: "STACK",
+    notes: "NOTAS OPERACIONAIS",
+    attachments: "ANEXOS: FOTO / POLAROID / RASTROS DIGITAIS",
+    risk: "RISCO: BAIXO PARA USUARIOS / ALTO PARA BUGS",
+  },
+  en: {
+    modernHeaderTitle: "DIGITAL INVESTIGATION UNIT",
+    modernHeaderSubtitle: "ARCHIVE / ACTIVE CASE / PORTFOLIO",
+    vintageHeaderTitle: "INTELLIGENCE UNIT",
+    vintageHeaderSubtitle: "CLASSIFIED ARCHIVE / OPERATIONAL PROFILE",
+    photoLabel: "IDENTIFICATION PHOTO",
+    photoEvidence: "EVIDENCE / 01",
+    classification: "CLASSIFICATION",
+    project: "PROJECT",
+    subject: "SUBJECT",
+    role: "ROLE",
+    status: "STATUS",
+    location: "LOCATION",
+    stack: "STACK",
+    notes: "OPERATIONAL NOTES",
+    attachments: "ATTACHMENTS: PHOTO / POLAROID / DIGITAL TRACES",
+    risk: "RISK: LOW FOR USERS / HIGH FOR BUGS",
+  },
 };
 
 const CANVAS_WIDTH = 1600;
@@ -89,7 +148,7 @@ function getPalette(
     panelInk: "#eee8dc",
     redaction: "#050505",
     grid: "rgba(16,16,15,0.1)",
-    stamp: "#9b1d1d",
+    stamp: "#303030",
   };
 }
 
@@ -331,6 +390,7 @@ function drawHeader(
   content: DossierContent,
   palette: DossierPalette,
   experience: DossierExperience,
+  labels: DossierTextureLabels,
 ) {
   if (experience === "modern") {
     ctx.fillStyle = palette.panel;
@@ -338,10 +398,10 @@ function drawHeader(
 
     ctx.fillStyle = palette.panelInk;
     setIndustrialFont(ctx, 400, 38);
-    ctx.fillText("DIGITAL INVESTIGATION UNIT", 128, 155);
+    ctx.fillText(labels.modernHeaderTitle, 128, 155);
 
     setMonoFont(ctx, 700, 22);
-    ctx.fillText("ARCHIVE / ACTIVE CASE / PORTFOLIO", 128, 202);
+    ctx.fillText(labels.modernHeaderSubtitle, 128, 202);
 
     setMonoFont(ctx, 700, 38);
     ctx.textAlign = "right";
@@ -355,10 +415,10 @@ function drawHeader(
 
   ctx.fillStyle = palette.panelInk;
   setDisplayFont(ctx, 400, 42);
-  ctx.fillText("UNIDADE DE INTELIG\u00caNCIA", 128, 162);
+  ctx.fillText(labels.vintageHeaderTitle, 128, 162);
 
   setMonoFont(ctx, 700, 24);
-  ctx.fillText("ARQUIVO CONFIDENCIAL / PERFIL OPERACIONAL", 128, 212);
+  ctx.fillText(labels.vintageHeaderSubtitle, 128, 212);
 
   setMonoFont(ctx, 700, 40);
   ctx.textAlign = "right";
@@ -370,6 +430,7 @@ function drawPhotoPlaceholder(
   ctx: CanvasRenderingContext2D,
   palette: DossierPalette,
   experience: DossierExperience,
+  labels: DossierTextureLabels,
 ) {
   const photoBox = {
     x: 1088,
@@ -392,14 +453,10 @@ function drawPhotoPlaceholder(
 
   setIndustrialFont(ctx, 400, 26);
   ctx.fillStyle = palette.muted;
-  ctx.fillText(
-    "FOTO DE IDENTIFICA\u00c7\u00c3O",
-    photoBox.x,
-    photoBox.y + photoBox.h + 46,
-  );
+  ctx.fillText(labels.photoLabel, photoBox.x, photoBox.y + photoBox.h + 46);
 
   setMonoFont(ctx, 700, 20);
-  ctx.fillText("EVIDENCIA / 01", photoBox.x, photoBox.y + photoBox.h + 82);
+  ctx.fillText(labels.photoEvidence, photoBox.x, photoBox.y + photoBox.h + 82);
 }
 
 function drawRedactions(
@@ -426,6 +483,7 @@ export function createDossierTexture(
   {
     experience = "vintage",
     colorMode = "dark",
+    locale = "pt",
   }: CreateDossierTextureOptions = {},
 ): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
@@ -439,34 +497,35 @@ export function createDossierTexture(
   }
 
   const palette = getPalette(experience, colorMode);
+  const labels = labelsByLocale[locale];
 
   ctx.textBaseline = "alphabetic";
   drawBaseDocument(ctx, palette, experience);
-  drawHeader(ctx, content, palette, experience);
-  drawPhotoPlaceholder(ctx, palette, experience);
+  drawHeader(ctx, content, palette, experience, labels);
+  drawPhotoPlaceholder(ctx, palette, experience, labels);
 
   drawField(
     ctx,
     palette,
-    "CLASSIFICA\u00c7\u00c3O",
+    labels.classification,
     content.classification,
     118,
     338,
     842,
   );
-  drawField(ctx, palette, "PROJETO", content.project, 118, 514, 842);
-  drawField(ctx, palette, "ALVO", content.subject, 118, 690, 842);
-  drawField(ctx, palette, "FUN\u00c7\u00c3O", content.role, 118, 866, 842);
-  drawField(ctx, palette, "STATUS", content.status, 118, 1042, 410);
-  drawField(ctx, palette, "LOCALIZA\u00c7\u00c3O", content.location, 570, 1042, 390);
-  drawField(ctx, palette, "STACK", content.stack, 118, 1228, 1322);
+  drawField(ctx, palette, labels.project, content.project, 118, 514, 842);
+  drawField(ctx, palette, labels.subject, content.subject, 118, 690, 842);
+  drawField(ctx, palette, labels.role, content.role, 118, 866, 842);
+  drawField(ctx, palette, labels.status, content.status, 118, 1042, 410);
+  drawField(ctx, palette, labels.location, content.location, 570, 1042, 390);
+  drawField(ctx, palette, labels.stack, content.stack, 118, 1228, 1322);
 
   ctx.fillStyle = palette.panel;
   ctx.fillRect(118, 1458, 842, 58);
 
   ctx.fillStyle = palette.panelInk;
   setIndustrialFont(ctx, 400, 33);
-  ctx.fillText("NOTAS OPERACIONAIS", 142, 1497);
+  ctx.fillText(labels.notes, 142, 1497);
 
   ctx.fillStyle = palette.ink;
   setMonoFont(ctx, 700, 38);
@@ -474,8 +533,8 @@ export function createDossierTexture(
 
   setMonoFont(ctx, 700, 22);
   ctx.fillStyle = palette.softInk;
-  ctx.fillText("ANEXOS: FOTO / POLAROID / RASTROS DIGITAIS", 1088, 932);
-  ctx.fillText("RISCO: BAIXO PARA USUARIOS / ALTO PARA BUGS", 1088, 980);
+  ctx.fillText(labels.attachments, 1088, 932);
+  ctx.fillText(labels.risk, 1088, 980);
 
   drawRedactions(ctx, content, palette);
   drawStamp(ctx, content.stamp, 1088, 1888, palette);

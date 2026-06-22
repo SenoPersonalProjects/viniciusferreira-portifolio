@@ -1,11 +1,12 @@
 "use client";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { stack } from "@/data/stack";
+import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
 
 export function StackSection() {
   const { dictionary } = useLanguage();
-  const localizedStack = stack.map((group, index) => ({
+  const { content } = usePortfolioData();
+  const localizedStack = content.technologies.map((group, index) => ({
     ...group,
     category: dictionary.stack.categories[index] ?? group.category,
   }));
@@ -25,12 +26,12 @@ export function StackSection() {
         <div className="mt-14 grid gap-8 md:grid-cols-2">
           {localizedStack.map((group) => (
             <article
-              key={group.category}
+              key={group.id}
               className="section-card relative overflow-hidden p-8 md:p-10"
             >
               <div className="absolute right-4 top-4 opacity-10">
                 <p className="font-[var(--font-industrial)] text-4xl font-normal uppercase tracking-[0.16em]">
-                  {group.category.substring(0, 3)}
+                {group.category.substring(0, 3)}
                 </p>
               </div>
 

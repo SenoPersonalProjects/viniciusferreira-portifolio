@@ -5,14 +5,14 @@ export const LANGUAGE_STORAGE_KEY = "portfolio-language";
 
 export const translations = {
   "pt-BR": {
-    languageName: "Português",
+    languageName: "Portugues",
     languageShort: "PT",
     nextLanguageName: "English",
     languageToggleLabel:
-      "Idioma atual: Português. Clique para mudar para English.",
+      "Idioma atual: Portugues. Clique para mudar para English.",
     header: {
       nav: {
-        home: "Início",
+        home: "Inicio",
         projects: "Projetos",
         about: "Sobre",
         contact: "Contato",
@@ -29,7 +29,7 @@ export const translations = {
       titlePrefix: "Modo",
     },
     experience: {
-      toggleLabel: "Alternar experiência visual",
+      toggleLabel: "Alternar experiencia visual",
       labels: {
         modern: "Modern",
         vintage: "Vintage",
@@ -38,50 +38,62 @@ export const translations = {
     profile: {
       role: "Desenvolvedor Full Stack",
       headline:
-        "Crio aplicações web modernas, performáticas e bem estruturadas, conectando frontend, backend e experiência do usuário.",
+        "Desenvolvo interfaces e APIs para produtos web que precisam ser claros, rapidos e faceis de evoluir.",
       summary:
-        "Sou desenvolvedor com foco em soluções web utilizando tecnologias como Next.js, NestJS, TypeScript e Node.js. Este portfólio apresenta minha trajetória, stack e projetos através de duas experiências visuais distintas.",
+        "Sou desenvolvedor full stack com foco em Next.js, React, NestJS, Node.js e TypeScript. Trabalho conectando experiencia de uso, arquitetura de frontend e APIs bem organizadas para transformar ideias em produtos web gerenciaveis.",
     },
     hero: {
       intro: "Eu sou",
       projectsCta: "Ver projetos",
       contactCta: "Contato seguro",
-      production: "Produção #026",
-      posterRole: "Diretor",
-      posterExperience: "Experiência noir",
+      production: "Arquivo #026",
+      posterRole: "Desenvolvedor",
+      posterExperience: "Portfolio gerenciavel",
     },
     detectiveFile: {
-      openLabel: "Abrir dossiê confidencial",
-      closeLabel: "Fechar dossiê confidencial",
-      hint: "Clique para abrir o dossiê",
-      classified: "CLASSIFIED",
-      caseFile: "CASE FILE",
+      openLabel: "Abrir dossie confidencial",
+      closeLabel: "Fechar dossie confidencial",
+      hint: "Clique para abrir o dossie",
+      classified: "CONFIDENCIAL",
+      caseFile: "DOSSIE",
       fileNumber: "VF-026",
-      subject: "SUBJECT",
+      subject: "ALVO",
       subjectName: "VINICIUS FERREIRA",
-      roleLabel: "ROLE",
-      role: "FULL STACK DEVELOPER",
+      roleLabel: "FUNCAO",
+      role: "DESENVOLVEDOR FULL STACK",
       status: "STATUS",
-      statusActive: "ACTIVE",
-      caseLabel: "CASE",
-      evidence: "EVIDENCE",
+      statusActive: "ATIVO",
+      caseLabel: "CASO",
+      evidence: "EVIDENCIA",
       photoAlt: "Retrato noir de Vinicius Ferreira",
-      secondaryPhotoAlt: "Foto secundária do dossiê de Vinicius Ferreira",
-      groupPhotoAlt: "Foto de grupo do dossiê de Vinicius Ferreira",
+      secondaryPhotoAlt: "Foto secundaria do dossie de Vinicius Ferreira",
+      groupPhotoAlt: "Foto de grupo do dossie de Vinicius Ferreira",
     },
     about: {
-      eyebrow: "Dossiê",
-      titleStart: "Um olhar sobre os",
-      titleHighlight: "arquivos",
-      classified: "Informação reservada",
+      eyebrow: "Dossie",
+      titleStart: "Codigo com",
+      titleHighlight: "contexto",
+      classified: "Informacao reservada",
       focus:
-        "Meu foco é desenvolver produtos digitais com arquitetura robusta, experiências de uso fluidas e código preparado para atravessar o tempo.",
+        "Meu foco e construir bases que continuem legiveis depois da primeira entrega: componentes claros, contratos de API previsiveis e uma experiencia que nao sacrifica manutencao por efeito visual.",
       end: "Fim do arquivo",
     },
+    roadmap: {
+      eyebrow: "Roadmap",
+      title: "Formacao e carreira",
+      copy:
+        "Uma linha do tempo enxuta do que venho construindo: estudos, pratica full stack e projetos que transformam stack em produto.",
+      selected: "Dossie selecionado",
+      types: {
+        formacao: "Formacao",
+        carreira: "Carreira",
+        projeto: "Projeto",
+      },
+    },
     stack: {
-      eyebrow: "Arsenal",
-      titleStart: "Manifesto",
-      titleHighlight: "técnico",
+      eyebrow: "Stack",
+      titleStart: "Ferramentas de",
+      titleHighlight: "producao",
       categories: ["Frontend", "Backend", "Banco de dados", "Ferramentas"],
     },
     projectsSection: {
@@ -90,46 +102,46 @@ export const translations = {
     },
     filmReel: {
       description:
-        "Cada frame apresenta um projeto em formato de película. Passe o mouse sobre um frame para acionar um preview cinematográfico com estética noir.",
+        "Cada frame reune um projeto ou estudo em formato de pelicula. Passe o mouse para ver o preview e abra os links quando houver repositorio ou demo publica.",
       previous: "Anterior",
-      next: "Próximo",
+      next: "Proximo",
     },
     filmFrame: {
       previewAltPrefix: "Preview do projeto",
       previewLabel: "Projetando...",
       frameLabel: "Frame",
-      code: "Código",
+      code: "Codigo",
       live: "Exibir",
       unavailable: "Classificado",
     },
     projects: {
       "portfolio-gerenciavel": {
-        title: "Portfólio Gerenciável",
+        title: "Portfolio Gerenciavel",
         description:
-          "Portfólio pessoal com frontend em Next.js, backend em NestJS e experiências visuais Modern e Vintage.",
+          "Portfolio pessoal com Next.js, NestJS, Three.js e uma base administrativa para evoluir conteudo sem hardcode.",
       },
       "ecommerce-noir": {
         title: "E-commerce Noir",
         description:
-          "Projeto mockado de loja virtual com catálogo, página de produto, checkout e área administrativa.",
+          "Estudo de loja virtual com catalogo, fluxo de compra e area administrativa, pensado para demonstrar arquitetura full stack.",
       },
       "dashboard-cinema": {
         title: "Dashboard Cinema",
         description:
-          "Projeto mockado de dashboard analítico com métricas, gráficos, usuários e relatórios.",
+          "Estudo de dashboard analitico para apresentar metricas, usuarios e relatorios em uma interface editorial.",
       },
       "api-archive": {
         title: "API Archive",
         description:
-          "Projeto mockado de API com autenticação, banco de dados, documentação e deploy.",
+          "Estudo de API com autenticacao, banco de dados, documentacao e organizacao de endpoints para produto web.",
       },
     },
     contact: {
-      eyebrow: "Transmissão",
-      titleStart: "Estabeleceu uma",
-      titleHighlight: "conexão",
+      eyebrow: "Transmissao",
+      titleStart: "Vamos abrir uma",
+      titleHighlight: "conversa",
       copy:
-        "Aberto para conversas técnicas, engenharia de produto ou novas oportunidades. A linha está aberta.",
+        "Estou aberto para oportunidades, conversas tecnicas e projetos que precisem de frontend bem cuidado, API consistente e evolucao com criterio.",
       messageCta: "Enviar mensagem",
     },
     footer: {
@@ -139,15 +151,15 @@ export const translations = {
   en: {
     languageName: "English",
     languageShort: "EN",
-    nextLanguageName: "Português",
+    nextLanguageName: "Portugues",
     languageToggleLabel:
-      "Current language: English. Click to switch to Português.",
+      "Current language: English. Click to switch to Portugues.",
     header: {
       nav: {
         home: "Home",
-        projects: "Archive",
-        about: "Intel",
-        contact: "Terminal",
+        projects: "Projects",
+        about: "About",
+        contact: "Contact",
       },
     },
     colorMode: {
@@ -170,22 +182,22 @@ export const translations = {
     profile: {
       role: "Full Stack Developer",
       headline:
-        "I build modern, performant, well-structured web applications connecting frontend, backend, and user experience.",
+        "I build interfaces and APIs for web products that need to be clear, fast, and easy to evolve.",
       summary:
-        "I am a developer focused on web solutions using technologies like Next.js, NestJS, TypeScript, and Node.js. This portfolio presents my path, stack, and projects through two distinct visual experiences.",
+        "I am a full stack developer focused on Next.js, React, NestJS, Node.js, and TypeScript. I connect user experience, frontend architecture, and organized APIs to turn ideas into manageable web products.",
     },
     hero: {
       intro: "I am",
-      projectsCta: "Exhibit Projects",
-      contactCta: "Secure Contact",
-      production: "Production #026",
-      posterRole: "Director",
-      posterExperience: "Noir Experience",
+      projectsCta: "View projects",
+      contactCta: "Secure contact",
+      production: "File #026",
+      posterRole: "Developer",
+      posterExperience: "Manageable portfolio",
     },
     detectiveFile: {
       openLabel: "Open confidential dossier",
       closeLabel: "Close confidential dossier",
-      hint: "Click to open the case file",
+      hint: "Click to open the dossier",
       classified: "CLASSIFIED",
       caseFile: "CASE FILE",
       fileNumber: "VF-026",
@@ -202,18 +214,30 @@ export const translations = {
       groupPhotoAlt: "Group dossier photo of Vinicius Ferreira",
     },
     about: {
-      eyebrow: "Intel",
-      titleStart: "A glimpse into the",
-      titleHighlight: "files",
-      classified: "Classified info",
+      eyebrow: "Dossier",
+      titleStart: "Code with",
+      titleHighlight: "context",
+      classified: "Reserved information",
       focus:
-        "My focus is on engineering digital products with robust architecture, seamless user experiences, and code built to withstand the test of time.",
+        "My focus is building foundations that remain readable after the first delivery: clear components, predictable API contracts, and an experience that does not trade maintainability for visual impact.",
       end: "End of file",
     },
+    roadmap: {
+      eyebrow: "Roadmap",
+      title: "Education and career",
+      copy:
+        "A concise timeline of what I have been building: studies, full stack practice, and projects that turn a stack into a product.",
+      selected: "Selected dossier",
+      types: {
+        formacao: "Education",
+        carreira: "Career",
+        projeto: "Project",
+      },
+    },
     stack: {
-      eyebrow: "Arsenal",
-      titleStart: "Technical",
-      titleHighlight: "manifest",
+      eyebrow: "Stack",
+      titleStart: "Production",
+      titleHighlight: "tools",
       categories: ["Frontend", "Backend", "Database", "Tools"],
     },
     projectsSection: {
@@ -222,7 +246,7 @@ export const translations = {
     },
     filmReel: {
       description:
-        "Each frame showcases a project in a film strip format. Hover over a frame to trigger a cinematic preview with noir aesthetics.",
+        "Each frame gathers a project or study in a film-strip format. Hover to preview it and open links when a repository or public demo is available.",
       previous: "Previous",
       next: "Next",
     },
@@ -231,38 +255,38 @@ export const translations = {
       previewLabel: "Projecting...",
       frameLabel: "Frame",
       code: "Code",
-      live: "Exhibit",
+      live: "View",
       unavailable: "Classified",
     },
     projects: {
       "portfolio-gerenciavel": {
         title: "Manageable Portfolio",
         description:
-          "Personal portfolio with a Next.js frontend, NestJS backend, and Modern and Vintage visual experiences.",
+          "Personal portfolio with Next.js, NestJS, Three.js, and an admin foundation for evolving content without hardcoding.",
       },
       "ecommerce-noir": {
         title: "E-commerce Noir",
         description:
-          "Mock virtual store project with catalog, product page, checkout, and admin area.",
+          "Virtual store study with catalog, purchase flow, and admin area, designed to demonstrate full stack architecture.",
       },
       "dashboard-cinema": {
         title: "Dashboard Cinema",
         description:
-          "Mock analytics dashboard project with metrics, charts, users, and reports.",
+          "Analytics dashboard study for presenting metrics, users, and reports through an editorial interface.",
       },
       "api-archive": {
         title: "API Archive",
         description:
-          "Mock API project with authentication, database, documentation, and deployment.",
+          "API study with authentication, database, documentation, and endpoint organization for a web product.",
       },
     },
     contact: {
       eyebrow: "Transmission",
-      titleStart: "Established a",
-      titleHighlight: "connection",
+      titleStart: "Let's open a",
+      titleHighlight: "conversation",
       copy:
-        "Open for tech discussions, product engineering, or new opportunities. The line is open.",
-      messageCta: "Send Message",
+        "I am open to opportunities, technical conversations, and projects that need thoughtful frontend, consistent APIs, and careful evolution.",
+      messageCta: "Send message",
     },
     footer: {
       rights: "All rights reserved.",

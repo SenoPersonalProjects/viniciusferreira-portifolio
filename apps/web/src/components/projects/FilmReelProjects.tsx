@@ -6,16 +6,28 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useEmblaCarousel from "embla-carousel-react";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { projects } from "@/data/projects";
+import type { PortfolioProject } from "@/data/portfolioContent";
 
 import { FilmFrame } from "@/components/projects/FilmFrame";
 
-const REEL_REPEAT_COUNT = 7;
-const REEL_START_INDEX = Math.floor(REEL_REPEAT_COUNT / 2) * projects.length;
+type FilmReelProjectsProps = {
+  projects: PortfolioProject[];
+};
 
-export function FilmReelProjects() {
+const REEL_REPEAT_COUNT = 7;
+
+export function FilmReelProjects({ projects }: FilmReelProjectsProps) {
   const { dictionary } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
+  const visibleProjects = useMemo(
+    () =>
+      projects
+        .filter((project) => project.published ?? true)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [projects],
+  );
+  const startIndex =
+    Math.floor(REEL_REPEAT_COUNT / 2) * Math.max(visibleProjects.length, 1);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
@@ -24,12 +36,12 @@ export function FilmReelProjects() {
     containScroll: false,
     skipSnaps: false,
     slidesToScroll: 1,
-    startIndex: REEL_START_INDEX,
+    startIndex,
   });
 
   const localizedProjects = useMemo(
     () =>
-      projects.map((project) => {
+      visibleProjects.map((project) => {
         const projectCopy =
           dictionary.projects[
             project.slug as keyof typeof dictionary.projects
@@ -41,7 +53,7 @@ export function FilmReelProjects() {
           description: projectCopy?.description ?? project.description,
         };
       }),
-    [dictionary],
+    [dictionary, visibleProjects],
   );
 
   // Repetir projetos para garantir loop infinito visual suave
@@ -137,8 +149,8 @@ export function FilmReelProjects() {
   }
 
   return (
-    <div className="mt-14" ref={containerRef}>
-      <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <div className="relative mt-14 overflow-visible" ref={containerRef}>
+      <div className="relative z-10 mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
           <p className="font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)]">
             {dictionary.filmReel.description}
@@ -164,13 +176,17 @@ export function FilmReelProjects() {
         </div>
       </div>
 
-      <div className="film-reel" ref={emblaRef}>
-        <div className="film-reel-track flex">
-          {repeatedProjects.map((item) => (
-            <div key={item.uniqueKey} className="film-reel-slide min-w-0">
-              <FilmFrame project={item} index={item.displayIndex} />
+      <div className="film-reel-full-bleed">
+        <div className="film-reel-tilt">
+          <div className="film-reel relative z-10" ref={emblaRef}>
+            <div className="film-reel-track flex">
+              {repeatedProjects.map((item) => (
+                <div key={item.uniqueKey} className="film-reel-slide min-w-0">
+                  <FilmFrame project={item} index={item.displayIndex} />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

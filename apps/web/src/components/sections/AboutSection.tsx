@@ -5,11 +5,13 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function AboutSection() {
   const { dictionary } = useLanguage();
+  const { content } = usePortfolioData();
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +79,7 @@ export function AboutSection() {
           >
             <div className="space-y-8 font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl">
               <p className="first-letter:font-[var(--font-display)] first-letter:text-5xl first-letter:text-[var(--color-primary)]">
-                {dictionary.profile.summary}
+                {content.profile.summary || dictionary.profile.summary}
               </p>
 
               <p className="border-t border-[var(--color-border)] pt-8 opacity-90">

@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { dossierByLocale } from "@/data/dossier";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { dossierByLocale, type DossierLocale } from "@/data/dossier";
 
 const DossierCanvas = dynamic(
   () =>
@@ -85,6 +86,9 @@ function useHeroActive() {
     updateHeroActive();
     resizeObserver.observe(section);
     window.addEventListener("resize", updateHeroActive);
+    window.addEventListener("scroll", updateHeroActive, {
+      passive: true,
+    });
 
     frameId = window.requestAnimationFrame(() => {
       updateHeroActive();
@@ -99,6 +103,7 @@ function useHeroActive() {
       observer.disconnect();
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateHeroActive);
+      window.removeEventListener("scroll", updateHeroActive);
     };
   }, []);
 
@@ -110,16 +115,22 @@ function useHeroActive() {
 
 export function HeroSection() {
   const { isHeroActive, sectionRef } = useHeroActive();
+  const { language } = useLanguage();
+  const dossierLocale: DossierLocale = language === "en" ? "en" : "pt";
 
   return (
     <section
       id="home"
       ref={sectionRef}
-      className="dossier-hero relative z-10 -mb-8 min-h-[calc(100dvh-66px)] overflow-visible bg-[var(--color-background)] pt-4 sm:-mb-12 md:-mb-16"
+      className="dossier-hero relative z-10 min-h-[calc(100svh-66px)] overflow-hidden bg-[var(--color-background)]"
       data-hero-active={isHeroActive}
     >
-      <div className="dossier-hero__stage mx-auto flex min-h-[calc(100dvh-66px)] w-full max-w-[1680px] items-start justify-center px-3 sm:px-4 md:px-8">
-        <DossierCanvas content={dossierByLocale.pt} isHeroActive={isHeroActive} />
+      <div className="dossier-hero__stage flex min-h-[calc(100svh-66px)] w-screen items-start justify-center">
+        <DossierCanvas
+          content={dossierByLocale[dossierLocale]}
+          locale={dossierLocale}
+          isHeroActive={isHeroActive}
+        />
       </div>
     </section>
   );

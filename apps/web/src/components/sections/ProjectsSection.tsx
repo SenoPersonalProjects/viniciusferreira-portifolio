@@ -2,9 +2,11 @@
 
 import { FilmReelProjects } from "@/components/projects/FilmReelProjects";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
 
 export function ProjectsSection() {
   const { dictionary } = useLanguage();
+  const { content } = usePortfolioData();
 
   return (
     <section
@@ -18,7 +20,7 @@ export function ProjectsSection() {
           {dictionary.projectsSection.title}
         </h2>
 
-        <FilmReelProjects />
+        <FilmReelProjects projects={content.projects} />
       </div>
     </section>
   );

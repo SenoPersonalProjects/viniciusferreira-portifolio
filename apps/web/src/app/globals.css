@@ -1022,10 +1022,167 @@ body {
   animation: vintage-flicker 6s infinite alternate;
 }
 
+.roadmap-timeline {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.roadmap-timeline::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0.875rem;
+  top: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.roadmap-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 1rem;
+  outline: none;
+}
+
+.roadmap-item__marker {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.5rem;
+  height: 1.75rem;
+  width: 1.75rem;
+  border: 2px solid var(--color-border);
+  background: var(--color-background);
+  box-shadow: 4px 4px 0 var(--color-shadow);
+}
+
+.roadmap-item__body {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
+  padding: 1.25rem;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.roadmap-item[data-active="true"] .roadmap-item__body,
+.roadmap-item:focus-visible .roadmap-item__body {
+  border-color: var(--color-primary);
+  box-shadow: 8px 8px 0 var(--color-shadow);
+  transform: translate(-2px, -2px);
+}
+
+.roadmap-item[data-active="true"] .roadmap-item__marker,
+.roadmap-item:focus-visible .roadmap-item__marker {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .roadmap-timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .roadmap-timeline::before {
+    bottom: auto;
+    left: 0;
+    right: 0;
+    top: 0.875rem;
+    height: 1px;
+    width: auto;
+  }
+
+  .roadmap-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .dossier-hero,
+  .dossier-hero__stage {
+    min-height: calc(92svh - 58px);
+  }
+
+  .vintage-header > div {
+    grid-template-columns: auto auto;
+  }
+}
+
+/* Dossier Hero */
+
+.dossier-hero {
+  isolation: isolate;
+}
+
+.dossier-hero__stage {
+  margin-inline: calc(50% - 50vw);
+}
+
+.vintage-3d-grain,
+.vintage-3d-noise {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+}
+
+.vintage-3d-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.72'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: soft-light;
+  opacity: 0.13;
+}
+
+.vintage-3d-noise {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.12), transparent 12%),
+    radial-gradient(circle at 78% 66%, rgba(0, 0, 0, 0.16), transparent 18%);
+  mix-blend-mode: overlay;
+  opacity: 0.08;
+}
+
+[data-visual-treatment="vintage-noir"][data-monochrome-canvas="true"] canvas {
+  filter: grayscale(1) contrast(1.08) brightness(0.94);
+}
+
+:root[data-color-mode="dark"]
+  [data-visual-treatment="vintage-noir"][data-monochrome-canvas="true"]
+  canvas {
+  filter: grayscale(1) contrast(1.16) brightness(1.02);
+}
+
 /* Film Reel Projects */
 
 .vintage-header {
   z-index: 100;
+}
+
+.film-reel-full-bleed {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  padding-block: clamp(1.25rem, 3vw, 2.75rem);
+  overflow: visible;
+}
+
+.film-reel-tilt {
+  --film-reel-overhang: clamp(2rem, 6vw, 6rem);
+
+  width: calc(100% + var(--film-reel-overhang));
+  margin-inline: calc(var(--film-reel-overhang) / -2);
+  transform: rotate(-0.45deg);
+  transform-origin: center;
 }
 
 .film-reel {
@@ -1038,6 +1195,18 @@ body {
 
 .film-reel:active {
   cursor: grabbing;
+}
+
+@media (min-width: 768px) {
+  .film-reel-tilt {
+    transform: rotate(-0.75deg);
+  }
+}
+
+@media (min-width: 1280px) {
+  .film-reel-tilt {
+    transform: rotate(-1deg);
+  }
 }
 
 .film-reel-track {

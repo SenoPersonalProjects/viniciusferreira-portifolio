@@ -54,7 +54,7 @@ describe("DetectiveFile", () => {
     renderDetectiveFile();
 
     const file = screen.getByRole("button", {
-      name: "Abrir dossiê confidencial",
+      name: "Abrir dossie confidencial",
     });
 
     expect(file.getAttribute("aria-pressed")).toBe("false");
@@ -83,7 +83,7 @@ describe("DetectiveFile", () => {
     renderDetectiveFile();
 
     const file = screen.getByRole("button", {
-      name: "Abrir dossiê confidencial",
+      name: "Abrir dossie confidencial",
     });
 
     file.focus();
