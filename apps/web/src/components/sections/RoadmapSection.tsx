@@ -7,9 +7,12 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import type { RoadmapItem } from "@/data/roadmap";
 
 function formatPeriod(startDate: string, endDate: string) {
@@ -49,10 +52,37 @@ export function RoadmapSection() {
         .sort((a, b) => a.order - b.order),
     [content.roadmap],
   );
+  const { ref: headingRevealRef, isRevealed: headingRevealed } = useScrollReveal<HTMLDivElement>();
+  const timelineRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
   const activeItemId = items.some((item) => item.id === activeId)
     ? activeId
     : items[0]?.id ?? "";
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".roadmap-timeline__line",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: timelineRef.current,
+            start: "top 75%",
+            end: "bottom 85%",
+            scrub: true,
+          },
+        }
+      );
+    }, timelineRef);
+
+    return () => ctx.revert();
+  }, [items]);
 
   useEffect(() => {
     let frame = 0;
@@ -119,7 +149,10 @@ export function RoadmapSection() {
       className="section-border px-6 py-20 md:px-10 md:py-24"
     >
       <div className="mx-auto max-w-7xl">
-        <div className="roadmap-heading">
+        <div
+          ref={headingRevealRef}
+          className={`roadmap-heading scroll-reveal ${headingRevealed ? "is-revealed" : ""}`}
+        >
           <p className="section-eyebrow">{dictionary.roadmap.eyebrow}</p>
 
           <h2 className="section-title mt-6 text-5xl md:text-7xl">
@@ -130,7 +163,8 @@ export function RoadmapSection() {
           </p>
         </div>
 
-        <div className="roadmap-timeline mt-14">
+        <div ref={timelineRef} className="roadmap-timeline mt-14">
+          <div className="roadmap-timeline__line" aria-hidden="true" />
           {items.map((item, index) => {
             const isActive = item.id === activeItemId;
             const period = formatPeriod(item.startDate, item.endDate);
