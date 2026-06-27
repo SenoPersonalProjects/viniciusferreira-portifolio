@@ -76,14 +76,10 @@ export const translations = {
       title: "Formacao e carreira",
       copy:
         "Uma linha do tempo enxuta do que venho construindo: estudos, pratica full stack e projetos que transformam stack em produto.",
-      selected: "Dossie selecionado",
-      period: "Periodo",
-      archive: "Arquivo",
       evidence: "Evidencia",
       technologies: "Tecnologias",
-      details: "Detalhes",
       figure: "FIG.",
-      selectItem: "Selecionar dossie",
+      selectItem: "Selecionar item da linha do tempo",
       types: {
         formacao: "Formacao",
         carreira: "Carreira",
@@ -220,14 +216,10 @@ export const translations = {
       title: "Education and career",
       copy:
         "A concise timeline of what I have been building: studies, full stack practice, and projects that turn a stack into a product.",
-      selected: "Selected dossier",
-      period: "Period",
-      archive: "Archive",
       evidence: "Evidence",
       technologies: "Technologies",
-      details: "Details",
       figure: "FIG.",
-      selectItem: "Select dossier",
+      selectItem: "Select timeline item",
       types: {
         formacao: "Education",
         carreira: "Career",
