@@ -77,6 +77,13 @@ export const translations = {
       copy:
         "Uma linha do tempo enxuta do que venho construindo: estudos, pratica full stack e projetos que transformam stack em produto.",
       selected: "Dossie selecionado",
+      period: "Periodo",
+      archive: "Arquivo",
+      evidence: "Evidencia",
+      technologies: "Tecnologias",
+      details: "Detalhes",
+      figure: "FIG.",
+      selectItem: "Selecionar dossie",
       types: {
         formacao: "Formacao",
         carreira: "Carreira",
@@ -214,6 +221,13 @@ export const translations = {
       copy:
         "A concise timeline of what I have been building: studies, full stack practice, and projects that turn a stack into a product.",
       selected: "Selected dossier",
+      period: "Period",
+      archive: "Archive",
+      evidence: "Evidence",
+      technologies: "Technologies",
+      details: "Details",
+      figure: "FIG.",
+      selectItem: "Select dossier",
       types: {
         formacao: "Education",
         carreira: "Career",
