@@ -115,7 +115,6 @@ async function openHome(page: Page, language = "pt-BR") {
 
   await page.addInitScript((selectedLanguage) => {
     window.localStorage.setItem("portfolio-language", selectedLanguage);
-    window.localStorage.setItem("portfolio-experience", "vintage");
 
     const applyAttribute = () => {
       document.documentElement?.setAttribute("data-experience", "vintage");
@@ -138,7 +137,6 @@ async function openHero(page: Page, language = "pt-BR", path = "/") {
 
   await page.addInitScript((selectedLanguage) => {
     window.localStorage.setItem("portfolio-language", selectedLanguage);
-    window.localStorage.setItem("portfolio-experience", "vintage");
 
     const applyAttribute = () => {
       document.documentElement?.setAttribute("data-experience", "vintage");
@@ -274,7 +272,6 @@ test("hero 3d dossier loads and toggles with keyboard without console errors", a
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
   await expect(dossier).toHaveAttribute("data-open", "false");
 
-  await expect(page.getByTestId("experience-toggle")).toHaveCount(0);
   await expect(page.locator("html")).toHaveAttribute("data-experience", "vintage");
   await expect(dossier).toHaveAttribute("data-experience", "vintage");
   await page.getByTestId("color-mode-toggle").click();
@@ -566,7 +563,6 @@ test("3d calibration interface exposes adjustable desk, dossier and phone snippe
   await expect(page.getByTestId("receiver-hover-position-x-input")).toHaveValue("-0.11");
 
   await page.evaluate(() => {
-    window.localStorage.setItem("portfolio-experience", "vintage");
     window.localStorage.setItem("portfolio-language", "pt-BR");
   });
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -721,8 +717,6 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   await expect(page.locator(".film-preview-effects")).toHaveCount(0);
   await expect(page.locator(".film-preview-noise")).toHaveCount(0);
 
-  await expect(root).toHaveAttribute("data-experience", "vintage");
-  await expect(page.getByTestId("experience-toggle")).toHaveCount(0);
   await expect(root).toHaveAttribute("data-experience", "vintage");
 
   const colorModeButton = page.getByTestId("color-mode-toggle");

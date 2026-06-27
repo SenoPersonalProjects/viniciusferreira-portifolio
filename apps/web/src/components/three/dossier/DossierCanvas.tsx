@@ -11,7 +11,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-import { useExperience } from "@/components/providers/ExperienceProvider";
+import { useAppearance } from "@/components/providers/AppearanceProvider";
 import { subscribeAppliedModelCalibration } from "@/components/three/calibration/modelCalibrationStorage";
 import { getDossierCameraConfig, getDossierLightingConfig } from "./dossierSceneConfig";
 import type { DossierContent, DossierLocale } from "@/data/dossier";
@@ -322,7 +322,7 @@ export function DossierCanvas({
   locale,
   isHeroActive,
 }: DossierCanvasProps) {
-  const { experience, resolvedColorMode } = useExperience();
+  const { resolvedColorMode } = useAppearance();
   const { isNarrow, isReady: isViewportReady } = useIsNarrowViewport();
   const prefersReducedMotion = usePrefersReducedMotion();
   const preferredRendererMode = useDossierRendererMode();
@@ -349,13 +349,13 @@ export function DossierCanvas({
   });
 
   const camera = useMemo(
-    () => getDossierCameraConfig(experience, isNarrow),
-    [experience, isNarrow],
+    () => getDossierCameraConfig(isNarrow),
+    [isNarrow],
   );
 
   const lighting = useMemo(
-    () => getDossierLightingConfig(experience, resolvedColorMode),
-    [experience, resolvedColorMode],
+    () => getDossierLightingConfig(resolvedColorMode),
+    [resolvedColorMode],
   );
 
   const rendererMode =
@@ -460,7 +460,6 @@ export function DossierCanvas({
       root,
       content,
       locale,
-      experience,
       resolvedColorMode,
       isNarrow,
       rendererMode: preferredRendererMode,
@@ -494,7 +493,6 @@ export function DossierCanvas({
     camera,
     content,
     locale,
-    experience,
     isNarrow,
     lighting,
     preferredRendererMode,
@@ -623,7 +621,7 @@ export function DossierCanvas({
     <div
       ref={rootRef}
       className="relative z-10 h-[calc(100svh-66px)] min-h-[600px] w-screen min-w-full flex-none basis-full overflow-hidden sm:min-h-[680px] lg:min-h-[720px]"
-      data-experience={experience}
+      data-experience="vintage"
       data-open={isOpen}
       data-hero-active={isHeroActive}
       data-interactive={isInteractive}
@@ -648,8 +646,8 @@ export function DossierCanvas({
       data-intro-state="pending"
       data-intro-duration-ms="0"
       data-renderer-mode={rendererMode}
-      data-visual-treatment={experience === "vintage" ? "vintage-noir" : "none"}
-      data-monochrome-canvas={experience === "vintage"}
+      data-visual-treatment="vintage-noir"
+      data-monochrome-canvas="true"
       data-testid="dossier-hero-canvas"
       onPointerOverCapture={(event: ReactPointerEvent<HTMLDivElement>) => {
         if (event.pointerType === "mouse") {
@@ -697,12 +695,8 @@ export function DossierCanvas({
         data-testid="dossier-three-stage"
       />
 
-      {experience === "vintage" ? (
-        <>
-          <div className="vintage-3d-grain" aria-hidden="true" />
-          <div className="vintage-3d-noise" aria-hidden="true" />
-        </>
-      ) : null}
+      <div className="vintage-3d-grain" aria-hidden="true" />
+      <div className="vintage-3d-noise" aria-hidden="true" />
       {rendererMode === "webgl-legacy" ? <DossierFallbackNotice /> : null}
       {isDebugMode ? <DossierDebugOverlay snapshot={debugSnapshot} /> : null}
     </div>

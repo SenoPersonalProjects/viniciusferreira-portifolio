@@ -2,11 +2,9 @@ import * as THREE from "three";
 
 import type { DossierContent, DossierLocale } from "@/data/dossier";
 
-type DossierExperience = "modern" | "vintage";
 type DossierColorMode = "light" | "dark";
 
 type CreateDossierTextureOptions = {
-  experience?: DossierExperience;
   colorMode?: DossierColorMode;
   locale?: DossierLocale;
   fontRevision?: number;
@@ -21,15 +19,12 @@ type DossierPalette = {
   panel: string;
   panelInk: string;
   redaction: string;
-  grid: string;
   stamp: string;
 };
 
 type DossierTextureLabels = {
-  modernHeaderTitle: string;
-  modernHeaderSubtitle: string;
-  vintageHeaderTitle: string;
-  vintageHeaderSubtitle: string;
+  headerTitle: string;
+  headerSubtitle: string;
   photoLabel: string;
   photoEvidence: string;
   classification: string;
@@ -46,10 +41,8 @@ type DossierTextureLabels = {
 
 const labelsByLocale: Record<DossierLocale, DossierTextureLabels> = {
   pt: {
-    modernHeaderTitle: "UNIDADE DE INVESTIGACAO DIGITAL",
-    modernHeaderSubtitle: "ARQUIVO / CASO ATIVO / PORTFOLIO",
-    vintageHeaderTitle: "UNIDADE DE INTELIGENCIA",
-    vintageHeaderSubtitle: "ARQUIVO CONFIDENCIAL / PERFIL OPERACIONAL",
+    headerTitle: "UNIDADE DE INTELIGENCIA",
+    headerSubtitle: "ARQUIVO CONFIDENCIAL / PERFIL OPERACIONAL",
     photoLabel: "FOTO DE IDENTIFICACAO",
     photoEvidence: "EVIDENCIA / 01",
     classification: "CLASSIFICACAO",
@@ -64,10 +57,8 @@ const labelsByLocale: Record<DossierLocale, DossierTextureLabels> = {
     risk: "RISCO: BAIXO PARA USUARIOS / ALTO PARA BUGS",
   },
   en: {
-    modernHeaderTitle: "DIGITAL INVESTIGATION UNIT",
-    modernHeaderSubtitle: "ARCHIVE / ACTIVE CASE / PORTFOLIO",
-    vintageHeaderTitle: "INTELLIGENCE UNIT",
-    vintageHeaderSubtitle: "CLASSIFIED ARCHIVE / OPERATIONAL PROFILE",
+    headerTitle: "INTELLIGENCE UNIT",
+    headerSubtitle: "CLASSIFIED ARCHIVE / OPERATIONAL PROFILE",
     photoLabel: "IDENTIFICATION PHOTO",
     photoEvidence: "EVIDENCE / 01",
     classification: "CLASSIFICATION",
@@ -117,26 +108,8 @@ function getDisplayFont() {
   return readCssFontVariable("--font-display", DEFAULT_DISPLAY_FONT);
 }
 
-function getPalette(
-  experience: DossierExperience,
-  colorMode: DossierColorMode,
-): DossierPalette {
+function getPalette(colorMode: DossierColorMode): DossierPalette {
   const isDark = colorMode === "dark";
-
-  if (experience === "modern") {
-    return {
-      paper: isDark ? "#dce3e7" : "#eef2f4",
-      ink: "#111820",
-      muted: "#43505a",
-      softInk: "rgba(17,24,32,0.64)",
-      line: "rgba(17,24,32,0.82)",
-      panel: isDark ? "#182027" : "#cfd8de",
-      panelInk: isDark ? "#eef5f8" : "#111820",
-      redaction: "#080c10",
-      grid: "rgba(37,50,60,0.12)",
-      stamp: "#a01818",
-    };
-  }
 
   return {
     paper: isDark ? "#d9d3c6" : "#e7e1d4",
@@ -147,7 +120,6 @@ function getPalette(
     panel: isDark ? "#191918" : "#201f1d",
     panelInk: "#eee8dc",
     redaction: "#050505",
-    grid: "rgba(16,16,15,0.1)",
     stamp: "#303030",
   };
 }
@@ -290,25 +262,6 @@ function drawVintageWear(ctx: CanvasRenderingContext2D) {
   }
 }
 
-function drawModernGrid(ctx: CanvasRenderingContext2D, palette: DossierPalette) {
-  ctx.strokeStyle = palette.grid;
-  ctx.lineWidth = 2;
-
-  for (let x = 100; x <= CANVAS_WIDTH - 100; x += 80) {
-    ctx.beginPath();
-    ctx.moveTo(x, 120);
-    ctx.lineTo(x, CANVAS_HEIGHT - 120);
-    ctx.stroke();
-  }
-
-  for (let y = 120; y <= CANVAS_HEIGHT - 120; y += 80) {
-    ctx.beginPath();
-    ctx.moveTo(100, y);
-    ctx.lineTo(CANVAS_WIDTH - 100, y);
-    ctx.stroke();
-  }
-}
-
 function drawField(
   ctx: CanvasRenderingContext2D,
   palette: DossierPalette,
@@ -360,24 +313,15 @@ function drawStamp(
   ctx.restore();
 }
 
-function drawBaseDocument(
-  ctx: CanvasRenderingContext2D,
-  palette: DossierPalette,
-  experience: DossierExperience,
-) {
+function drawBaseDocument(ctx: CanvasRenderingContext2D, palette: DossierPalette) {
   ctx.fillStyle = palette.paper;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  if (experience === "modern") {
-    drawModernGrid(ctx, palette);
-    drawNoise(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, 7500, 0.035);
-  } else {
-    drawNoise(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, 13500, 0.07);
-    drawVintageWear(ctx);
-  }
+  drawNoise(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, 13500, 0.07);
+  drawVintageWear(ctx);
 
   ctx.strokeStyle = palette.line;
-  ctx.lineWidth = experience === "modern" ? 6 : 9;
+  ctx.lineWidth = 9;
   ctx.strokeRect(72, 72, CANVAS_WIDTH - 144, CANVAS_HEIGHT - 144);
 
   ctx.strokeStyle = palette.softInk;
@@ -389,36 +333,17 @@ function drawHeader(
   ctx: CanvasRenderingContext2D,
   content: DossierContent,
   palette: DossierPalette,
-  experience: DossierExperience,
   labels: DossierTextureLabels,
 ) {
-  if (experience === "modern") {
-    ctx.fillStyle = palette.panel;
-    ctx.fillRect(96, 105, 1408, 132);
-
-    ctx.fillStyle = palette.panelInk;
-    setIndustrialFont(ctx, 400, 38);
-    ctx.fillText(labels.modernHeaderTitle, 128, 155);
-
-    setMonoFont(ctx, 700, 22);
-    ctx.fillText(labels.modernHeaderSubtitle, 128, 202);
-
-    setMonoFont(ctx, 700, 38);
-    ctx.textAlign = "right";
-    ctx.fillText(content.fileId, 1470, 180);
-    ctx.textAlign = "left";
-    return;
-  }
-
   ctx.fillStyle = palette.panel;
   ctx.fillRect(96, 105, 1408, 148);
 
   ctx.fillStyle = palette.panelInk;
   setDisplayFont(ctx, 400, 42);
-  ctx.fillText(labels.vintageHeaderTitle, 128, 162);
+  ctx.fillText(labels.headerTitle, 128, 162);
 
   setMonoFont(ctx, 700, 24);
-  ctx.fillText(labels.vintageHeaderSubtitle, 128, 212);
+  ctx.fillText(labels.headerSubtitle, 128, 212);
 
   setMonoFont(ctx, 700, 40);
   ctx.textAlign = "right";
@@ -429,7 +354,6 @@ function drawHeader(
 function drawPhotoPlaceholder(
   ctx: CanvasRenderingContext2D,
   palette: DossierPalette,
-  experience: DossierExperience,
   labels: DossierTextureLabels,
 ) {
   const photoBox = {
@@ -443,8 +367,7 @@ function drawPhotoPlaceholder(
   ctx.lineWidth = 7;
   ctx.strokeRect(photoBox.x, photoBox.y, photoBox.w, photoBox.h);
 
-  ctx.fillStyle =
-    experience === "modern" ? "rgba(17,24,32,0.07)" : "rgba(0,0,0,0.08)";
+  ctx.fillStyle = "rgba(0,0,0,0.08)";
   ctx.fillRect(photoBox.x, photoBox.y, photoBox.w, photoBox.h);
 
   ctx.strokeStyle = palette.softInk;
@@ -481,7 +404,6 @@ function drawRedactions(
 export function createDossierTexture(
   content: DossierContent,
   {
-    experience = "vintage",
     colorMode = "dark",
     locale = "pt",
   }: CreateDossierTextureOptions = {},
@@ -496,13 +418,13 @@ export function createDossierTexture(
     throw new Error("Canvas 2D context unavailable.");
   }
 
-  const palette = getPalette(experience, colorMode);
+  const palette = getPalette(colorMode);
   const labels = labelsByLocale[locale];
 
   ctx.textBaseline = "alphabetic";
-  drawBaseDocument(ctx, palette, experience);
-  drawHeader(ctx, content, palette, experience, labels);
-  drawPhotoPlaceholder(ctx, palette, experience, labels);
+  drawBaseDocument(ctx, palette);
+  drawHeader(ctx, content, palette, labels);
+  drawPhotoPlaceholder(ctx, palette, labels);
 
   drawField(
     ctx,

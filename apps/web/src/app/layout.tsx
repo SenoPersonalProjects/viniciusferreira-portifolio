@@ -10,7 +10,7 @@ import {
   Special_Elite,
 } from "next/font/google";
 
-import { ExperienceProvider } from "@/components/providers/ExperienceProvider";
+import { AppearanceProvider } from "@/components/providers/AppearanceProvider";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 import "./globals.css";
@@ -79,7 +79,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-[var(--color-background)] text-[var(--color-foreground)]">
         <LanguageProvider>
-          <ExperienceProvider>{children}</ExperienceProvider>
+          <AppearanceProvider>{children}</AppearanceProvider>
         </LanguageProvider>
       </body>
     </html>

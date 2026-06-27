@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { useExperience } from "@/components/providers/ExperienceProvider";
 import {
   ERICSSON_PHONE_CAMERA_CALIBRATION,
   ERICSSON_RECEIVER_CALIBRATION,
@@ -19,7 +18,6 @@ const ERICSSON_CREDIT =
   '"Ericsson DBH 1001 telephone" (https://skfb.ly/ouFUW) by Museum of Engineering and Technology, Krakow is licensed under CC Attribution-NonCommercial-ShareAlike (http://creativecommons.org/licenses/by-nc-sa/4.0/).';
 
 export function RotaryTelephoneProp() {
-  const { experience } = useExperience();
   const [phoneModelCalibration, setPhoneModelCalibration] = useState(() =>
     ERICSSON_PHONE_MODEL_CALIBRATION,
   );
@@ -79,10 +77,6 @@ export function RotaryTelephoneProp() {
       unsubscribe();
     };
   }, []);
-
-  if (experience !== "vintage") {
-    return null;
-  }
 
   return (
     <DecorativeModelCanvas

@@ -28,13 +28,6 @@ export const translations = {
       ariaSuffix: "Clique para alternar.",
       titlePrefix: "Modo",
     },
-    experience: {
-      toggleLabel: "Alternar experiencia visual",
-      labels: {
-        modern: "Modern",
-        vintage: "Vintage",
-      },
-    },
     profile: {
       role: "Desenvolvedor Full Stack",
       headline:
@@ -171,13 +164,6 @@ export const translations = {
       ariaPrefix: "Current mode",
       ariaSuffix: "Click to cycle.",
       titlePrefix: "Mode",
-    },
-    experience: {
-      toggleLabel: "Toggle visual experience",
-      labels: {
-        modern: "Modern",
-        vintage: "Vintage",
-      },
     },
     profile: {
       role: "Full Stack Developer",
