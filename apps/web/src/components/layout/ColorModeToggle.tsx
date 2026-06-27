@@ -1,10 +1,10 @@
 "use client";
 
-import { useExperience } from "@/components/providers/ExperienceProvider";
+import { useAppearance } from "@/components/providers/AppearanceProvider";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ColorModeToggle() {
-  const { colorModePreference, cycleColorMode } = useExperience();
+  const { colorModePreference, cycleColorMode } = useAppearance();
   const { dictionary } = useLanguage();
   const label = dictionary.colorMode.labels[colorModePreference];
 

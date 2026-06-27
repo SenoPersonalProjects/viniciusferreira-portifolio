@@ -10,23 +10,18 @@ import {
   useState,
 } from "react";
 
-type Experience = "modern" | "vintage";
 type ColorModePreference = "system" | "light" | "dark";
 type ResolvedColorMode = "light" | "dark";
 
-type ExperienceContextValue = {
-  experience: Experience;
-  setExperience: (experience: Experience) => void;
-  toggleExperience: () => void;
+type AppearanceContextValue = {
   colorModePreference: ColorModePreference;
   resolvedColorMode: ResolvedColorMode;
   setColorModePreference: (mode: ColorModePreference) => void;
   cycleColorMode: () => void;
 };
 
-const ExperienceContext = createContext<ExperienceContextValue | null>(null);
+const AppearanceContext = createContext<AppearanceContextValue | null>(null);
 
-const EXPERIENCE_STORAGE_KEY = "portfolio-experience";
 const COLOR_MODE_STORAGE_KEY = "portfolio-color-mode";
 
 function getSystemColorMode(): ResolvedColorMode {
@@ -39,9 +34,7 @@ function getSystemColorMode(): ResolvedColorMode {
     : "light";
 }
 
-export function ExperienceProvider({ children }: { children: ReactNode }) {
-  const [experience, setExperienceState] = useState<Experience>("vintage");
-
+export function AppearanceProvider({ children }: { children: ReactNode }) {
   const [colorModePreference, setColorModePreferenceState] =
     useState<ColorModePreference>("system");
 
@@ -50,15 +43,6 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
 
   const resolvedColorMode: ResolvedColorMode =
     colorModePreference === "system" ? systemColorMode : colorModePreference;
-
-  const setExperience = useCallback((experienceValue: Experience) => {
-    setExperienceState(experienceValue);
-    window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, experienceValue);
-  }, []);
-
-  const toggleExperience = useCallback(() => {
-    setExperience(experience === "modern" ? "vintage" : "modern");
-  }, [experience, setExperience]);
 
   const setColorModePreference = useCallback((mode: ColorModePreference) => {
     setColorModePreferenceState(mode);
@@ -87,19 +71,9 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
     };
 
     const hydrationTimer = window.setTimeout(() => {
-      const storedExperience = window.localStorage.getItem(
-        EXPERIENCE_STORAGE_KEY,
-      ) as Experience | null;
-
       const storedColorMode = window.localStorage.getItem(
         COLOR_MODE_STORAGE_KEY,
       ) as ColorModePreference | null;
-
-      if (storedExperience !== "vintage") {
-        window.localStorage.setItem(EXPERIENCE_STORAGE_KEY, "vintage");
-      }
-
-      setExperienceState("vintage");
 
       if (
         storedColorMode === "system" ||
@@ -123,25 +97,19 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
 
-    root.setAttribute("data-experience", experience);
+    root.setAttribute("data-experience", "vintage");
     root.setAttribute("data-color-mode", resolvedColorMode);
     root.setAttribute("data-color-mode-preference", colorModePreference);
-  }, [experience, resolvedColorMode, colorModePreference]);
+  }, [resolvedColorMode, colorModePreference]);
 
   const value = useMemo(
     () => ({
-      experience,
-      setExperience,
-      toggleExperience,
       colorModePreference,
       resolvedColorMode,
       setColorModePreference,
       cycleColorMode,
     }),
     [
-      experience,
-      setExperience,
-      toggleExperience,
       colorModePreference,
       resolvedColorMode,
       setColorModePreference,
@@ -150,17 +118,17 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <ExperienceContext.Provider value={value}>
+    <AppearanceContext.Provider value={value}>
       {children}
-    </ExperienceContext.Provider>
+    </AppearanceContext.Provider>
   );
 }
 
-export function useExperience() {
-  const context = useContext(ExperienceContext);
+export function useAppearance() {
+  const context = useContext(AppearanceContext);
 
   if (!context) {
-    throw new Error("useExperience deve ser usado dentro de ExperienceProvider");
+    throw new Error("useAppearance deve ser usado dentro de AppearanceProvider");
   }
 
   return context;

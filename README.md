@@ -1,15 +1,20 @@
-# Vinicius Ferreira Portifólio
+# Vinicius Ferreira Portfolio
 
-Portfólio pessoal gerenciável desenvolvido com Next.js no frontend e NestJS no backend.
+Portfolio pessoal gerenciavel desenvolvido com Next.js no frontend e NestJS no backend.
 
 ## Objetivo
 
-Este projeto tem como objetivo apresentar minha trajetória profissional, stack técnica, projetos e experiências por meio de uma interface interativa, responsiva e gerenciável.
+Este projeto apresenta a trajetoria profissional, stack tecnica, projetos e experiencias de Vinicius Ferreira por meio de uma interface interativa, responsiva e gerenciavel.
 
-A proposta principal do portfólio é oferecer duas experiências visuais distintas:
+A direcao visual do portfolio e vintage/noir: preto e branco, cinema antigo, arquivo confidencial, dossie investigativo, rolo de filme, textura de papel, tinta, granulado e composicao editorial.
 
-- **Experiência moderna:** visual tecnológico, escuro, com detalhes em neon e atmosfera high-tech.
-- **Experiência vintage:** visual preto e branco inspirado nas décadas de 1930 a 1950, com estética clássica e editorial.
+O site preserva modo de cor:
+
+- `system`
+- `light`
+- `dark`
+
+Esses modos alteram a leitura claro/escuro da mesma experiencia vintage/noir. Nao existe outra experiencia visual separada no produto atual.
 
 ## Stack
 
@@ -23,11 +28,11 @@ A proposta principal do portfólio é oferecer duas experiências visuais distin
 
 ```txt
 apps/
-  web/        # Aplicação frontend em Next.js
-  api/        # Aplicação backend em NestJS
+  web/        # Aplicacao frontend em Next.js
+  api/        # Aplicacao backend em NestJS
 
 packages/     # Pacotes compartilhados futuros
-docs/         # Documentação técnica e de produto
+docs/         # Documentacao tecnica e de produto
 ```
 
 ## Scripts principais
@@ -43,7 +48,7 @@ pnpm format
 
 ## Rodando localmente
 
-Instale as dependências:
+Instale as dependencias:
 
 ```bash
 pnpm install
@@ -61,7 +66,7 @@ Rode a API:
 pnpm dev:api
 ```
 
-Por padrão:
+Por padrao:
 
 ```txt
 Frontend: http://localhost:3000
@@ -71,34 +76,34 @@ API:      http://localhost:3333
 ## Fluxo de branches
 
 ```txt
-main       # produção
-dev        # desenvolvimento/integração
+main       # producao
+dev        # desenvolvimento/integracao
 feature/*  # novas funcionalidades
-fix/*      # correções
-docs/*     # documentação
-chore/*    # configurações e manutenção
+fix/*      # correcoes
+docs/*     # documentacao
+chore/*    # configuracoes e manutencao
 ```
 
-O fluxo principal é:
+O fluxo principal e:
 
 ```txt
 feature/* -> dev -> main
 ```
 
-## Padrão de commits
+## Padrao de commits
 
-Este projeto utiliza Conventional Commits com mensagens em português.
+Este projeto utiliza Conventional Commits com mensagens em portugues.
 
 Exemplos:
 
 ```bash
-feat(web): adiciona seção inicial do portfólio
-feat(api): adiciona módulo de projetos
-fix(web): corrige responsividade do cabeçalho
-docs: adiciona documentação inicial do projeto
+feat(web): adiciona secao inicial do portfolio
+feat(api): adiciona modulo de projetos
+fix(web): corrige responsividade do cabecalho
+docs: adiciona documentacao inicial do projeto
 chore(workspace): ajusta scripts do monorepo
 ```
 
 ## Status
 
-Projeto em fase inicial de estruturação.
+Projeto em evolucao, com frontend vintage/noir, ambientacao 3D e base administrativa para conteudo gerenciavel.

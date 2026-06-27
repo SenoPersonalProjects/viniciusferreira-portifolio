@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { WebGPURenderer } from "three/webgpu";
 
-import { useExperience } from "@/components/providers/ExperienceProvider";
+import { useAppearance } from "@/components/providers/AppearanceProvider";
 import {
   ERICSSON_PHONE_CAMERA_CALIBRATION,
   ERICSSON_RECEIVER_CALIBRATION,
@@ -1182,7 +1182,7 @@ function OutputBlock({
 }
 
 export function ModelCalibrationInterface() {
-  const { resolvedColorMode } = useExperience();
+  const { resolvedColorMode } = useAppearance();
   const [desk, setDesk] = useState<DeskEditorState>(() => createStaticDeskState());
   const [dossierTable, setDossierTable] = useState<DossierEditorState>(() =>
     createStaticDossierState(),
@@ -1231,7 +1231,7 @@ export function ModelCalibrationInterface() {
     receiver.hoverRotationDegOffset,
   );
   const heroLighting = useMemo(
-    () => getDossierLightingConfig("vintage", resolvedColorMode),
+    () => getDossierLightingConfig(resolvedColorMode),
     [resolvedColorMode],
   );
   const deskSnippet = [

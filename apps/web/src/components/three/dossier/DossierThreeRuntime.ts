@@ -23,7 +23,6 @@ import { createDossierTexture } from "./createDossierTexture";
 import { createFolderCoverTexture } from "./createFolderCoverTexture";
 import { createImageTexture } from "./createImageTexture";
 
-export type DossierExperience = "modern" | "vintage";
 export type DossierColorMode = "light" | "dark";
 export type DossierRendererMode = "pending" | "webgpu" | "webgl-legacy";
 
@@ -127,7 +126,6 @@ export type DossierThreeRuntimeOptions = {
   root: HTMLDivElement;
   content: DossierContent;
   locale: DossierLocale;
-  experience: DossierExperience;
   resolvedColorMode: DossierColorMode;
   isNarrow: boolean;
   state: RuntimeState;
@@ -294,40 +292,8 @@ function buildSurfaceMaterial(
   });
 }
 
-function createMaterialKit(
-  experience: DossierExperience,
-  colorMode: DossierColorMode,
-): MaterialKit {
+function createMaterialKit(colorMode: DossierColorMode): MaterialKit {
   const isDark = colorMode === "dark";
-
-  if (experience === "modern") {
-    return {
-      folderBack: buildSurfaceMaterial(isDark ? "#1f2429" : "#b8c0c8", {
-        roughness: 0.82,
-      }),
-      folderFront: buildSurfaceMaterial(isDark ? "#2b3138" : "#d0d6dc", {
-        roughness: 0.8,
-      }),
-      folderSpine: buildSurfaceMaterial(isDark ? "#12161b" : "#8f99a4", {
-        roughness: 0.9,
-      }),
-      folderTab: buildSurfaceMaterial(isDark ? "#38414a" : "#e1e6ea", {
-        roughness: 0.76,
-      }),
-      paper: buildSurfaceMaterial(isDark ? "#d6dde1" : "#edf2f4", {
-        roughness: 0.9,
-      }),
-      paperStack: buildSurfaceMaterial(isDark ? "#aeb9c0" : "#d6dde2", {
-        roughness: 0.94,
-      }),
-      photoBase: buildSurfaceMaterial(isDark ? "#101418" : "#1f252b", {
-        roughness: 0.62,
-      }),
-      polaroidFrame: buildSurfaceMaterial(isDark ? "#e2e6e8" : "#f2f4f5", {
-        roughness: 0.78,
-      }),
-    };
-  }
 
   return {
     folderBack: buildSurfaceMaterial(isDark ? "#30302d" : "#9a968c", {
@@ -367,46 +333,18 @@ function disposeMaterialKit(materialKit: MaterialKit | null) {
   }
 }
 
-function getModelPoses(
-  experience: DossierExperience,
-  isNarrow: boolean,
-): ModelPoses {
+function getModelPoses(isNarrow: boolean): ModelPoses {
   if (isNarrow) {
     return {
       hero: {
         position: [0, -0.16, 0.01],
-        rotation:
-          experience === "modern"
-            ? [-0.2, -0.14, 0.06]
-            : [-0.24, 0.16, -0.08],
-        scale: experience === "modern" ? 0.78 : 0.76,
-      },
-      table:
-        experience === "modern"
-          ? {
-              position: [0, -0.28, 0.08],
-              rotation: [-0.8, -0.08, 0.06],
-              scale: 0.73,
-            }
-          : {
-              position: [0, -0.3, 0.1],
-              rotation: [-0.86, 0.12, -0.14],
-              scale: 0.72,
-            },
-    };
-  }
-
-  if (experience === "modern") {
-    return {
-      hero: {
-        position: [0.05, 0.22, 0.02],
-        rotation: [-0.22, -0.2, 0.08],
-        scale: 0.62,
+        rotation: [-0.24, 0.16, -0.08],
+        scale: 0.76,
       },
       table: {
-        position: [0.03, -0.08, 0.14],
-        rotation: [-0.8, -0.12, 0.08],
-        scale: 0.59,
+        position: [0, -0.3, 0.1],
+        rotation: [-0.86, 0.12, -0.14],
+        scale: 0.72,
       },
     };
   }
@@ -417,31 +355,8 @@ function getModelPoses(
   };
 }
 
-function getImageTextureStyle(
-  experience: DossierExperience,
-  colorMode: DossierColorMode,
-): ImageTextureStyle {
-  const isModern = experience === "modern";
+function getImageTextureStyle(colorMode: DossierColorMode): ImageTextureStyle {
   const isDark = colorMode === "dark";
-
-  if (isModern) {
-    return {
-      main: {
-        background: isDark ? "#cfd8de" : "#e4e9ed",
-        filter: "grayscale(1) contrast(1.28) brightness(0.98)",
-        overlay: isDark ? "rgba(14,22,28,0.08)" : "rgba(235,244,248,0.08)",
-        noiseOpacity: 0.045,
-        scanlineOpacity: 0.04,
-      },
-      polaroid: {
-        background: isDark ? "#d8dde0" : "#f0f2f3",
-        filter: "grayscale(1) contrast(1.28) brightness(0.98)",
-        overlay: isDark ? "rgba(14,22,28,0.08)" : "rgba(235,244,248,0.08)",
-        noiseOpacity: 0.045,
-        scanlineOpacity: 0.04,
-      },
-    };
-  }
 
   return {
     main: {
@@ -496,7 +411,6 @@ export class DossierThreeRuntime {
   private readonly root: HTMLDivElement;
   private readonly content: DossierContent;
   private readonly locale: DossierLocale;
-  private readonly experience: DossierExperience;
   private readonly colorMode: DossierColorMode;
   private readonly isNarrow: boolean;
   private readonly onInteractiveChange: (value: boolean) => void;
@@ -555,7 +469,6 @@ export class DossierThreeRuntime {
     this.root = options.root;
     this.content = options.content;
     this.locale = options.locale;
-    this.experience = options.experience;
     this.colorMode = options.resolvedColorMode;
     this.isNarrow = options.isNarrow;
     this.state = { ...options.state };
@@ -565,9 +478,9 @@ export class DossierThreeRuntime {
     this.onInteractiveChange = options.onInteractiveChange;
     this.onRendererModeChange = options.onRendererModeChange;
     this.onToggle = options.onToggle;
-    const basePoses = getModelPoses(options.experience, options.isNarrow);
+    const basePoses = getModelPoses(options.isNarrow);
     this.poses =
-      options.experience === "vintage" && !options.isNarrow
+      !options.isNarrow
         ? {
             ...basePoses,
             table: getAppliedDossierTableCalibration(),
@@ -588,9 +501,8 @@ export class DossierThreeRuntime {
     this.root.dataset.modelRotationY = "0.0000";
     this.root.dataset.deskLoaded = "false";
     this.root.dataset.deskModelLoaded = "false";
-    this.root.dataset.deskSource = this.experience === "vintage" ? "glb" : "none";
-    this.root.dataset.deskPivotMode =
-      this.experience === "vintage" ? VINTAGE_DESK_PIVOT_MODE : "none";
+    this.root.dataset.deskSource = "glb";
+    this.root.dataset.deskPivotMode = VINTAGE_DESK_PIVOT_MODE;
     this.root.dataset.deskPivotReady = "false";
     this.root.dataset.deskFitSize = this.deskCalibration.fitSize.toFixed(4);
     this.root.dataset.deskLayoutX = this.deskLayout.position[0].toFixed(4);
@@ -881,7 +793,7 @@ export class DossierThreeRuntime {
         ? document.fonts.ready
         : Promise.resolve();
 
-    const imageStyle = getImageTextureStyle(this.experience, this.colorMode);
+    const imageStyle = getImageTextureStyle(this.colorMode);
     const [gltf, mainPhotoTexture, polaroidTexture] = await Promise.all([
       loader.loadAsync(
         "/models/dossier/detective-dossier.glb",
@@ -934,13 +846,11 @@ export class DossierThreeRuntime {
     await fontReady;
 
     const dossierTexture = createDossierTexture(this.content, {
-      experience: this.experience,
       colorMode: this.colorMode,
       locale: this.locale,
       fontRevision: 1,
     });
     const folderCoverTexture = createFolderCoverTexture(this.content, {
-      experience: this.experience,
       colorMode: this.colorMode,
       locale: this.locale,
       fontRevision: 1,
@@ -959,7 +869,7 @@ export class DossierThreeRuntime {
       mainPhotoMaterial,
       polaroidMaterial,
     );
-    this.materialKit = createMaterialKit(this.experience, this.colorMode);
+    this.materialKit = createMaterialKit(this.colorMode);
     this.applyMaterials(
       gltf.scene,
       dossierMaterial,
@@ -971,9 +881,7 @@ export class DossierThreeRuntime {
     this.mixer = new THREE.AnimationMixer(this.animationGroup);
     this.actions = gltf.animations.map((clip) => this.mixer!.clipAction(clip));
 
-    if (this.experience === "vintage") {
-      void this.loadDesk(loader);
-    }
+    void this.loadDesk(loader);
   }
 
   private async loadDesk(loader: GLTFLoader) {

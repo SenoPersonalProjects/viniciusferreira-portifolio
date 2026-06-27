@@ -2,11 +2,9 @@ import * as THREE from "three";
 
 import type { DossierContent, DossierLocale } from "@/data/dossier";
 
-type DossierExperience = "modern" | "vintage";
 type DossierColorMode = "light" | "dark";
 
 type CreateFolderCoverTextureOptions = {
-  experience?: DossierExperience;
   colorMode?: DossierColorMode;
   locale?: DossierLocale;
   fontRevision?: number;
@@ -21,10 +19,8 @@ type CoverPalette = {
 };
 
 type CoverLabels = {
-  modernHeader: string;
-  modernSection: string;
-  vintageHeader: string;
-  vintageSection: string;
+  header: string;
+  section: string;
   wantedLineOne: string;
   wantedLineTwo: string;
   wantedLineThree: string;
@@ -34,10 +30,8 @@ type CoverLabels = {
 
 const labelsByLocale: Record<DossierLocale, CoverLabels> = {
   pt: {
-    modernHeader: "INVESTIGACAO DIGITAL",
-    modernSection: "ARQUIVO / SUPERFICIE FRONT-END",
-    vintageHeader: "ARQUIVO DE INVESTIGACAO",
-    vintageSection: "SECAO: TECNOLOGIA / WEB",
+    header: "ARQUIVO DE INVESTIGACAO",
+    section: "SECAO: TECNOLOGIA / WEB",
     wantedLineOne: "DESENVOLVEDOR",
     wantedLineTwo: "FULL STACK",
     wantedLineThree: "PROCURADO",
@@ -45,10 +39,8 @@ const labelsByLocale: Record<DossierLocale, CoverLabels> = {
     investigation: "INVESTIGACAO DIGITAL",
   },
   en: {
-    modernHeader: "DIGITAL INVESTIGATION",
-    modernSection: "CASE FILE / FRONT-END SURFACE",
-    vintageHeader: "INVESTIGATION ARCHIVE",
-    vintageSection: "SECTION: TECHNOLOGY / WEB",
+    header: "INVESTIGATION ARCHIVE",
+    section: "SECTION: TECHNOLOGY / WEB",
     wantedLineOne: "FULL STACK",
     wantedLineTwo: "DEVELOPER",
     wantedLineThree: "WANTED",
@@ -91,21 +83,8 @@ function getDisplayFont() {
   return readCssFontVariable("--font-display", DEFAULT_DISPLAY_FONT);
 }
 
-function getPalette(
-  experience: DossierExperience,
-  colorMode: DossierColorMode,
-): CoverPalette {
+function getPalette(colorMode: DossierColorMode): CoverPalette {
   const isDark = colorMode === "dark";
-
-  if (experience === "modern") {
-    return {
-      ink: isDark ? "#edf5f8" : "#101820",
-      muted: isDark ? "rgba(237,245,248,0.66)" : "rgba(16,24,32,0.66)",
-      line: isDark ? "rgba(237,245,248,0.72)" : "rgba(16,24,32,0.72)",
-      faint: isDark ? "rgba(237,245,248,0.18)" : "rgba(16,24,32,0.14)",
-      stamp: "#a01818",
-    };
-  }
 
   return {
     ink: isDark ? "#eee8dc" : "#171615",
@@ -159,10 +138,9 @@ function drawFittedText(
 function drawTextureWear(
   ctx: CanvasRenderingContext2D,
   palette: CoverPalette,
-  experience: DossierExperience,
 ) {
-  const count = experience === "modern" ? 3600 : 6200;
-  const maxOpacity = experience === "modern" ? 0.1 : 0.16;
+  const count = 6200;
+  const maxOpacity = 0.16;
 
   for (let i = 0; i < count; i += 1) {
     const x = Math.random() * COVER_WIDTH;
@@ -194,10 +172,9 @@ function drawStamp(
   ctx: CanvasRenderingContext2D,
   text: string,
   palette: CoverPalette,
-  experience: DossierExperience,
 ) {
   ctx.save();
-  ctx.translate(experience === "modern" ? 818 : 844, 1188);
+  ctx.translate(844, 1188);
   ctx.rotate((-13 * Math.PI) / 180);
 
   ctx.strokeStyle = palette.stamp;
@@ -212,54 +189,7 @@ function drawStamp(
   ctx.restore();
 }
 
-function drawModernCover(
-  ctx: CanvasRenderingContext2D,
-  content: DossierContent,
-  palette: CoverPalette,
-  labels: CoverLabels,
-) {
-  ctx.strokeStyle = palette.line;
-  ctx.lineWidth = 5;
-  ctx.strokeRect(112, 145, 1120, 1335);
-
-  ctx.strokeStyle = palette.faint;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(142, 175, 1060, 1275);
-
-  for (let y = 245; y < 1320; y += 92) {
-    ctx.beginPath();
-    ctx.moveTo(142, y);
-    ctx.lineTo(1202, y);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = palette.muted;
-  setIndustrialFont(ctx, 400, 32);
-  ctx.fillText(labels.modernHeader, 170, 272);
-  setMonoFont(ctx, 700, 27);
-  ctx.fillText(labels.modernSection, 170, 328);
-
-  ctx.fillStyle = palette.ink;
-  drawFittedText(ctx, labels.wantedLineOne, 170, 510, 980, 108, getIndustrialFont());
-  drawFittedText(ctx, labels.wantedLineTwo, 170, 636, 980, 108, getIndustrialFont());
-  drawFittedText(ctx, labels.wantedLineThree, 170, 762, 980, 108, getIndustrialFont());
-
-  setMonoFont(ctx, 700, 42);
-  ctx.fillText(`${labels.dossierPrefix} ${content.fileId}`, 170, 868);
-
-  setIndustrialFont(ctx, 400, 38);
-  ctx.fillStyle = palette.muted;
-  ctx.fillText(labels.investigation, 170, 934);
-
-  ctx.fillStyle = palette.faint;
-  ctx.fillRect(170, 1025, 260, 28);
-  ctx.fillRect(470, 1025, 520, 28);
-  ctx.fillRect(170, 1088, 720, 28);
-
-  drawStamp(ctx, content.stamp, palette, "modern");
-}
-
-function drawVintageCover(
+function drawCover(
   ctx: CanvasRenderingContext2D,
   content: DossierContent,
   palette: CoverPalette,
@@ -275,9 +205,9 @@ function drawVintageCover(
 
   ctx.fillStyle = palette.muted;
   setIndustrialFont(ctx, 400, 32);
-  ctx.fillText(labels.vintageHeader, 158, 278);
+  ctx.fillText(labels.header, 158, 278);
   setMonoFont(ctx, 700, 27);
-  ctx.fillText(labels.vintageSection, 158, 328);
+  ctx.fillText(labels.section, 158, 328);
 
   ctx.fillStyle = palette.ink;
   drawFittedText(ctx, labels.wantedLineOne, 158, 520, 990, 92);
@@ -303,13 +233,12 @@ function drawVintageCover(
   ctx.fillRect(158, 1142, 820, 36);
   ctx.fillRect(158, 1212, 340, 36);
 
-  drawStamp(ctx, content.stamp, palette, "vintage");
+  drawStamp(ctx, content.stamp, palette);
 }
 
 export function createFolderCoverTexture(
   content: DossierContent,
   {
-    experience = "vintage",
     colorMode = "dark",
     locale = "pt",
   }: CreateFolderCoverTextureOptions = {},
@@ -324,19 +253,14 @@ export function createFolderCoverTexture(
     throw new Error("Canvas 2D context unavailable.");
   }
 
-  const palette = getPalette(experience, colorMode);
+  const palette = getPalette(colorMode);
   const labels = labelsByLocale[locale];
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.textBaseline = "alphabetic";
 
-  drawTextureWear(ctx, palette, experience);
-
-  if (experience === "modern") {
-    drawModernCover(ctx, content, palette, labels);
-  } else {
-    drawVintageCover(ctx, content, palette, labels);
-  }
+  drawTextureWear(ctx, palette);
+  drawCover(ctx, content, palette, labels);
 
   const texture = new THREE.CanvasTexture(canvas);
 
