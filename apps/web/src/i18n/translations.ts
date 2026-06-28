@@ -5,16 +5,18 @@ export const LANGUAGE_STORAGE_KEY = "portfolio-language";
 
 export const translations = {
   "pt-BR": {
-    languageName: "Portugues",
+    languageName: "Português",
     languageShort: "PT",
     nextLanguageName: "English",
     languageToggleLabel:
-      "Idioma atual: Portugues. Clique para mudar para English.",
+      "Idioma atual: Português. Clique para mudar para English.",
     header: {
+      navLabel: "Navegação principal",
       nav: {
-        home: "Inicio",
-        projects: "Projetos",
         about: "Sobre",
+        roadmap: "Trajetória",
+        stack: "Stack",
+        projects: "Projetos",
         contact: "Contato",
       },
     },
@@ -31,9 +33,9 @@ export const translations = {
     profile: {
       role: "Desenvolvedor Full Stack",
       headline:
-        "Desenvolvo interfaces e APIs para produtos web que precisam ser claros, rapidos e faceis de evoluir.",
+        "Desenvolvo interfaces e APIs para produtos web que precisam ser claros, rápidos e fáceis de evoluir.",
       summary:
-        "Sou desenvolvedor full stack com foco em Next.js, React, NestJS, Node.js e TypeScript. Trabalho conectando experiencia de uso, arquitetura de frontend e APIs bem organizadas para transformar ideias em produtos web gerenciaveis.",
+        "Sou desenvolvedor full stack com foco em Next.js, React, NestJS, Node.js e TypeScript. Conecto experiência de uso, arquitetura de frontend e APIs bem organizadas para transformar ideias em produtos web gerenciáveis.",
     },
     hero: {
       intro: "Eu sou",
@@ -41,7 +43,7 @@ export const translations = {
       contactCta: "Contato seguro",
       production: "Arquivo #026",
       posterRole: "Desenvolvedor",
-      posterExperience: "Portfolio gerenciavel",
+      posterExperience: "Portfólio gerenciável",
     },
     detectiveFile: {
       openLabel: "Abrir dossie confidencial",
@@ -63,33 +65,56 @@ export const translations = {
       groupPhotoAlt: "Foto de grupo do dossie de Vinicius Ferreira",
     },
     about: {
-      eyebrow: "Dossie",
-      titleStart: "Codigo com",
+      eyebrow: "Dossiê técnico",
+      titleStart: "Código com",
       titleHighlight: "contexto",
-      classified: "Informacao reservada",
+      classified: "Informação reservada",
       focus:
-        "Meu foco e construir bases que continuem legiveis depois da primeira entrega: componentes claros, contratos de API previsiveis e uma experiencia que nao sacrifica manutencao por efeito visual.",
+        "Meu foco é construir bases que continuem legíveis depois da primeira entrega: componentes claros, contratos de API previsíveis e uma experiência que não sacrifica manutenção por impacto visual.",
       end: "Fim do arquivo",
     },
     roadmap: {
-      eyebrow: "Roadmap",
-      title: "Formacao e carreira",
+      eyebrow: "Registro",
+      title: "Registro de trajetória",
       copy:
-        "Uma linha do tempo enxuta do que venho construindo: estudos, pratica full stack e projetos que transformam stack em produto.",
-      evidence: "Evidencia",
+        "Uma linha do tempo da minha evolução técnica: fundamentos, prática full stack e projetos que conectam código, produto e experiência.",
+      evidence: "Evidência",
       technologies: "Tecnologias",
       figure: "FIG.",
       selectItem: "Selecionar item da linha do tempo",
       types: {
-        formacao: "Formacao",
+        formacao: "Formação",
         carreira: "Carreira",
         projeto: "Projeto",
+      },
+      items: {
+        "roadmap-portfolio-gerenciavel": {
+          title: "Portfólio gerenciável",
+          summary:
+            "Construção deste portfólio como produto próprio, com frontend em Next.js, backend em NestJS e ambientação 3D vintage.",
+          details:
+            "O projeto concentra UI editorial, Three.js imperativo, painel administrativo, API e uma base de conteúdo preparada para evoluir sem depender de alterações manuais no código.",
+        },
+        "roadmap-fullstack": {
+          title: "Consolidação full stack",
+          summary:
+            "Aprofundamento em aplicações web completas, conectando frontend, backend, banco de dados e deploy.",
+          details:
+            "Foco em React, TypeScript, Node.js, APIs REST, modelagem de dados e organização de projetos em monorepo.",
+        },
+        "roadmap-base-web": {
+          title: "Base em desenvolvimento web",
+          summary:
+            "Estudo e prática dos fundamentos de interfaces, lógica de aplicação, versionamento e consumo de APIs.",
+          details:
+            "Período dedicado a transformar fundamentos em projetos aplicáveis, com atenção a responsividade, estrutura de componentes e manutenção do código.",
+        },
       },
     },
     stack: {
       eyebrow: "Stack",
       titleStart: "Ferramentas de",
-      titleHighlight: "producao",
+      titleHighlight: "produção",
       categories: ["Frontend", "Backend", "Banco de dados", "Ferramentas"],
     },
     projectsSection: {
@@ -98,63 +123,66 @@ export const translations = {
     },
     filmReel: {
       description:
-        "Cada frame reune um projeto ou estudo em formato de pelicula. Passe o mouse para ver o preview e abra os links quando houver repositorio ou demo publica.",
+        "Cada frame reúne um projeto ou estudo em formato de película. Passe o mouse para ver o preview e abra os links quando houver repositório ou demo pública.",
       previous: "Anterior",
-      next: "Proximo",
+      next: "Próximo",
     },
     filmFrame: {
       previewAltPrefix: "Preview do projeto",
       previewLabel: "Projetando...",
       frameLabel: "Frame",
-      code: "Codigo",
+      code: "Código",
       live: "Exibir",
-      unavailable: "Classificado",
+      unavailable: "Indisponível",
     },
     projects: {
       "portfolio-gerenciavel": {
-        title: "Portfolio Gerenciavel",
+        title: "Portfólio Gerenciável",
         description:
-          "Portfolio pessoal com Next.js, NestJS, Three.js e uma base administrativa para evoluir conteudo sem hardcode.",
+          "Portfólio pessoal com Next.js, NestJS, Three.js e uma base administrativa para evoluir conteúdo sem hardcode.",
       },
       "ecommerce-noir": {
         title: "E-commerce Noir",
         description:
-          "Estudo de loja virtual com catalogo, fluxo de compra e area administrativa, pensado para demonstrar arquitetura full stack.",
+          "Estudo de loja virtual com catálogo, fluxo de compra e área administrativa, pensado para demonstrar arquitetura full stack.",
       },
       "dashboard-cinema": {
         title: "Dashboard Cinema",
         description:
-          "Estudo de dashboard analitico para apresentar metricas, usuarios e relatorios em uma interface editorial.",
+          "Estudo de dashboard analítico para apresentar métricas, usuários e relatórios em uma interface editorial.",
       },
       "api-archive": {
         title: "API Archive",
         description:
-          "Estudo de API com autenticacao, banco de dados, documentacao e organizacao de endpoints para produto web.",
+          "Estudo de API com autenticação, banco de dados, documentação e organização de endpoints para produto web.",
       },
     },
     contact: {
-      eyebrow: "Transmissao",
-      titleStart: "Vamos abrir uma",
-      titleHighlight: "conversa",
+      eyebrow: "Contato",
+      titleStart: "Canal de",
+      titleHighlight: "comunicação",
       copy:
-        "Estou aberto para oportunidades, conversas tecnicas e projetos que precisem de frontend bem cuidado, API consistente e evolucao com criterio.",
+        "Disponível para oportunidades técnicas, conversas sobre produto e projetos que precisem de frontend bem cuidado, APIs consistentes e evolução com critério.",
       messageCta: "Enviar mensagem",
     },
     footer: {
       rights: "Todos os direitos reservados.",
+      tagline: "Portfólio gerenciável construído com Next.js, NestJS e TypeScript.",
     },
   },
   en: {
     languageName: "English",
     languageShort: "EN",
-    nextLanguageName: "Portugues",
+    nextLanguageName: "Português",
     languageToggleLabel:
-      "Current language: English. Click to switch to Portugues.",
+      "Current language: English. Click to switch to Português.",
     header: {
+      navLabel: "Primary navigation",
       nav: {
-        home: "Home",
-        projects: "Projects",
         about: "About",
+        roadmap: "Trajectory",
+        stack: "Stack",
+        projects: "Projects",
         contact: "Contact",
       },
     },
@@ -173,7 +201,7 @@ export const translations = {
       headline:
         "I build interfaces and APIs for web products that need to be clear, fast, and easy to evolve.",
       summary:
-        "I am a full stack developer focused on Next.js, React, NestJS, Node.js, and TypeScript. I connect user experience, frontend architecture, and organized APIs to turn ideas into manageable web products.",
+        "I am a full stack developer focused on Next.js, React, NestJS, Node.js, and TypeScript. I connect user experience, frontend architecture, and well-structured APIs to turn ideas into manageable web products.",
     },
     hero: {
       intro: "I am",
@@ -203,7 +231,7 @@ export const translations = {
       groupPhotoAlt: "Group dossier photo of Vinicius Ferreira",
     },
     about: {
-      eyebrow: "Dossier",
+      eyebrow: "Technical dossier",
       titleStart: "Code with",
       titleHighlight: "context",
       classified: "Reserved information",
@@ -212,10 +240,10 @@ export const translations = {
       end: "End of file",
     },
     roadmap: {
-      eyebrow: "Roadmap",
-      title: "Education and career",
+      eyebrow: "Record",
+      title: "Career trajectory",
       copy:
-        "A concise timeline of what I have been building: studies, full stack practice, and projects that turn a stack into a product.",
+        "A timeline of my technical evolution: fundamentals, full stack practice, and projects that connect code, product, and experience.",
       evidence: "Evidence",
       technologies: "Technologies",
       figure: "FIG.",
@@ -224,6 +252,29 @@ export const translations = {
         formacao: "Education",
         carreira: "Career",
         projeto: "Project",
+      },
+      items: {
+        "roadmap-portfolio-gerenciavel": {
+          title: "Manageable portfolio",
+          summary:
+            "Building this portfolio as a product of its own, with a Next.js frontend, NestJS backend, and vintage 3D atmosphere.",
+          details:
+            "The project brings together editorial UI, imperative Three.js, an admin panel, API, and a content foundation prepared to evolve without manual code changes.",
+        },
+        "roadmap-fullstack": {
+          title: "Full stack consolidation",
+          summary:
+            "Deeper practice in complete web applications, connecting frontend, backend, database, and deployment.",
+          details:
+            "Focused on React, TypeScript, Node.js, REST APIs, data modeling, and project organization in a monorepo.",
+        },
+        "roadmap-base-web": {
+          title: "Web development foundation",
+          summary:
+            "Study and practice of interface fundamentals, application logic, version control, and API consumption.",
+          details:
+            "A period dedicated to turning fundamentals into applicable projects, with attention to responsiveness, component structure, and code maintenance.",
+        },
       },
     },
     stack: {
@@ -273,15 +324,16 @@ export const translations = {
       },
     },
     contact: {
-      eyebrow: "Transmission",
-      titleStart: "Let's open a",
-      titleHighlight: "conversation",
+      eyebrow: "Contact",
+      titleStart: "Communication",
+      titleHighlight: "channel",
       copy:
-        "I am open to opportunities, technical conversations, and projects that need thoughtful frontend, consistent APIs, and careful evolution.",
+        "Available for technical opportunities, product conversations, and projects that need thoughtful frontend, consistent APIs, and careful evolution.",
       messageCta: "Send message",
     },
     footer: {
       rights: "All rights reserved.",
+      tagline: "Manageable portfolio built with Next.js, NestJS, and TypeScript.",
     },
   },
 } as const;

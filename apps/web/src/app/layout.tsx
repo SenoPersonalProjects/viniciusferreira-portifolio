@@ -61,9 +61,9 @@ const specialElite = Special_Elite({
 });
 
 export const metadata: Metadata = {
-  title: "Vinicius Ferreira | Portfolio",
+  title: "Vinicius Ferreira | Portfólio",
   description:
-    "Portfolio pessoal e personal portfolio de Vinicius Ferreira, desenvolvedor full stack.",
+    "Portfólio pessoal de Vinicius Ferreira, desenvolvedor full stack.",
 };
 
 export default function RootLayout({

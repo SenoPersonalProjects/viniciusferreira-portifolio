@@ -24,7 +24,10 @@ export function ContactSection() {
     >
       <div className="relative mx-auto max-w-7xl overflow-visible">
         <div className={`section-card relative z-10 overflow-visible p-10 md:p-20 scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
-          <div className="absolute -right-20 -top-20 hidden h-64 w-64 md:block">
+          <div
+            className="absolute -right-20 -top-20 hidden h-64 w-64 md:block"
+            aria-hidden="true"
+          >
             <div className="halftone-bg h-full w-full opacity-10" />
           </div>
 
@@ -38,7 +41,6 @@ export function ContactSection() {
               <span className="text-[var(--color-primary)]">
                 {dictionary.contact.titleHighlight}
               </span>
-              ?
             </h2>
 
             <p className={`mt-8 max-w-2xl font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl scroll-reveal stagger-delay-3 ${isRevealed ? "is-revealed" : ""}`}>

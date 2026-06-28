@@ -1,9 +1,9 @@
 export const projects = [
   {
-    title: "Portfolio Gerenciavel",
+    title: "Portfólio Gerenciável",
     slug: "portfolio-gerenciavel",
     description:
-      "Portfolio pessoal com Next.js, NestJS, Three.js e uma base administrativa para evoluir conteudo sem hardcode.",
+      "Portfólio pessoal com Next.js, NestJS, Three.js e uma base administrativa para evoluir conteúdo sem hardcode.",
     stack: ["Next.js", "NestJS", "TypeScript", "Tailwind CSS"],
     repositoryUrl:
       "https://github.com/SenoPersonalProjects/viniciusferreira-portifolio",
@@ -22,7 +22,7 @@ export const projects = [
     title: "E-commerce Noir",
     slug: "ecommerce-noir",
     description:
-      "Estudo de loja virtual com catalogo, fluxo de compra e area administrativa, pensado para demonstrar arquitetura full stack.",
+      "Estudo de loja virtual com catálogo, fluxo de compra e área administrativa, pensado para demonstrar arquitetura full stack.",
     stack: ["Next.js", "NestJS", "TypeScript", "PostgreSQL"],
     repositoryUrl: "",
     liveUrl: "",
@@ -40,7 +40,7 @@ export const projects = [
     title: "Dashboard Cinema",
     slug: "dashboard-cinema",
     description:
-      "Estudo de dashboard analitico para apresentar metricas, usuarios e relatorios em uma interface editorial.",
+      "Estudo de dashboard analítico para apresentar métricas, usuários e relatórios em uma interface editorial.",
     stack: ["React", "TypeScript", "Tailwind CSS", "Charts"],
     repositoryUrl: "",
     liveUrl: "",
@@ -58,7 +58,7 @@ export const projects = [
     title: "API Archive",
     slug: "api-archive",
     description:
-      "Estudo de API com autenticacao, banco de dados, documentacao e organizacao de endpoints para produto web.",
+      "Estudo de API com autenticação, banco de dados, documentação e organização de endpoints para produto web.",
     stack: ["NestJS", "Prisma", "PostgreSQL", "JWT"],
     repositoryUrl: "",
     liveUrl: "",
