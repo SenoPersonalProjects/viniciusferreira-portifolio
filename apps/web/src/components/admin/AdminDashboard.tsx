@@ -1,0 +1,220 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { AdminApiError, adminApiFetch } from "@/lib/admin/adminApi";
+import { useAdminSession } from "@/hooks/useAdminSession";
+
+type AdminContent = {
+  contactLinks: Array<Record<string, unknown>>;
+  profile: Record<string, unknown> | null;
+  projects: Array<Record<string, unknown>>;
+  roadmap: Array<Record<string, unknown>>;
+  siteCopy: Array<Record<string, unknown>>;
+  technologies: Array<Record<string, unknown>>;
+};
+
+type DashboardState =
+  | { data: AdminContent | null; error: null; status: "idle" | "loading" }
+  | { data: AdminContent | null; error: string; status: "error" }
+  | { data: AdminContent; error: null; status: "ready" };
+
+const emptyAdminContent: AdminContent = {
+  contactLinks: [],
+  profile: null,
+  projects: [],
+  roadmap: [],
+  siteCopy: [],
+  technologies: [],
+};
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof AdminApiError) {
+    if (error.code === "unauthorized" || error.code === "forbidden") {
+      return "A API recusou a sessão. Confirme o login e a allowlist SUPABASE_ADMIN_EMAILS.";
+    }
+
+    if (error.code === "unavailable") {
+      return "API administrativa indisponível. Confirme se o backend está em execução.";
+    }
+
+    return error.message;
+  }
+
+  return "Não foi possível carregar o resumo administrativo.";
+}
+
+function pluralize(count: number, singular: string, plural: string) {
+  return count === 1 ? `${count} ${singular}` : `${count} ${plural}`;
+}
+
+export function AdminDashboard() {
+  const { accessToken } = useAdminSession();
+  const [state, setState] = useState<DashboardState>({
+    data: null,
+    error: null,
+    status: "idle",
+  });
+
+  const loadDashboard = useCallback(async () => {
+    if (!accessToken) {
+      return;
+    }
+
+    setState((current) => ({
+      data: current.data,
+      error: null,
+      status: "loading",
+    }));
+
+    try {
+      const data = await adminApiFetch<AdminContent>(
+        "/admin/content",
+        undefined,
+        accessToken,
+      );
+
+      setState({
+        data: data ?? emptyAdminContent,
+        error: null,
+        status: "ready",
+      });
+    } catch (error) {
+      setState({
+        data: null,
+        error: getErrorMessage(error),
+        status: "error",
+      });
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      void loadDashboard();
+    });
+  }, [loadDashboard]);
+
+  const content = state.data ?? emptyAdminContent;
+  const modules = useMemo(
+    () => [
+      {
+        description: content.profile ? "Perfil carregado" : "Sem perfil salvo",
+        label: "Perfil",
+        status: content.profile ? "Disponível" : "Sem dados",
+      },
+      {
+        description: pluralize(content.contactLinks.length, "link", "links"),
+        label: "Contatos",
+        status: "Read-only",
+      },
+      {
+        description: pluralize(content.projects.length, "projeto", "projetos"),
+        label: "Projetos",
+        status: "Read-only",
+      },
+      {
+        description: pluralize(content.technologies.length, "grupo", "grupos"),
+        label: "Stack",
+        status: "Read-only",
+      },
+      {
+        description: pluralize(content.roadmap.length, "marco", "marcos"),
+        label: "Trajetória",
+        status: "Read-only",
+      },
+      {
+        description: pluralize(content.siteCopy.length, "texto", "textos"),
+        label: "Textos",
+        status: "Read-only",
+      },
+      {
+        description: "Informações do dossiê serão tratadas em branch futura",
+        label: "Dossiê",
+        status: "Planejado",
+      },
+      {
+        description: "Metadados e preview social serão editáveis depois",
+        label: "SEO",
+        status: "Planejado",
+      },
+      {
+        description: "Ferramenta local com presets e localStorage existentes",
+        href: "/admin/calibration",
+        label: "Calibração 3D",
+        status: "Ativo",
+      },
+    ],
+    [content],
+  );
+
+  return (
+    <div className="grid gap-8">
+      <section className="section-card p-7 md:p-10">
+        <p className="section-eyebrow">Admin</p>
+        <div className="mt-5 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="section-title text-4xl md:text-6xl">
+              Painel administrativo
+            </h1>
+            <p className="mt-5 max-w-3xl font-[var(--font-body)] text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
+              Fundação segura para gerenciar o portfólio. Nesta etapa, o painel
+              apenas lê o resumo do conteúdo e prepara a navegação dos módulos.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="secondary-action h-11 px-5 text-[10px] uppercase tracking-[0.2em]"
+            onClick={() => void loadDashboard()}
+          >
+            Recarregar
+          </button>
+        </div>
+
+        <div className="mt-8 grid gap-3 font-[var(--font-mono)] text-xs text-[var(--color-muted)]">
+          <p>
+            Segurança: a navegação client-side melhora a experiência, mas a API
+            continua protegida pelo AdminGuard com Supabase JWT e allowlist.
+          </p>
+          {state.status === "loading" ? <p>Carregando resumo...</p> : null}
+          {state.status === "error" ? (
+            <p className="text-[var(--color-foreground)]" role="alert">
+              {state.error}
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      <section
+        aria-label="Módulos administrativos"
+        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+      >
+        {modules.map((module) => {
+          const card = (
+            <article className="section-card h-full p-6 transition hover:border-[var(--color-primary)]">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="font-[var(--font-display)] text-3xl uppercase text-[var(--color-foreground)]">
+                  {module.label}
+                </h2>
+                <span className="border border-[var(--color-border)] px-3 py-1 font-[var(--font-industrial)] text-[9px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
+                  {module.status}
+                </span>
+              </div>
+              <p className="mt-5 font-[var(--font-body)] text-sm leading-relaxed text-[var(--color-muted)]">
+                {module.description}
+              </p>
+            </article>
+          );
+
+          return module.href ? (
+            <Link key={module.label} href={module.href}>
+              {card}
+            </Link>
+          ) : (
+            <div key={module.label}>{card}</div>
+          );
+        })}
+      </section>
+    </div>
+  );
+}

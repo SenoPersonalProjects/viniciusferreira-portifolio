@@ -1,5 +1,5 @@
-import { ModelCalibrationInterface } from "@/components/three/calibration/ModelCalibrationInterface";
+import { redirect } from "next/navigation";
 
 export default function InterfacePage() {
-  return <ModelCalibrationInterface />;
+  redirect("/admin/calibration");
 }
