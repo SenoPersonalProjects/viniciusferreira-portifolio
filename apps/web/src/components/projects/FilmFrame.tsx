@@ -11,19 +11,35 @@ import { FilmPreviewEffects } from "./FilmPreviewEffects";
 type FilmFrameProps = {
   project: Project;
   index: number;
+  isActive?: boolean;
+  isInteractive?: boolean;
+  position?: number;
+  total?: number;
 };
 
-export function FilmFrame({ project, index }: FilmFrameProps) {
+export function FilmFrame({
+  project,
+  index,
+  isActive = true,
+  isInteractive = true,
+  position = index + 1,
+  total = 1,
+}: FilmFrameProps) {
   const { dictionary } = useLanguage();
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== "undefined" && typeof window.matchMedia === "function"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
 
   const previewImages =
     project.previewImages.length > 0
       ? project.previewImages
       : [project.posterImage];
 
-  const currentImage = isPreviewing
+  const currentImage = isPreviewing && !prefersReducedMotion
     ? previewImages[previewIndex]
     : project.posterImage;
 
@@ -38,18 +54,38 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
   }
 
   useEffect(() => {
-    if (!isPreviewing) return;
+    if (!isPreviewing || prefersReducedMotion) return;
 
     const interval = window.setInterval(() => {
       setPreviewIndex((current) => (current + 1) % previewImages.length);
     }, 260);
 
     return () => window.clearInterval(interval);
-  }, [isPreviewing, previewImages.length]);
+  }, [isPreviewing, prefersReducedMotion, previewImages.length]);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+
+    mediaQuery.addEventListener("change", updatePreference);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updatePreference);
+    };
+  }, []);
 
   return (
     <article
       className="film-frame group relative h-full min-w-0"
+      tabIndex={isInteractive ? 0 : -1}
+      aria-current={isActive ? "true" : undefined}
+      aria-label={`${dictionary.filmFrame.projectLabel} ${position} ${dictionary.filmReel.statusOf} ${total}: ${project.title}`}
       onMouseEnter={startPreview}
       onMouseLeave={stopPreview}
       onFocus={startPreview}
@@ -118,6 +154,8 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
                 href={project.repositoryUrl}
                 target="_blank"
                 rel="noreferrer"
+                tabIndex={isInteractive ? undefined : -1}
+                aria-label={`${dictionary.filmFrame.codeAriaLabel}: ${project.title}`}
                 className="secondary-action h-10 text-[10px] font-bold uppercase tracking-widest"
               >
                 {dictionary.filmFrame.code}
@@ -129,12 +167,18 @@ export function FilmFrame({ project, index }: FilmFrameProps) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noreferrer"
+                tabIndex={isInteractive ? undefined : -1}
+                aria-label={`${dictionary.filmFrame.liveAriaLabel}: ${project.title}`}
                 className="primary-action h-10 text-[10px] font-bold uppercase tracking-widest"
               >
                 {dictionary.filmFrame.live}
               </a>
             ) : (
-              <div className="secondary-action h-10 cursor-not-allowed opacity-40 text-[10px] font-bold uppercase tracking-widest">
+              <div
+                className="secondary-action h-10 cursor-not-allowed opacity-40 text-[10px] font-bold uppercase tracking-widest"
+                aria-disabled="true"
+                aria-label={`${dictionary.filmFrame.unavailableAriaLabel}: ${project.title}`}
+              >
                 {dictionary.filmFrame.unavailable}
               </div>
             )}

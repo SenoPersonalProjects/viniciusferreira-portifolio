@@ -1367,10 +1367,17 @@ body {
   cursor: grab;
   overflow: hidden;
   overscroll-behavior: contain;
+  overscroll-behavior-x: contain;
+  touch-action: pan-y pinch-zoom;
 }
 
 .film-reel-control {
   scroll-margin-top: 108px;
+}
+
+.film-reel:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 6px;
 }
 
 .film-reel:active {
@@ -1483,6 +1490,31 @@ body {
   height: 100%;
   border-radius: 4px;
   background: var(--color-surface);
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
+}
+
+.film-frame:focus-visible {
+  outline: none;
+}
+
+.film-frame:focus-visible .film-frame-window,
+.film-frame:focus-within .film-frame-window {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+.film-reel-slide[data-active="true"] .film-frame-window {
+  border-color: var(--color-primary);
+  box-shadow:
+    0 0 0 1px var(--color-primary),
+    0 0 24px rgba(232, 228, 219, 0.2);
+}
+
+.film-reel-slide[data-active="true"] .film-frame {
+  z-index: 12;
 }
 
 /* Vintage Light */
@@ -1670,6 +1702,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .film-frame-window,
   .film-image,
   .film-preview-flicker,
   .animate-\[vintage-flicker_0\.15s_infinite\] {
@@ -1677,12 +1710,21 @@ body {
     transition: none;
   }
 
+  .film-frame:hover .film-image,
+  .film-frame:focus-within .film-image {
+    transform: none;
+  }
+
   .film-preview-noise {
-    opacity: 0.22;
+    opacity: 0.16;
+  }
+
+  .film-preview-scanlines {
+    opacity: 0.38;
   }
 
   .film-preview-flicker {
-    opacity: 0.06;
+    opacity: 0;
   }
 }
 

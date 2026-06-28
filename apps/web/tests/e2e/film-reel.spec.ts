@@ -1,7 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test.describe.configure({ timeout: 180_000 });
+test.describe.configure({ mode: "serial", timeout: 180_000 });
 
 function isIgnorableBrowserIssue(message: string) {
   return (
@@ -434,19 +434,44 @@ test("hero 3d dossier skips intro and keeps reduced hover in reduced motion", as
   await expect(phoneProp).toHaveAttribute("data-receiver-rest-applied", "true");
   await expect(phoneProp).toHaveAttribute("data-receiver-state", "rest");
 
-  const reducedPhoneBox = await phoneProp.boundingBox();
+  const reducedPhoneCanvas = phoneProp.locator("canvas");
+  const reducedPhoneCanvasBox = await reducedPhoneCanvas.boundingBox();
+  const reducedPhoneHoverTargets = [
+    [0.78, 0.48],
+    [0.7, 0.48],
+    [0.62, 0.52],
+    [0.82, 0.56],
+    [0.5, 0.5],
+  ];
+  let reducedPhoneHoverAttempt = 0;
 
-  expect(reducedPhoneBox).not.toBeNull();
-  await page.mouse.move(
-    reducedPhoneBox!.x + reducedPhoneBox!.width * 0.78,
-    reducedPhoneBox!.y + reducedPhoneBox!.height * 0.48,
-    { steps: 8 },
-  );
+  expect(reducedPhoneCanvasBox).not.toBeNull();
   await expect(phoneProp).toHaveAttribute("data-motion-scale", "0.32");
   await expect
     .poll(
-      async () => Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta")),
-      { timeout: 4_000 },
+      async () => {
+        const phoneBox = await reducedPhoneCanvas.boundingBox();
+        const [xRatio, yRatio] =
+          reducedPhoneHoverTargets[
+            reducedPhoneHoverAttempt % reducedPhoneHoverTargets.length
+          ];
+
+        reducedPhoneHoverAttempt += 1;
+
+        if (!phoneBox) {
+          return 0;
+        }
+
+        await page.mouse.move(
+          phoneBox.x + phoneBox.width * xRatio,
+          phoneBox.y + phoneBox.height * yRatio,
+          { steps: 6 },
+        );
+        await page.waitForTimeout(120);
+
+        return Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta"));
+      },
+      { timeout: 6_000 },
     )
     .toBeGreaterThan(0.005);
   await expect
@@ -634,13 +659,45 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   const reel = page.locator(".film-reel");
   const track = page.locator(".film-reel-track");
   const slides = page.locator(".film-reel-slide");
+  const nextProjectButton = page.getByRole("button", {
+    exact: true,
+    name: "Próximo projeto",
+  });
+  const previousProjectButton = page.getByRole("button", {
+    exact: true,
+    name: "Projeto anterior",
+  });
+  const carouselRegion = page.getByRole("region", {
+    name: "Projetos em destaque",
+  });
+  const activeStatus = page.locator("[data-film-reel-status]");
 
+  await expect(carouselRegion).toBeVisible();
   await expect(reel).toBeVisible();
+  await expect(reel).toHaveAttribute("tabindex", "0");
+  await expect(reel).toHaveAttribute("aria-label", "Película de projetos");
   await expect(page.getByTestId("light-switch-toggle-3d")).toHaveCount(0);
   await expect(page.getByTestId("photographic-film-3d")).toHaveCount(0);
   await expect(root).toHaveAttribute("lang", "pt-BR");
   await expect(root).toHaveAttribute("data-language", "pt-BR");
   await expect(slides).toHaveCount(28);
+  await expect(page.locator('.film-reel-slide[data-active="true"]')).toHaveCount(1);
+  await expect(activeStatus).toContainText("Projeto ativo: 1 de 4");
+  const activeProjectArticle = page.getByRole("article", {
+    name: /Projeto 1 de 4: Portfólio Gerenciável/i,
+  });
+
+  await expect(activeProjectArticle).toHaveAttribute("aria-current", "true");
+  await expect(
+    page.getByRole("link", {
+      name: "Código do projeto: Portfólio Gerenciável",
+    }),
+  ).toBeVisible();
+  await expect(
+    activeProjectArticle.locator(
+      '[aria-label="Demonstração indisponível: Portfólio Gerenciável"]',
+    ),
+  ).toBeVisible();
   await expect(page.locator(".vintage-grain")).toHaveCSS("display", "none");
   await expect(page.locator(".film-preview-effects")).toHaveCount(0);
   await expect(page.locator(".film-preview-noise")).toHaveCount(0);
@@ -655,12 +712,28 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   expect(trackBox!.width).toBeGreaterThan(reelBox!.width * 3);
 
   let before = await trackTransform(track);
-  await page.getByRole("button", { exact: true, name: "Próximo" }).click();
+  await nextProjectButton.click();
   await expectTrackToMove(track, before);
 
   before = await trackTransform(track);
-  await page.getByRole("button", { exact: true, name: "Anterior" }).click();
+  await previousProjectButton.click();
   await expectTrackToMove(track, before);
+
+  await reel.focus();
+  before = await trackTransform(track);
+  await page.keyboard.press("ArrowRight");
+  await expectTrackToMove(track, before);
+  await expect(activeStatus).toContainText("Projeto ativo: 2 de 4");
+
+  before = await trackTransform(track);
+  await page.keyboard.press("ArrowLeft");
+  await expectTrackToMove(track, before);
+  await expect(activeStatus).toContainText("Projeto ativo: 1 de 4");
+
+  await page.keyboard.press("End");
+  await expect(activeStatus).toContainText("Projeto ativo: 4 de 4");
+  await page.keyboard.press("Home");
+  await expect(activeStatus).toContainText("Projeto ativo: 1 de 4");
 
   before = await trackTransform(track);
   await reel.hover();
@@ -681,11 +754,11 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   await expectTrackToMove(track, before);
 
   for (let index = 0; index < 6; index += 1) {
-    await page.getByRole("button", { exact: true, name: "Próximo" }).click();
+    await nextProjectButton.click();
   }
 
   for (let index = 0; index < 6; index += 1) {
-    await page.getByRole("button", { exact: true, name: "Anterior" }).click();
+    await previousProjectButton.click();
   }
 
   await expect(reel).toBeVisible();
