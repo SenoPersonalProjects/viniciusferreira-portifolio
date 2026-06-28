@@ -94,4 +94,43 @@ describe("FilmFrame", () => {
       expect(imageWrap?.contains(effect)).toBe(true);
     }
   });
+
+  it("uses project-specific accessible labels for controls", () => {
+    renderFilmFrame();
+
+    const codeLink = screen.getByRole("link", {
+      name: /Código do projeto: Portfólio Gerenciável/i,
+    });
+    const unavailable = screen.getByText("Indisponível");
+
+    expect(codeLink.getAttribute("href")).toBe(
+      "https://github.com/SenoPersonalProjects/viniciusferreira-portifolio",
+    );
+    expect(unavailable.getAttribute("aria-disabled")).toBe("true");
+    expect(unavailable.getAttribute("aria-label")).toBe(
+      "Demonstração indisponível: Portfólio Gerenciável",
+    );
+  });
+
+  it("removes inactive duplicate frames from the tab order", () => {
+    render(
+      <LanguageProvider>
+        <FilmFrame
+          project={projects[0]}
+          index={0}
+          isActive={false}
+          isInteractive={false}
+        />
+      </LanguageProvider>,
+    );
+
+    const frame = screen.getByRole("article");
+    const codeLink = screen.getByRole("link", {
+      name: /Código do projeto: Portfólio Gerenciável/i,
+    });
+
+    expect(frame.getAttribute("tabindex")).toBe("-1");
+    expect(frame.getAttribute("aria-current")).toBeNull();
+    expect(codeLink.getAttribute("tabindex")).toBe("-1");
+  });
 });
