@@ -655,7 +655,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   expect(trackBox!.width).toBeGreaterThan(reelBox!.width * 3);
 
   let before = await trackTransform(track);
-  await page.getByRole("button", { exact: true, name: "Proximo" }).click();
+  await page.getByRole("button", { exact: true, name: "Próximo" }).click();
   await expectTrackToMove(track, before);
 
   before = await trackTransform(track);
@@ -681,7 +681,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   await expectTrackToMove(track, before);
 
   for (let index = 0; index < 6; index += 1) {
-    await page.getByRole("button", { exact: true, name: "Proximo" }).click();
+    await page.getByRole("button", { exact: true, name: "Próximo" }).click();
   }
 
   for (let index = 0; index < 6; index += 1) {

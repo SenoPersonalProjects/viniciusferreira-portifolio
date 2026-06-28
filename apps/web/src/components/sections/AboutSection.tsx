@@ -11,9 +11,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function AboutSection() {
   const { dictionary } = useLanguage();
-  const { content } = usePortfolioData();
+  const { content, source } = usePortfolioData();
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const profileSummary =
+    source === "api" && content.profile.summary
+      ? content.profile.summary
+      : dictionary.profile.summary;
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -79,7 +83,7 @@ export function AboutSection() {
           >
             <div className="space-y-8 font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl">
               <p className="first-letter:font-[var(--font-display)] first-letter:text-5xl first-letter:text-[var(--color-primary)]">
-                {content.profile.summary || dictionary.profile.summary}
+                {profileSummary}
               </p>
 
               <p className="border-t border-[var(--color-border)] pt-8 opacity-90">

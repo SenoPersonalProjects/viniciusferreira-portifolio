@@ -173,6 +173,13 @@ export function RoadmapSection() {
             const position = index % 2 === 0 ? "left" : "right";
             const imageUrl = getRoadmapImage(item);
             const panelId = `roadmap-panel-${item.id}`;
+            const localizedItem =
+              dictionary.roadmap.items[
+                item.id as keyof typeof dictionary.roadmap.items
+              ];
+            const itemTitle = localizedItem?.title ?? item.title;
+            const itemSummary = localizedItem?.summary ?? item.summary;
+            const itemDetails = localizedItem?.details ?? item.details;
             const visualStyle = imageUrl
               ? ({
                   "--roadmap-visual-image": `url(${imageUrl})`,
@@ -202,7 +209,7 @@ export function RoadmapSection() {
                     className="roadmap-item__trigger"
                     aria-controls={panelId}
                     aria-expanded={isActive}
-                    aria-label={`${dictionary.roadmap.selectItem}: ${item.title}`}
+                    aria-label={`${dictionary.roadmap.selectItem}: ${itemTitle}`}
                     onClick={() => setActiveId(item.id)}
                     onFocus={() => setActiveId(item.id)}
                     onMouseEnter={() => setActiveId(item.id)}
@@ -211,7 +218,7 @@ export function RoadmapSection() {
                     <span className="roadmap-item__type">
                       {dictionary.roadmap.types[item.type]}
                     </span>
-                    <span className="roadmap-item__title">{item.title}</span>
+                    <span className="roadmap-item__title">{itemTitle}</span>
                   </button>
 
                   <div
@@ -220,8 +227,8 @@ export function RoadmapSection() {
                     aria-hidden={!isActive}
                   >
                     <div className="roadmap-item__description">
-                      <p>{item.summary}</p>
-                      <p>{item.details}</p>
+                      <p>{itemSummary}</p>
+                      <p>{itemDetails}</p>
 
                       <div
                         className="roadmap-tech-list"
@@ -246,7 +253,7 @@ export function RoadmapSection() {
                         <span>{evidenceCode}</span>
                       </div>
                       <figcaption>
-                        {dictionary.roadmap.types[item.type]} / {item.title}
+                        {dictionary.roadmap.types[item.type]} / {itemTitle}
                       </figcaption>
                     </figure>
                   </div>

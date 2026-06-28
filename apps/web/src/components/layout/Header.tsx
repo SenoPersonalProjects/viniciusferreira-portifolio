@@ -8,34 +8,67 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 export function Header() {
   const { dictionary } = useLanguage();
   const [activeSection, setActiveSection] = useState("home");
+  const navItems = [
+    { id: "about", label: dictionary.header.nav.about },
+    { id: "roadmap", label: dictionary.header.nav.roadmap },
+    { id: "stack", label: dictionary.header.nav.stack },
+    { id: "projects", label: dictionary.header.nav.projects },
+    { id: "contact", label: dictionary.header.nav.contact },
+  ] as const;
 
   useEffect(() => {
     const sectionIds = ["home", "about", "roadmap", "stack", "projects", "contact"];
-    const observerOptions = {
-      root: null,
-      rootMargin: "-45% 0px -45% 0px",
-      threshold: 0,
-    };
+    let frameId = 0;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const id = entry.target.id;
-          if (id === "roadmap" || id === "stack") {
-            setActiveSection("about");
-          } else {
-            setActiveSection(id);
-          }
+    const updateActiveSection = () => {
+      frameId = 0;
+
+      const probeLine = window.innerHeight * 0.48;
+      let closestId = "home";
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      sectionIds.forEach((id) => {
+        const element = document.getElementById(id);
+
+        if (!element) {
+          return;
+        }
+
+        const rect = element.getBoundingClientRect();
+        const containsProbeLine = rect.top <= probeLine && rect.bottom >= probeLine;
+        const distance = containsProbeLine
+          ? 0
+          : Math.min(
+              Math.abs(rect.top - probeLine),
+              Math.abs(rect.bottom - probeLine),
+            );
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestId = id;
         }
       });
-    }, observerOptions);
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+      setActiveSection(closestId);
+    };
 
-    return () => observer.disconnect();
+    const requestUpdate = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
   }, []);
 
   return (
@@ -51,47 +84,24 @@ export function Header() {
           V.F.S.
         </a>
 
-        <nav className="hidden justify-self-center md:flex md:items-center md:gap-10">
-          <a
-            href="#home"
-            className={`border-b-2 pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] transition-all duration-300 ${
-              activeSection === "home"
-                ? "border-[var(--color-primary)] text-[var(--color-foreground)]"
-                : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
-            }`}
-          >
-            {dictionary.header.nav.home}
-          </a>
-          <a
-            href="#projects"
-            className={`border-b-2 pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] transition-all duration-300 ${
-              activeSection === "projects"
-                ? "border-[var(--color-primary)] text-[var(--color-foreground)]"
-                : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
-            }`}
-          >
-            {dictionary.header.nav.projects}
-          </a>
-          <a
-            href="#about"
-            className={`border-b-2 pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] transition-all duration-300 ${
-              activeSection === "about"
-                ? "border-[var(--color-primary)] text-[var(--color-foreground)]"
-                : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
-            }`}
-          >
-            {dictionary.header.nav.about}
-          </a>
-          <a
-            href="#contact"
-            className={`border-b-2 pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] transition-all duration-300 ${
-              activeSection === "contact"
-                ? "border-[var(--color-primary)] text-[var(--color-foreground)]"
-                : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
-            }`}
-          >
-            {dictionary.header.nav.contact}
-          </a>
+        <nav
+          aria-label={dictionary.header.navLabel}
+          className="hidden justify-self-center md:flex md:items-center md:gap-10"
+        >
+          {navItems.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              aria-current={activeSection === item.id ? "true" : undefined}
+              className={`border-b-2 pb-1 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.24em] transition-all duration-300 ${
+                activeSection === item.id
+                  ? "border-[var(--color-primary)] text-[var(--color-foreground)]"
+                  : "border-transparent text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center justify-self-end gap-2">
