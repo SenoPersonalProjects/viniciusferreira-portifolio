@@ -7,7 +7,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function ProjectsSection() {
   const { dictionary } = useLanguage();
-  const { content } = usePortfolioData();
+  const { content, source } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
 
   return (
@@ -25,7 +25,10 @@ export function ProjectsSection() {
           {dictionary.projectsSection.title}
         </h2>
 
-        <FilmReelProjects projects={content.projects} />
+        <FilmReelProjects
+          localizeProjects={source === "fallback"}
+          projects={content.projects}
+        />
       </div>
     </section>
   );

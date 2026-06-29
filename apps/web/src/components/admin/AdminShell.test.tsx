@@ -43,6 +43,7 @@ describe("AdminShell", () => {
     expect(screen.getByRole("navigation").textContent).toContain("Contatos");
     expect(screen.getByRole("navigation").textContent).toContain("Stack");
     expect(screen.getByRole("navigation").textContent).toContain("Trajetória");
+    expect(screen.getByRole("navigation").textContent).toContain("Projetos");
     expect(screen.getByRole("navigation").textContent).toContain(
       "Calibração 3D",
     );

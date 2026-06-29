@@ -94,6 +94,17 @@ function getRoadmapSummary(roadmap: Array<Record<string, unknown>>) {
   )}${typeSummary}`;
 }
 
+function getProjectSummary(projects: Array<Record<string, unknown>>) {
+  const publishedCount = projects.filter((project) => project.published).length;
+  const featuredCount = projects.filter((project) => project.featured).length;
+
+  return `${pluralize(projects.length, "projeto", "projetos")}, ${pluralize(
+    publishedCount,
+    "publicado",
+    "publicados",
+  )}, ${pluralize(featuredCount, "destacado", "destacados")}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -156,9 +167,11 @@ export function AdminDashboard() {
         status: "Editável",
       },
       {
-        description: pluralize(content.projects.length, "projeto", "projetos"),
+        actionLabel: "Gerenciar",
+        description: getProjectSummary(content.projects),
+        href: "/admin/projects",
         label: "Projetos",
-        status: "Read-only",
+        status: "Editável",
       },
       {
         actionLabel: "Gerenciar",
