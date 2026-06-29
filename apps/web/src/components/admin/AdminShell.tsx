@@ -13,6 +13,7 @@ const adminNavItems = [
   { href: "/admin/technologies", label: "Stack" },
   { href: "/admin/roadmap", label: "Trajetória" },
   { href: "/admin/projects", label: "Projetos" },
+  { href: "/admin/site-copy", label: "Textos" },
   { href: "/admin/calibration", label: "Calibração 3D" },
 ] as const;
 

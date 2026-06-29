@@ -124,6 +124,29 @@ function getProjectSummary(projects: Array<Record<string, unknown>>) {
   )}, ${pluralize(featuredCount, "destacado", "destacados")}`;
 }
 
+function getSiteCopySummary(siteCopy: Array<Record<string, unknown>>) {
+  const locales = Array.from(
+    new Set(
+      siteCopy
+        .map((record) => (typeof record.locale === "string" ? record.locale : ""))
+        .filter(Boolean),
+    ),
+  );
+  const uniqueKeys = new Set(
+    siteCopy
+      .map((record) => (typeof record.key === "string" ? record.key : ""))
+      .filter(Boolean),
+  );
+  const localeSummary =
+    locales.length > 0 ? `, locales: ${locales.join(", ")}` : "";
+
+  return `${pluralize(siteCopy.length, "registro", "registros")}, ${pluralize(
+    uniqueKeys.size,
+    "chave única",
+    "chaves únicas",
+  )}${localeSummary}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -189,13 +212,6 @@ export function AdminDashboard() {
       },
       {
         actionLabel: "Gerenciar",
-        description: getProjectSummary(content.projects),
-        href: "/admin/projects",
-        label: "Projetos",
-        status: "Editável",
-      },
-      {
-        actionLabel: "Gerenciar",
         description: getVisibleTechnologySummary(content.technologies),
         href: "/admin/technologies",
         label: "Stack",
@@ -209,9 +225,18 @@ export function AdminDashboard() {
         status: "Editável",
       },
       {
-        description: pluralize(content.siteCopy.length, "texto", "textos"),
+        actionLabel: "Gerenciar",
+        description: getProjectSummary(content.projects),
+        href: "/admin/projects",
+        label: "Projetos",
+        status: "Editável",
+      },
+      {
+        actionLabel: "Gerenciar",
+        description: getSiteCopySummary(content.siteCopy),
+        href: "/admin/site-copy",
         label: "Textos",
-        status: "Read-only",
+        status: "Editável",
       },
       {
         description: "Informações do dossiê serão tratadas em branch futura",
