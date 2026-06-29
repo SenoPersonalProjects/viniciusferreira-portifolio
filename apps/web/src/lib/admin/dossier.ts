@@ -10,6 +10,44 @@ export const DOSSIER_LOCALES = Object.keys(
 
 export type DossierDraft = DossierContent;
 
+export type PersistedDossierContent = {
+  id: string;
+  locale: DossierLocale;
+  fileId: string;
+  classification: string;
+  project: string;
+  subject: string;
+  role: string;
+  status: string;
+  location: string;
+  stack: string[];
+  note: string;
+  stamp: string;
+  mainPhotoUrl: string;
+  polaroidPhotoUrl: string;
+  redactions?: DossierContent["redactions"] | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type DossierOrigin = "database" | "fallback";
+
+export type DossierSavePayload = {
+  fileId: string;
+  classification: string;
+  project: string;
+  subject: string;
+  role: string;
+  status: string;
+  location: string;
+  stack: string[];
+  note: string;
+  stamp: string;
+  mainPhotoUrl: string;
+  polaroidPhotoUrl: string;
+  redactions?: DossierContent["redactions"] | null;
+};
+
 export type DossierFormValues = {
   fileId: string;
   classification: string;
@@ -37,6 +75,17 @@ type ValidationResult =
   | {
       ok: true;
       payload: DossierDraft;
+    };
+
+type SaveValidationResult =
+  | {
+      errors: DossierValidationErrors;
+      ok: false;
+    }
+  | {
+      draft: DossierDraft;
+      ok: true;
+      payload: DossierSavePayload;
     };
 
 type FieldRule = {
@@ -70,6 +119,91 @@ function cloneDossierContent(content: DossierContent): DossierDraft {
   return {
     ...content,
     redactions: content.redactions?.map((redaction) => ({ ...redaction })),
+  };
+}
+
+function normalizePersistedStack(stack: string[]) {
+  return stack.map((item) => item.trim()).filter(Boolean).join(" / ");
+}
+
+function normalizeStackItems(value: string) {
+  const items = Array.from(
+    new Set(
+      value
+        .split(/[\/\n]+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
+
+  if (items.length === 0 || items.length > 30) {
+    return {
+      error: "Informe a stack com 1 a 30 itens.",
+      items,
+    };
+  }
+
+  if (items.some((item) => item.length > 40)) {
+    return {
+      error: "Cada item da stack deve ter ate 40 caracteres.",
+      items,
+    };
+  }
+
+  return {
+    error: null,
+    items,
+  };
+}
+
+function getPersistedByLocale(items: PersistedDossierContent[]) {
+  return DOSSIER_LOCALES.reduce(
+    (byLocale, locale) => ({
+      ...byLocale,
+      [locale]: items.find((item) => item.locale === locale) ?? null,
+    }),
+    {} as Record<DossierLocale, PersistedDossierContent | null>,
+  );
+}
+
+export function createDossierDraftFromPersisted(
+  content: PersistedDossierContent,
+): DossierDraft {
+  return {
+    classification: content.classification,
+    fileId: content.fileId,
+    location: content.location,
+    mainPhotoUrl: content.mainPhotoUrl,
+    note: content.note,
+    polaroidPhotoUrl: content.polaroidPhotoUrl,
+    project: content.project,
+    redactions: Array.isArray(content.redactions)
+      ? content.redactions.map((redaction) => ({ ...redaction }))
+      : undefined,
+    role: content.role,
+    stack: normalizePersistedStack(content.stack),
+    stamp: content.stamp,
+    status: content.status,
+    subject: content.subject,
+  };
+}
+
+export function resolveDossierContentForLocale(
+  locale: DossierLocale,
+  persistedByLocale: Record<DossierLocale, PersistedDossierContent | null>,
+) {
+  const persisted = persistedByLocale[locale];
+
+  if (persisted) {
+    return {
+      content: createDossierDraftFromPersisted(persisted),
+      origin: "database" as const,
+    };
+  }
+
+  return {
+    content: createDossierDraft(dossierByLocale[locale]),
+    origin: "fallback" as const,
   };
 }
 
@@ -158,9 +292,57 @@ export function getInitialDossierPreviewDrafts() {
   );
 }
 
-export function resetDossierDraft(locale: DossierLocale) {
+export function getDossierStateFromPersisted(
+  items: PersistedDossierContent[] = [],
+) {
+  const persistedByLocale = getPersistedByLocale(items);
+
+  return DOSSIER_LOCALES.reduce(
+    (state, locale) => {
+      const resolved = resolveDossierContentForLocale(locale, persistedByLocale);
+
+      return {
+        formValues: {
+          ...state.formValues,
+          [locale]: getDossierFormValues(resolved.content),
+        },
+        origins: {
+          ...state.origins,
+          [locale]: resolved.origin,
+        },
+        persistedByLocale,
+        previews: {
+          ...state.previews,
+          [locale]: createDossierDraft(resolved.content),
+        },
+      };
+    },
+    {
+      formValues: {} as Record<DossierLocale, DossierFormValues>,
+      origins: {} as Record<DossierLocale, DossierOrigin>,
+      persistedByLocale,
+      previews: {} as Record<DossierLocale, DossierDraft>,
+    },
+  );
+}
+
+export function resetDossierDraft(
+  locale: DossierLocale,
+  persistedByLocale?: Record<DossierLocale, PersistedDossierContent | null>,
+) {
+  if (persistedByLocale) {
+    const resolved = resolveDossierContentForLocale(locale, persistedByLocale);
+
+    return {
+      formValues: getDossierFormValues(resolved.content),
+      origin: resolved.origin,
+      preview: createDossierDraft(resolved.content),
+    };
+  }
+
   return {
     formValues: getDossierFormValues(dossierByLocale[locale]),
+    origin: "fallback" as const,
     preview: createDossierDraft(dossierByLocale[locale]),
   };
 }
@@ -216,5 +398,41 @@ export function validateDossierForm(
   return {
     ok: true,
     payload,
+  };
+}
+
+export function validateDossierSavePayload(
+  values: DossierFormValues,
+  currentContent?: DossierContent,
+): SaveValidationResult {
+  const draftResult = validateDossierForm(values, currentContent);
+
+  if (!draftResult.ok) {
+    return draftResult;
+  }
+
+  const stack = normalizeStackItems(values.stack);
+
+  if (stack.error) {
+    return {
+      errors: {
+        stack: stack.error,
+      },
+      ok: false,
+    };
+  }
+
+  const draft = {
+    ...draftResult.payload,
+    stack: stack.items.join(" / "),
+  };
+
+  return {
+    draft,
+    ok: true,
+    payload: {
+      ...draftResult.payload,
+      stack: stack.items,
+    },
   };
 }

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service';
+import { normalizeDossierContentInput } from './dossier-content.validation';
 
 function normalizeSiteCopyValue(value: unknown) {
   if (typeof value === 'string') {
@@ -19,17 +20,25 @@ export class AdminContentService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getDashboardData() {
-    const [profile, contactLinks, technologies, projects, roadmap, siteCopy] =
-      await Promise.all([
-        this.prisma.profile.findFirst({ orderBy: { updatedAt: 'desc' } }),
-        this.prisma.contactLink.findMany({ orderBy: { order: 'asc' } }),
-        this.prisma.technology.findMany({ orderBy: { order: 'asc' } }),
-        this.prisma.project.findMany({ orderBy: { order: 'asc' } }),
-        this.prisma.roadmapItem.findMany({ orderBy: { order: 'asc' } }),
-        this.prisma.siteCopy.findMany({
-          orderBy: [{ key: 'asc' }, { locale: 'asc' }],
-        }),
-      ]);
+    const [
+      profile,
+      contactLinks,
+      technologies,
+      projects,
+      roadmap,
+      siteCopy,
+      dossierContent,
+    ] = await Promise.all([
+      this.prisma.profile.findFirst({ orderBy: { updatedAt: 'desc' } }),
+      this.prisma.contactLink.findMany({ orderBy: { order: 'asc' } }),
+      this.prisma.technology.findMany({ orderBy: { order: 'asc' } }),
+      this.prisma.project.findMany({ orderBy: { order: 'asc' } }),
+      this.prisma.roadmapItem.findMany({ orderBy: { order: 'asc' } }),
+      this.prisma.siteCopy.findMany({
+        orderBy: [{ key: 'asc' }, { locale: 'asc' }],
+      }),
+      this.prisma.dossierContent.findMany({ orderBy: { locale: 'asc' } }),
+    ]);
 
     return {
       profile,
@@ -38,7 +47,26 @@ export class AdminContentService {
       projects,
       roadmap,
       siteCopy,
+      dossierContent,
     };
+  }
+
+  async getDossierContent() {
+    const items = await this.prisma.dossierContent.findMany({
+      orderBy: { locale: 'asc' },
+    });
+
+    return { items };
+  }
+
+  upsertDossierContent(locale: string, body: Record<string, unknown>) {
+    const data = normalizeDossierContentInput(locale, body);
+
+    return this.prisma.dossierContent.upsert({
+      where: { locale: data.locale },
+      update: data as never,
+      create: data as never,
+    });
   }
 
   async updateProfile(body: Record<string, unknown>) {

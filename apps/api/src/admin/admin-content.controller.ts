@@ -22,6 +22,19 @@ export class AdminContentController {
     return this.adminContentService.getDashboardData();
   }
 
+  @Get('dossier')
+  getDossierContent() {
+    return this.adminContentService.getDossierContent();
+  }
+
+  @Put('dossier/:locale')
+  upsertDossierContent(
+    @Param('locale') locale: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    return this.adminContentService.upsertDossierContent(locale, body);
+  }
+
   @Put('profile')
   updateProfile(@Body() body: Record<string, unknown>) {
     return this.adminContentService.updateProfile(body);

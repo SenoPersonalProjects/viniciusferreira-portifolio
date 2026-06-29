@@ -8,6 +8,7 @@ import { useAdminSession } from "@/hooks/useAdminSession";
 
 type AdminContent = {
   contactLinks: Array<Record<string, unknown>>;
+  dossierContent: Array<Record<string, unknown>>;
   profile: Record<string, unknown> | null;
   projects: Array<Record<string, unknown>>;
   roadmap: Array<Record<string, unknown>>;
@@ -22,6 +23,7 @@ type DashboardState =
 
 const emptyAdminContent: AdminContent = {
   contactLinks: [],
+  dossierContent: [],
   profile: null,
   projects: [],
   roadmap: [],
@@ -147,6 +149,22 @@ function getSiteCopySummary(siteCopy: Array<Record<string, unknown>>) {
   )}${localeSummary}`;
 }
 
+function getDossierSummary(dossierContent: Array<Record<string, unknown>>) {
+  const locales = Array.from(
+    new Set(
+      dossierContent
+        .map((record) => (typeof record.locale === "string" ? record.locale : ""))
+        .filter(Boolean),
+    ),
+  );
+
+  if (locales.length === 0) {
+    return "Persistência admin ativa, sem registro no banco";
+  }
+
+  return `Persistência admin ativa, locales no banco: ${locales.join(", ")}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -239,12 +257,11 @@ export function AdminDashboard() {
         status: "Editável",
       },
       {
-        actionLabel: "Pré-visualizar",
-        description:
-          "Contrato visual local com 2 locales disponíveis, sem persistência",
+        actionLabel: "Gerenciar",
+        description: getDossierSummary(content.dossierContent),
         href: "/admin/dossier",
         label: "Dossiê",
-        status: "Preview",
+        status: "Persistente",
       },
       {
         description: "Metadados e preview social serão editáveis depois",

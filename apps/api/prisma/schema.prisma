@@ -93,3 +93,23 @@ model SiteCopy {
 
   @@unique([key, locale])
 }
+
+model DossierContent {
+  id               String   @id @default(cuid())
+  locale           String   @unique
+  fileId           String
+  classification   String
+  project          String
+  subject          String
+  role             String
+  status           String
+  location         String
+  stack            String[]
+  note             String
+  stamp            String
+  mainPhotoUrl     String
+  polaroidPhotoUrl String
+  redactions       Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
