@@ -19,6 +19,7 @@ import type { PortfolioProject } from "@/data/portfolioContent";
 import { FilmFrame } from "@/components/projects/FilmFrame";
 
 type FilmReelProjectsProps = {
+  localizeProjects?: boolean;
   projects: PortfolioProject[];
 };
 
@@ -33,14 +34,17 @@ function getLogicalProjectIndex(snapIndex: number, projectCount: number) {
   return ((snapIndex % projectCount) + projectCount) % projectCount;
 }
 
-export function FilmReelProjects({ projects }: FilmReelProjectsProps) {
+export function FilmReelProjects({
+  localizeProjects = true,
+  projects,
+}: FilmReelProjectsProps) {
   const { dictionary } = useLanguage();
   const instructionsId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const visibleProjects = useMemo(
     () =>
       projects
-        .filter((project) => project.published ?? true)
+        .filter((project) => (project.published ?? true) && (project.featured ?? true))
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
     [projects],
   );
@@ -64,6 +68,10 @@ export function FilmReelProjects({ projects }: FilmReelProjectsProps) {
   const localizedProjects = useMemo(
     () =>
       visibleProjects.map((project) => {
+        if (!localizeProjects) {
+          return project;
+        }
+
         const projectCopy =
           dictionary.projects[
             project.slug as keyof typeof dictionary.projects
@@ -75,7 +83,7 @@ export function FilmReelProjects({ projects }: FilmReelProjectsProps) {
           description: projectCopy?.description ?? project.description,
         };
       }),
-    [dictionary, visibleProjects],
+    [dictionary, localizeProjects, visibleProjects],
   );
 
   // Repetir projetos para garantir loop infinito visual suave
