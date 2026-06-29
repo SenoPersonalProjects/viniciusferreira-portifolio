@@ -76,6 +76,24 @@ function getVisibleTechnologySummary(
   )}, ${pluralize(itemsCount, "item", "itens")}`;
 }
 
+function getRoadmapSummary(roadmap: Array<Record<string, unknown>>) {
+  const publishedCount = roadmap.filter((item) => item.published).length;
+  const types = Array.from(
+    new Set(
+      roadmap
+        .map((item) => (typeof item.type === "string" ? item.type : ""))
+        .filter(Boolean),
+    ),
+  );
+  const typeSummary = types.length > 0 ? `, ${types.join(", ")}` : "";
+
+  return `${pluralize(roadmap.length, "item", "itens")}, ${pluralize(
+    publishedCount,
+    "publicado",
+    "publicados",
+  )}${typeSummary}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -150,9 +168,11 @@ export function AdminDashboard() {
         status: "Editável",
       },
       {
-        description: pluralize(content.roadmap.length, "marco", "marcos"),
+        actionLabel: "Gerenciar",
+        description: getRoadmapSummary(content.roadmap),
+        href: "/admin/roadmap",
         label: "Trajetória",
-        status: "Read-only",
+        status: "Editável",
       },
       {
         description: pluralize(content.siteCopy.length, "texto", "textos"),

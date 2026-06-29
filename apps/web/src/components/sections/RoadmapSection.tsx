@@ -43,7 +43,7 @@ function getRoadmapImage(item: RoadmapItem) {
 
 export function RoadmapSection() {
   const { dictionary } = useLanguage();
-  const { content } = usePortfolioData();
+  const { content, source } = usePortfolioData();
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
   const items = useMemo(
     () =>
@@ -174,9 +174,11 @@ export function RoadmapSection() {
             const imageUrl = getRoadmapImage(item);
             const panelId = `roadmap-panel-${item.id}`;
             const localizedItem =
-              dictionary.roadmap.items[
-                item.id as keyof typeof dictionary.roadmap.items
-              ];
+              source === "fallback"
+                ? dictionary.roadmap.items[
+                    item.id as keyof typeof dictionary.roadmap.items
+                  ]
+                : undefined;
             const itemTitle = localizedItem?.title ?? item.title;
             const itemSummary = localizedItem?.summary ?? item.summary;
             const itemDetails = localizedItem?.details ?? item.details;
