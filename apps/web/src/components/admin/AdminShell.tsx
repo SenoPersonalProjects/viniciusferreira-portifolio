@@ -8,6 +8,7 @@ import { useAdminSession } from "@/hooks/useAdminSession";
 
 const adminNavItems = [
   { href: "/admin", label: "Visão geral" },
+  { href: "/admin/profile", label: "Perfil" },
   { href: "/admin/contacts", label: "Contatos" },
   { href: "/admin/technologies", label: "Stack" },
   { href: "/admin/roadmap", label: "Trajetória" },

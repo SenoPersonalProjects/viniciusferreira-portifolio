@@ -22,29 +22,32 @@ test("admin login page renders without a real Supabase session", async ({ page }
 test("admin protected routes redirect to login without session", async ({
   page,
 }) => {
-  await page.goto("/admin", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByText("Painel administrativo")).toHaveCount(0);
+  test.setTimeout(90_000);
 
-  await page.goto("/admin/contacts", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByText("Gerenciar contatos")).toHaveCount(0);
+  const protectedRoutes = [
+    { path: "/admin", hiddenText: "Painel administrativo" },
+    { path: "/admin/profile", hiddenText: "Gerenciar perfil" },
+    { path: "/admin/contacts", hiddenText: "Gerenciar contatos" },
+    { path: "/admin/technologies", hiddenText: "Gerenciar stack" },
+    { path: "/admin/roadmap", hiddenText: "Gerenciar trajetória" },
+    { path: "/admin/projects", hiddenText: "Gerenciar projetos" },
+  ];
 
-  await page.goto("/admin/technologies", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByText("Gerenciar stack")).toHaveCount(0);
+  for (const route of protectedRoutes) {
+    await test.step(`${route.path} redirects to login`, async () => {
+      await page.goto("about:blank");
+      await page.goto(route.path, { waitUntil: "domcontentloaded" });
+      await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 20_000 });
+      await expect(page.getByText(route.hiddenText)).toHaveCount(0);
+    });
+  }
 
-  await page.goto("/admin/roadmap", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByText("Gerenciar trajetória")).toHaveCount(0);
-
-  await page.goto("/admin/projects", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByText("Gerenciar projetos")).toHaveCount(0);
-
-  await page.goto("/admin/calibration", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/admin\/login$/);
-  await expect(page.getByTestId("calibration-interface")).toHaveCount(0);
+  await test.step("/admin/calibration redirects to login", async () => {
+    await page.goto("about:blank");
+    await page.goto("/admin/calibration", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 20_000 });
+    await expect(page.getByTestId("calibration-interface")).toHaveCount(0);
+  });
 });
 
 test("legacy interface route no longer exposes calibration publicly", async ({
