@@ -1,19 +1,135 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service';
 import type { Locale, PortfolioContent } from './portfolio.types';
 
+type PublicDossierLocale = 'pt' | 'en';
+
+type PublicDossierRedaction = {
+  h: number;
+  w: number;
+  x: number;
+  y: number;
+};
+
+type PublicDossierContent = {
+  classification: string;
+  fileId: string;
+  location: string;
+  mainPhotoUrl: string;
+  note: string;
+  polaroidPhotoUrl: string;
+  project: string;
+  redactions?: PublicDossierRedaction[];
+  role: string;
+  stack: string[];
+  stamp: string;
+  status: string;
+  subject: string;
+};
+
+type PublicDossierResponse =
+  | {
+      content: PublicDossierContent;
+      source: 'database';
+    }
+  | {
+      content: null;
+      source: 'empty';
+    };
+
 function resolveLocale(locale?: string): Locale {
   return locale === 'en' ? 'en' : 'pt-BR';
+}
+
+function resolveDossierLocale(locale?: string): PublicDossierLocale {
+  if (!locale) {
+    return 'pt';
+  }
+
+  const normalized = locale.trim();
+
+  if (normalized === 'pt' || normalized === 'en') {
+    return normalized;
+  }
+
+  throw new BadRequestException('Locale do dossie invalido');
 }
 
 function isEmailUrl(url: string) {
   return url.startsWith('mailto:') ? url.replace('mailto:', '') : '';
 }
 
+function isPublicDossierRedaction(
+  value: unknown,
+): value is PublicDossierRedaction {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const redaction = value as Record<string, unknown>;
+
+  return ['h', 'w', 'x', 'y'].every(
+    (key) =>
+      typeof redaction[key] === 'number' && Number.isFinite(redaction[key]),
+  );
+}
+
+function getPublicRedactions(value: unknown) {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  if (!value.every(isPublicDossierRedaction)) {
+    return undefined;
+  }
+
+  return value.map((redaction) => ({
+    h: redaction.h,
+    w: redaction.w,
+    x: redaction.x,
+    y: redaction.y,
+  }));
+}
+
 @Injectable()
 export class PortfolioService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getPublicDossier(localeQuery?: string): Promise<PublicDossierResponse> {
+    const locale = resolveDossierLocale(localeQuery);
+    const dossier = await this.prisma.dossierContent.findUnique({
+      where: { locale },
+    });
+
+    if (!dossier) {
+      return {
+        content: null,
+        source: 'empty',
+      };
+    }
+
+    const redactions = getPublicRedactions(dossier.redactions);
+
+    return {
+      content: {
+        classification: dossier.classification,
+        fileId: dossier.fileId,
+        location: dossier.location,
+        mainPhotoUrl: dossier.mainPhotoUrl,
+        note: dossier.note,
+        polaroidPhotoUrl: dossier.polaroidPhotoUrl,
+        project: dossier.project,
+        ...(redactions ? { redactions } : {}),
+        role: dossier.role,
+        stack: dossier.stack,
+        stamp: dossier.stamp,
+        status: dossier.status,
+        subject: dossier.subject,
+      },
+      source: 'database',
+    };
+  }
 
   async getPublicPortfolio(localeQuery?: string): Promise<PortfolioContent> {
     const locale = resolveLocale(localeQuery);

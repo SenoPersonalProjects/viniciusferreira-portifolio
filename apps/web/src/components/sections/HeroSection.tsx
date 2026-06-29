@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { useLayoutEffect, useRef, useState } from "react";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
-import { dossierByLocale, type DossierLocale } from "@/data/dossier";
+import type { DossierLocale } from "@/data/dossier";
+import { useDossierContent } from "@/hooks/useDossierContent";
 
 const DossierCanvas = dynamic(
   () =>
@@ -117,6 +118,7 @@ export function HeroSection() {
   const { isHeroActive, sectionRef } = useHeroActive();
   const { language } = useLanguage();
   const dossierLocale: DossierLocale = language === "en" ? "en" : "pt";
+  const { content: dossierContent } = useDossierContent(dossierLocale);
 
   return (
     <section
@@ -127,7 +129,7 @@ export function HeroSection() {
     >
       <div className="dossier-hero__stage flex min-h-[calc(100svh-66px)] w-screen items-start justify-center">
         <DossierCanvas
-          content={dossierByLocale[dossierLocale]}
+          content={dossierContent}
           locale={dossierLocale}
           isHeroActive={isHeroActive}
         />
