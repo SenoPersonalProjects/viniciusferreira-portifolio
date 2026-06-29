@@ -9,6 +9,7 @@ async function main() {
   await prisma.project.deleteMany();
   await prisma.roadmapItem.deleteMany();
   await prisma.siteCopy.deleteMany();
+  await prisma.dossierContent.deleteMany();
 
   await prisma.profile.create({
     data: {
@@ -242,6 +243,75 @@ async function main() {
       },
     ],
   });
+
+  await Promise.all([
+    prisma.dossierContent.upsert({
+      where: { locale: 'pt' },
+      update: {
+        classification: 'CONFIDENCIAL',
+        fileId: 'VF-026',
+        location: 'BRASIL',
+        mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+        note: 'Desenvolvedor full stack com foco em aplicacoes web gerenciaveis, interfaces responsivas e APIs bem estruturadas.',
+        polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+        project: 'PORTFOLIO GERENCIAVEL',
+        redactions: undefined,
+        role: 'DESENVOLVEDOR FULL STACK',
+        stack: ['NEXT.JS', 'NESTJS', 'TYPESCRIPT'],
+        stamp: 'CONFIDENCIAL',
+        status: 'ATIVO',
+        subject: 'VINICIUS FERREIRA',
+      },
+      create: {
+        classification: 'CONFIDENCIAL',
+        fileId: 'VF-026',
+        locale: 'pt',
+        location: 'BRASIL',
+        mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+        note: 'Desenvolvedor full stack com foco em aplicacoes web gerenciaveis, interfaces responsivas e APIs bem estruturadas.',
+        polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+        project: 'PORTFOLIO GERENCIAVEL',
+        role: 'DESENVOLVEDOR FULL STACK',
+        stack: ['NEXT.JS', 'NESTJS', 'TYPESCRIPT'],
+        stamp: 'CONFIDENCIAL',
+        status: 'ATIVO',
+        subject: 'VINICIUS FERREIRA',
+      },
+    }),
+    prisma.dossierContent.upsert({
+      where: { locale: 'en' },
+      update: {
+        classification: 'CLASSIFIED',
+        fileId: 'VF-026',
+        location: 'BRAZIL',
+        mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+        note: 'Full stack developer focused on manageable web applications, responsive interfaces, and well-structured APIs.',
+        polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+        project: 'MANAGEABLE PORTFOLIO',
+        redactions: undefined,
+        role: 'FULL STACK DEVELOPER',
+        stack: ['NEXT.JS', 'NESTJS', 'TYPESCRIPT'],
+        stamp: 'CLASSIFIED',
+        status: 'ACTIVE',
+        subject: 'VINICIUS FERREIRA',
+      },
+      create: {
+        classification: 'CLASSIFIED',
+        fileId: 'VF-026',
+        locale: 'en',
+        location: 'BRAZIL',
+        mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+        note: 'Full stack developer focused on manageable web applications, responsive interfaces, and well-structured APIs.',
+        polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+        project: 'MANAGEABLE PORTFOLIO',
+        role: 'FULL STACK DEVELOPER',
+        stack: ['NEXT.JS', 'NESTJS', 'TYPESCRIPT'],
+        stamp: 'CLASSIFIED',
+        status: 'ACTIVE',
+        subject: 'VINICIUS FERREIRA',
+      },
+    }),
+  ]);
 }
 
 main()

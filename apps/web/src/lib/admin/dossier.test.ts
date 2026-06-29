@@ -2,10 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { dossierByLocale, type DossierContent } from "@/data/dossier";
 import {
+  createDossierDraftFromPersisted,
   createDossierDraft,
+  getDossierStateFromPersisted,
   getDossierFormValues,
   resetDossierDraft,
   validateDossierForm,
+  validateDossierSavePayload,
 } from "@/lib/admin/dossier";
 
 describe("admin dossier helper", () => {
@@ -89,5 +92,55 @@ describe("admin dossier helper", () => {
     expect(reset.formValues.note).toBe(dossierByLocale.pt.note);
     expect(reset.preview).toEqual(dossierByLocale.pt);
     expect(reset.preview).not.toBe(dossierByLocale.pt);
+  });
+
+  it("maps persisted records to a local draft shape", () => {
+    const draft = createDossierDraftFromPersisted({
+      ...dossierByLocale.en,
+      createdAt: "2026-06-29T00:00:00.000Z",
+      id: "dossier-en",
+      locale: "en",
+      redactions: [{ h: 4, w: 3, x: 1, y: 2 }],
+      stack: ["NEXT.JS", "NESTJS", "TYPESCRIPT"],
+      updatedAt: "2026-06-29T00:00:00.000Z",
+    });
+
+    expect(draft.stack).toBe("NEXT.JS / NESTJS / TYPESCRIPT");
+    expect(draft.note).toBe(dossierByLocale.en.note);
+    expect(draft.redactions?.[0]?.x).toBe(1);
+  });
+
+  it("uses database records when present and fallback local otherwise", () => {
+    const state = getDossierStateFromPersisted([
+      {
+        ...dossierByLocale.en,
+        id: "dossier-en",
+        locale: "en",
+        stack: ["NEXT.JS", "NESTJS"],
+      },
+    ]);
+
+    expect(state.origins.en).toBe("database");
+    expect(state.origins.pt).toBe("fallback");
+    expect(state.previews.en.stack).toBe("NEXT.JS / NESTJS");
+    expect(state.previews.pt).toEqual(dossierByLocale.pt);
+  });
+
+  it("prepares a normalized persistence payload without mutating local content", () => {
+    const result = validateDossierSavePayload(
+      {
+        ...getDossierFormValues(dossierByLocale.pt),
+        stack: " Next.js / NestJS / Next.js ",
+      },
+      dossierByLocale.pt,
+    );
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.payload.stack).toEqual(["Next.js", "NestJS"]);
+      expect(result.draft.stack).toBe("Next.js / NestJS");
+      expect(dossierByLocale.pt.stack).toBe("NEXT.JS / NESTJS / TYPESCRIPT");
+    }
   });
 });
