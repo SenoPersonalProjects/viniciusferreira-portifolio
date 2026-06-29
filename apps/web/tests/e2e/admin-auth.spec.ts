@@ -31,6 +31,7 @@ test("admin protected routes redirect to login without session", async ({
     { path: "/admin/technologies", hiddenText: "Gerenciar stack" },
     { path: "/admin/roadmap", hiddenText: "Gerenciar trajetória" },
     { path: "/admin/projects", hiddenText: "Gerenciar projetos" },
+    { path: "/admin/site-copy", hiddenText: "Gerenciar textos" },
   ];
 
   for (const route of protectedRoutes) {
