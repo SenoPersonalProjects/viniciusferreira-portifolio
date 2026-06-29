@@ -49,6 +49,25 @@ function pluralize(count: number, singular: string, plural: string) {
   return count === 1 ? `${count} ${singular}` : `${count} ${plural}`;
 }
 
+function getStringValue(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : null;
+}
+
+function getProfileSummary(profile: Record<string, unknown> | null) {
+  if (!profile) {
+    return "Nome, cargo e localização não configurados";
+  }
+
+  const name = getStringValue(profile.name) ?? "Nome não configurado";
+  const role = getStringValue(profile.rolePt) ?? "Cargo PT não configurado";
+  const location =
+    getStringValue(profile.locationPt) ?? "Localização PT não configurada";
+
+  return `${name}, ${role}, ${location}`;
+}
+
 function getVisibleContactSummary(contactLinks: Array<Record<string, unknown>>) {
   const visibleCount = contactLinks.filter((link) => link.visible).length;
 
@@ -155,9 +174,11 @@ export function AdminDashboard() {
   const modules = useMemo(
     () => [
       {
-        description: content.profile ? "Perfil carregado" : "Sem perfil salvo",
+        actionLabel: "Gerenciar",
+        description: getProfileSummary(content.profile),
+        href: "/admin/profile",
         label: "Perfil",
-        status: content.profile ? "Disponível" : "Sem dados",
+        status: content.profile ? "Editável" : "Sem dados",
       },
       {
         actionLabel: "Gerenciar",
