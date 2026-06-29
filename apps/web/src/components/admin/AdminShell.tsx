@@ -14,6 +14,7 @@ const adminNavItems = [
   { href: "/admin/roadmap", label: "Trajetória" },
   { href: "/admin/projects", label: "Projetos" },
   { href: "/admin/site-copy", label: "Textos" },
+  { href: "/admin/dossier", label: "Dossiê" },
   { href: "/admin/calibration", label: "Calibração 3D" },
 ] as const;
 

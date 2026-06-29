@@ -239,9 +239,12 @@ export function AdminDashboard() {
         status: "Editável",
       },
       {
-        description: "Informações do dossiê serão tratadas em branch futura",
+        actionLabel: "Pré-visualizar",
+        description:
+          "Contrato visual local com 2 locales disponíveis, sem persistência",
+        href: "/admin/dossier",
         label: "Dossiê",
-        status: "Planejado",
+        status: "Preview",
       },
       {
         description: "Metadados e preview social serão editáveis depois",
