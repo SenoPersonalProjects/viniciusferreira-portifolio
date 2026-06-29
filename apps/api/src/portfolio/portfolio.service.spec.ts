@@ -1,7 +1,12 @@
+import { BadRequestException } from '@nestjs/common';
+
 import { PortfolioService } from './portfolio.service';
 
 describe('PortfolioService', () => {
   const prisma = {
+    dossierContent: {
+      findUnique: jest.fn(),
+    },
     profile: {
       findFirst: jest.fn(),
     },
@@ -141,5 +146,108 @@ describe('PortfolioService', () => {
         },
       ],
     });
+  });
+
+  it('returns the public dossier from the database without admin fields', async () => {
+    prisma.dossierContent.findUnique.mockResolvedValue({
+      classification: 'CLASSIFIED',
+      createdAt: new Date('2026-06-29T00:00:00.000Z'),
+      fileId: 'VF-026',
+      id: 'dossier-en',
+      locale: 'en',
+      location: 'BRAZIL',
+      mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+      note: 'Public note',
+      polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+      project: 'MANAGEABLE PORTFOLIO',
+      redactions: [{ h: 4, w: 3, x: 1, y: 2 }],
+      role: 'FULL STACK DEVELOPER',
+      stack: ['NEXT.JS', 'NESTJS'],
+      stamp: 'CLASSIFIED',
+      status: 'ACTIVE',
+      subject: 'VINICIUS FERREIRA',
+      updatedAt: new Date('2026-06-29T00:00:00.000Z'),
+    });
+
+    const service = new PortfolioService(prisma as never);
+    const result = await service.getPublicDossier('en');
+
+    expect(prisma.dossierContent.findUnique).toHaveBeenCalledWith({
+      where: { locale: 'en' },
+    });
+    expect(result).toEqual({
+      content: {
+        classification: 'CLASSIFIED',
+        fileId: 'VF-026',
+        location: 'BRAZIL',
+        mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+        note: 'Public note',
+        polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+        project: 'MANAGEABLE PORTFOLIO',
+        redactions: [{ h: 4, w: 3, x: 1, y: 2 }],
+        role: 'FULL STACK DEVELOPER',
+        stack: ['NEXT.JS', 'NESTJS'],
+        stamp: 'CLASSIFIED',
+        status: 'ACTIVE',
+        subject: 'VINICIUS FERREIRA',
+      },
+      source: 'database',
+    });
+    expect(JSON.stringify(result)).not.toContain('dossier-en');
+    expect(JSON.stringify(result)).not.toContain('createdAt');
+  });
+
+  it('uses pt as the default public dossier locale', async () => {
+    prisma.dossierContent.findUnique.mockResolvedValue(null);
+
+    const service = new PortfolioService(prisma as never);
+
+    await expect(service.getPublicDossier()).resolves.toEqual({
+      content: null,
+      source: 'empty',
+    });
+    expect(prisma.dossierContent.findUnique).toHaveBeenCalledWith({
+      where: { locale: 'pt' },
+    });
+  });
+
+  it('rejects invalid public dossier locales', async () => {
+    const service = new PortfolioService(prisma as never);
+
+    await expect(service.getPublicDossier('pt-BR')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('omits incompatible public dossier redactions', async () => {
+    prisma.dossierContent.findUnique.mockResolvedValue({
+      classification: 'CONFIDENCIAL',
+      fileId: 'VF-026',
+      location: 'BRASIL',
+      mainPhotoUrl: '/profile/detective/individual-1.jpeg',
+      note: 'Nota publica',
+      polaroidPhotoUrl: '/profile/detective/individual-2.jpeg',
+      project: 'PORTFOLIO GERENCIAVEL',
+      redactions: { invalid: true },
+      role: 'DESENVOLVEDOR FULL STACK',
+      stack: ['NEXT.JS'],
+      stamp: 'CONFIDENCIAL',
+      status: 'ATIVO',
+      subject: 'VINICIUS FERREIRA',
+    });
+
+    const service = new PortfolioService(prisma as never);
+    const result = await service.getPublicDossier('pt');
+
+    expect(result).toMatchObject({
+      content: {
+        note: 'Nota publica',
+      },
+      source: 'database',
+    });
+
+    if (result.content) {
+      expect(result.content.redactions).toBeUndefined();
+    }
   });
 });
