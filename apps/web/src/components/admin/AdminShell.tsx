@@ -7,7 +7,8 @@ import { type ReactNode, useEffect } from "react";
 import { useAdminSession } from "@/hooks/useAdminSession";
 
 const adminNavItems = [
-  { href: "/admin", label: "Painel" },
+  { href: "/admin", label: "Visão geral" },
+  { href: "/admin/contacts", label: "Contatos" },
   { href: "/admin/calibration", label: "Calibração 3D" },
 ] as const;
 

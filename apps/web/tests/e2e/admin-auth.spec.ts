@@ -19,12 +19,16 @@ test("admin login page renders without a real Supabase session", async ({ page }
   ).toBeVisible();
 });
 
-test("admin dashboard and calibration redirect to login without session", async ({
+test("admin protected routes redirect to login without session", async ({
   page,
 }) => {
   await page.goto("/admin", { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/\/admin\/login$/);
   await expect(page.getByText("Painel administrativo")).toHaveCount(0);
+
+  await page.goto("/admin/contacts", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page.getByText("Gerenciar contatos")).toHaveCount(0);
 
   await page.goto("/admin/calibration", { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/\/admin\/login$/);

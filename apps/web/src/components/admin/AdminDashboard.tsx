@@ -49,6 +49,16 @@ function pluralize(count: number, singular: string, plural: string) {
   return count === 1 ? `${count} ${singular}` : `${count} ${plural}`;
 }
 
+function getVisibleContactSummary(contactLinks: Array<Record<string, unknown>>) {
+  const visibleCount = contactLinks.filter((link) => link.visible).length;
+
+  return `${pluralize(contactLinks.length, "link", "links")}, ${pluralize(
+    visibleCount,
+    "visível",
+    "visíveis",
+  )}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -104,9 +114,11 @@ export function AdminDashboard() {
         status: content.profile ? "Disponível" : "Sem dados",
       },
       {
-        description: pluralize(content.contactLinks.length, "link", "links"),
+        actionLabel: "Gerenciar",
+        description: getVisibleContactSummary(content.contactLinks),
+        href: "/admin/contacts",
         label: "Contatos",
-        status: "Read-only",
+        status: "Editável",
       },
       {
         description: pluralize(content.projects.length, "projeto", "projetos"),
@@ -203,6 +215,11 @@ export function AdminDashboard() {
               <p className="mt-5 font-[var(--font-body)] text-sm leading-relaxed text-[var(--color-muted)]">
                 {module.description}
               </p>
+              {module.actionLabel ? (
+                <p className="mt-5 font-[var(--font-industrial)] text-[10px] uppercase tracking-[0.22em] text-[var(--color-primary)]">
+                  {module.actionLabel}
+                </p>
+              ) : null}
             </article>
           );
 
