@@ -59,6 +59,23 @@ function getVisibleContactSummary(contactLinks: Array<Record<string, unknown>>) 
   )}`;
 }
 
+function getVisibleTechnologySummary(
+  technologies: Array<Record<string, unknown>>,
+) {
+  const visibleCount = technologies.filter(
+    (technology) => technology.visible,
+  ).length;
+  const itemsCount = technologies.reduce((total, technology) => {
+    return total + (Array.isArray(technology.items) ? technology.items.length : 0);
+  }, 0);
+
+  return `${pluralize(technologies.length, "grupo", "grupos")}, ${pluralize(
+    visibleCount,
+    "visível",
+    "visíveis",
+  )}, ${pluralize(itemsCount, "item", "itens")}`;
+}
+
 export function AdminDashboard() {
   const { accessToken } = useAdminSession();
   const [state, setState] = useState<DashboardState>({
@@ -126,9 +143,11 @@ export function AdminDashboard() {
         status: "Read-only",
       },
       {
-        description: pluralize(content.technologies.length, "grupo", "grupos"),
+        actionLabel: "Gerenciar",
+        description: getVisibleTechnologySummary(content.technologies),
+        href: "/admin/technologies",
         label: "Stack",
-        status: "Read-only",
+        status: "Editável",
       },
       {
         description: pluralize(content.roadmap.length, "marco", "marcos"),
