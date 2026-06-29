@@ -6,11 +6,14 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function StackSection() {
   const { dictionary } = useLanguage();
-  const { content } = usePortfolioData();
+  const { content, source } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
   const localizedStack = content.technologies.map((group, index) => ({
     ...group,
-    category: dictionary.stack.categories[index] ?? group.category,
+    category:
+      source === "fallback"
+        ? (dictionary.stack.categories[index] ?? group.category)
+        : group.category,
   }));
 
   return (
@@ -39,7 +42,7 @@ export function StackSection() {
             >
               <div className="absolute right-4 top-4 opacity-10">
                 <p className="font-[var(--font-industrial)] text-4xl font-normal uppercase tracking-[0.16em]">
-                {group.category.substring(0, 3)}
+                  {group.category.substring(0, 3)}
                 </p>
               </div>
 

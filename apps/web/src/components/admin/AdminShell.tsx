@@ -9,6 +9,7 @@ import { useAdminSession } from "@/hooks/useAdminSession";
 const adminNavItems = [
   { href: "/admin", label: "Visão geral" },
   { href: "/admin/contacts", label: "Contatos" },
+  { href: "/admin/technologies", label: "Stack" },
   { href: "/admin/calibration", label: "Calibração 3D" },
 ] as const;
 
