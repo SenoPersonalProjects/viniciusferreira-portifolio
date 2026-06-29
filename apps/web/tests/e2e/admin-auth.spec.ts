@@ -34,6 +34,10 @@ test("admin protected routes redirect to login without session", async ({
   await expect(page).toHaveURL(/\/admin\/login$/);
   await expect(page.getByText("Gerenciar stack")).toHaveCount(0);
 
+  await page.goto("/admin/roadmap", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page.getByText("Gerenciar trajetória")).toHaveCount(0);
+
   await page.goto("/admin/calibration", { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/\/admin\/login$/);
   await expect(page.getByTestId("calibration-interface")).toHaveCount(0);
