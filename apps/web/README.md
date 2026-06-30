@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Web
 
-## Getting Started
+Aplicacao frontend do portfolio pessoal gerenciavel de Vinicius Ferreira.
 
-First, run the development server:
+## Proposito
+
+O frontend apresenta perfil profissional, stack tecnica, projetos, contatos e uma experiencia visual vintage/noir baseada em dossie 3D, arquivo confidencial e rolo de filme.
+
+Nao ha experiencia visual alternativa no produto atual. O usuario pode alternar apenas o modo de cor entre `system`, `light` e `dark`.
+
+## Arquivos principais
+
+- `src/app/page.tsx`: composicao da pagina publica.
+- `src/app/globals.css`: estilos globais, classes semanticas e efeitos vintage/noir.
+- `src/styles/themes.css`: tokens de cor e tipografia para claro/escuro.
+- `src/components/providers/AppearanceProvider.tsx`: modo de cor e atributos globais.
+- `src/components/three/dossier/`: runtime e texturas do dossie 3D.
+- `src/components/projects/`: carrossel de projetos em rolo de filme.
+- `src/data/`: conteudo estatico usado como fallback.
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm --filter web dev
+pnpm --filter web build
+pnpm --filter web lint
+pnpm --filter web test:unit
+pnpm --filter web test:e2e
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

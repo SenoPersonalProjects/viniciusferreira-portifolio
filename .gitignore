@@ -10,6 +10,10 @@ out
 dist
 build
 coverage
+playwright-report
+test-results
+apps/web/playwright-report
+apps/web/test-results
 
 # env
 .env
@@ -42,3 +46,8 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea
+
+# ai agents
+PROMPT.md
+AGENTS.md
+design.MD

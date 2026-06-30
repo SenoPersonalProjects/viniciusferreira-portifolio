@@ -2,13 +2,13 @@ export const profile = {
   name: "Vinicius Ferreira",
   role: "Desenvolvedor Full Stack",
   headline:
-    "Crio aplicações web modernas, performáticas e bem estruturadas, conectando frontend, backend e experiência do usuário.",
+    "Desenvolvo interfaces e APIs para produtos web que precisam ser claros, rápidos e fáceis de evoluir.",
   location: "Brasil",
   summary:
-    "Sou desenvolvedor com foco em soluções web utilizando tecnologias como Next.js, NestJS, TypeScript e Node.js. Este portfólio apresenta minha trajetória, stack e projetos através de duas experiências visuais distintas.",
+    "Sou desenvolvedor full stack com foco em Next.js, React, NestJS, Node.js e TypeScript. Conecto experiência de uso, arquitetura de frontend e APIs bem organizadas para transformar ideias em produtos web gerenciáveis.",
   socialLinks: {
     github: "https://github.com/SenoPersonalProjects",
     linkedin: "",
-    email: ""
-  }
+    email: "",
+  },
 };

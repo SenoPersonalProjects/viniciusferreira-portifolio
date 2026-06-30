@@ -1,25 +1,23 @@
 "use client";
 
-import { useExperience } from "@/components/providers/ExperienceProvider";
+import { useAppearance } from "@/components/providers/AppearanceProvider";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export function ColorModeToggle() {
-  const { colorModePreference, cycleColorMode } = useExperience();
-
-  const labelMap = {
-    system: "Sistema",
-    light: "Claro",
-    dark: "Escuro",
-  } as const;
+  const { colorModePreference, cycleColorMode } = useAppearance();
+  const { dictionary } = useLanguage();
+  const label = dictionary.colorMode.labels[colorModePreference];
 
   return (
     <button
       type="button"
       onClick={cycleColorMode}
-      className="rounded-none border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 font-[var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-      aria-label={`Modo de cor atual: ${labelMap[colorModePreference]}. Clique para alternar.`}
-      title={`Modo de cor: ${labelMap[colorModePreference]}`}
+      className="h-9 rounded-none border border-[var(--color-border)] bg-[var(--color-surface-soft)] px-2 font-[var(--font-industrial)] text-[10px] font-normal uppercase tracking-[0.14em] text-[var(--color-foreground)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] sm:px-4 sm:tracking-[0.22em]"
+      aria-label={`${dictionary.colorMode.ariaPrefix}: ${label}. ${dictionary.colorMode.ariaSuffix}`}
+      title={`${dictionary.colorMode.titlePrefix}: ${label}`}
+      data-testid="color-mode-toggle"
     >
-      {labelMap[colorModePreference]}
+      {label}
     </button>
   );
 }

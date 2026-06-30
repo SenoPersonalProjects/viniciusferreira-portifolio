@@ -1,115 +1,65 @@
 # Design System
 
-## Direção visual
+## Direcao visual
 
-O portfólio terá duas experiências visuais principais:
+O portfolio usa uma unica experiencia visual: vintage/noir.
 
-- **Modern:** estética tecnológica, escura, com detalhes em neon.
-- **Vintage:** estética preto e branco, inspirada entre as décadas de 1930 e 1950.
+A estetica combina cinema antigo, dossie confidencial, arquivo investigativo, rolo de filme, papel, tinta, granulado, halftone e composicao editorial. O modo claro deve parecer papel/tinta. O modo escuro deve se aproximar de filme antigo/noir.
 
-## Princípios
+## Principios
 
-- O conteúdo deve ser compartilhado entre as experiências.
-- A troca visual não deve alterar a estrutura principal dos dados.
-- Os temas devem ser controlados por tokens.
-- Componentes devem usar variáveis semânticas, não cores fixas.
-- A interface deve ser responsiva, acessível e performática.
+- A direcao visual e sempre vintage/noir.
+- O conteudo deve vir do README, dados, schemas, seeds e componentes reais.
+- Os modos `system`, `light` e `dark` alteram somente a leitura de cor da experiencia vintage/noir.
+- Componentes devem usar variaveis semanticas, nao cores fixas, quando a cor fizer parte do tema.
+- A interface deve ser responsiva, acessivel e performatica.
 
-## Experiência Modern
+## Tokens
 
-Características:
-
-- Fundo escuro.
-- Detalhes em neon.
-- Alto contraste.
-- Gradientes sutis.
-- Elementos tecnológicos.
-- Animações mais presentes.
-- Sensação de interface futurista.
-
-Tokens iniciais:
+Os tokens principais ficam em `apps/web/src/styles/themes.css`.
 
 ```css
-:root[data-experience="modern"] {
-  --background: #030712;
-  --foreground: #f8fafc;
-  --primary: #22d3ee;
-  --secondary: #a855f7;
-  --muted: #94a3b8;
-  --surface: #111827;
-  --border: #1f2937;
+:root {
+  --color-background: #0d0d0d;
+  --color-foreground: #e8e4db;
+  --color-primary: #e8e4db;
+  --color-muted: #8c8882;
+  --color-surface: #121212;
+  --color-border: rgba(232, 228, 219, 0.85);
+}
+
+:root[data-color-mode="light"] {
+  --color-background: #f4f1ea;
+  --color-foreground: #111111;
+  --color-primary: #111111;
+  --color-muted: #4a4a4a;
+  --color-surface: #fffaf0;
+  --color-border: #111111;
 }
 ```
 
-## Experiência Vintage
-
-Características:
-
-- Preto e branco.
-- Inspiração editorial.
-- Alto uso de contraste tipográfico.
-- Texturas leves de papel ou filme.
-- Bordas clássicas.
-- Animações mais discretas.
-- Sensação de pôster, jornal ou cinema antigo.
-
-Tokens iniciais:
-
-```css
-:root[data-experience="vintage"] {
-  --background: #f5f1e8;
-  --foreground: #111111;
-  --primary: #111111;
-  --secondary: #4b4b4b;
-  --muted: #777777;
-  --surface: #fffaf0;
-  --border: #222222;
-}
-```
-
-## Componentes iniciais
+## Componentes principais
 
 - Header
 - Footer
-- ExperienceToggle
-- HeroSection
+- ColorModeToggle
+- HeroSection com dossie 3D
 - AboutSection
 - StackSection
-- ProjectsSection
-- ContactSection
-- ProjectCard
-- StackBadge
+- FilmReelProjects
+- ContactSection com telefone vintage
 
 ## Tipografia
 
-Sugestão inicial:
+- Fonte display vintage para titulos editoriais.
+- Fonte industrial para labels, navegacao, marcadores e botoes.
+- Fonte typewriter para textos de arquivo e dossie.
+- Fonte sans-serif limpa para leitura longa.
 
-### Modern
+## Animacoes
 
-- Fonte principal: Sans-serif moderna
-- Uso de pesos médios e fortes
-- Espaçamento generoso
-- Letras com aparência tecnológica
-
-### Vintage
-
-- Fonte principal: Serifada ou display
-- Fonte auxiliar: Sans-serif simples
-- Composição inspirada em jornal, pôster ou cinema clássico
-
-## Animações
-
-### Modern
-
-- Glow
-- Hover com brilho
-- Transições suaves
-- Efeitos de linha ou scan
-- Microinterações em cards
-
-### Vintage
-
-- Fade discreto
-- Movimento sutil
-- Efeito de granulação
-- Transições com aparência cinematográfica
+- Flicker discreto.
+- Movimento sutil de dossie e props 3D.
+- Granulado, ruido e textura de filme.
+- Preview de projetos com efeito de pelicula apenas em hover/focus.
+- Sempre respeitar `prefers-reduced-motion`.

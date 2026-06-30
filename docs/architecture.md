@@ -15,7 +15,7 @@ A aplicação é dividida em duas partes principais:
 - Manter o projeto organizado em um único repositório.
 - Permitir compartilhamento futuro de tipos e configurações.
 - Facilitar evolução para um painel administrativo.
-- Permitir troca de experiências visuais sem duplicar conteúdo.
+- Manter a experiência visual vintage/noir sem duplicar conteúdo.
 
 ## Estrutura
 
@@ -51,7 +51,7 @@ docs/
 O frontend será responsável por:
 
 - Apresentar o portfólio público.
-- Renderizar as duas experiências visuais.
+- Renderizar a experiência visual vintage/noir.
 - Consumir dados mockados inicialmente.
 - Consumir a API posteriormente.
 - Futuramente, disponibilizar uma área administrativa.
@@ -81,11 +81,11 @@ apps/web/src/data/profile.ts
 
 Posteriormente, esses dados serão migrados para a API.
 
-## Experiências visuais
+## Experiência visual
 
-O conteúdo principal do portfólio será compartilhado entre as duas experiências visuais.
+O conteúdo principal do portfólio alimenta uma única experiência visual vintage/noir.
 
-A diferença estará na camada de apresentação:
+A camada de apresentação concentra:
 
 - Cores
 - Tipografia
