@@ -34,20 +34,30 @@ describe("AdminLoginForm", () => {
     expect(onSubmit).toHaveBeenCalledWith("admin@test.dev", "senha-segura");
   });
 
-  it("shows configuration errors and disables submit", () => {
+  it("shows login errors without disabling submit", () => {
     render(
       <AdminLoginForm
-        configError="Configure Supabase"
+        errorMessage="Não foi possível entrar."
         onSubmit={vi.fn()}
       />,
     );
 
-    expect(screen.getByRole("status").textContent).toContain(
-      "Configure Supabase",
+    expect(screen.getByRole("alert").textContent).toContain(
+      "Não foi possível entrar.",
     );
     expect(
       (screen.getByRole("button", {
         name: "Entrar no painel",
+      }) as HTMLButtonElement).disabled,
+    ).toBe(false);
+  });
+
+  it("disables submit while credentials are being verified", () => {
+    render(<AdminLoginForm isSubmitting onSubmit={vi.fn()} />);
+
+    expect(
+      (screen.getByRole("button", {
+        name: "Verificando...",
       }) as HTMLButtonElement).disabled,
     ).toBe(true);
   });

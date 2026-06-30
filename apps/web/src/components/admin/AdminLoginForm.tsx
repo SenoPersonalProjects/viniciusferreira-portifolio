@@ -3,21 +3,19 @@
 import { type FormEvent, useState } from "react";
 
 type AdminLoginFormProps = {
-  configError?: string | null;
   errorMessage?: string | null;
   isSubmitting?: boolean;
   onSubmit: (email: string, password: string) => Promise<void> | void;
 };
 
 export function AdminLoginForm({
-  configError,
   errorMessage,
   isSubmitting = false,
   onSubmit,
 }: AdminLoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const isDisabled = isSubmitting || Boolean(configError);
+  const isDisabled = isSubmitting;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,15 +51,6 @@ export function AdminLoginForm({
           required
         />
       </label>
-
-      {configError ? (
-        <p
-          className="border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-4 font-[var(--font-mono)] text-xs leading-relaxed text-[var(--color-muted)]"
-          role="status"
-        >
-          {configError}
-        </p>
-      ) : null}
 
       {errorMessage ? (
         <p
