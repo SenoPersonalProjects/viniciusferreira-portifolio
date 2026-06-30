@@ -36,6 +36,19 @@ export const AdminAuthContext =
 
 const genericLoginError =
   "Não foi possível entrar. Verifique as credenciais e a autorização administrativa.";
+const authEnvironmentError =
+  "Autenticação indisponível neste ambiente. Confirme a configuração pública do Supabase e refaça o deploy.";
+
+function logAdminAuthDiagnostic(
+  event: string,
+  details: Record<string, boolean | number | string | undefined>,
+) {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
+  console.info("[admin-auth]", event, details);
+}
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [client, setClient] = useState<SupabaseClient | null>(null);
@@ -55,6 +68,17 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       setClient(result.client);
       setConfigError(result.configError);
+
+      if (!result.client) {
+        logAdminAuthDiagnostic("supabase-client-unavailable", {
+          hasPublishableKey: Boolean(
+            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim(),
+          ),
+          hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()),
+          runtime:
+            typeof window === "undefined" ? "server" : "browser",
+        });
+      }
 
       if (!result.client) {
         setIsLoading(false);
@@ -102,7 +126,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       if (!client) {
         return {
           ok: false,
-          error: genericLoginError,
+          error: authEnvironmentError,
         };
       }
 
@@ -112,6 +136,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (error || !data.session) {
+        logAdminAuthDiagnostic("supabase-sign-in-failed", {
+          code: error?.code,
+          status: error?.status,
+        });
+
         return {
           ok: false,
           error: genericLoginError,
