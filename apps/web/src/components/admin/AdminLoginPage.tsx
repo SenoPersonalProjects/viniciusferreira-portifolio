@@ -8,7 +8,7 @@ import { useAdminSession } from "@/hooks/useAdminSession";
 
 export function AdminLoginPage() {
   const router = useRouter();
-  const { configError, isLoading, session, signIn } = useAdminSession();
+  const { isLoading, session, signIn } = useAdminSession();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,11 +36,11 @@ export function AdminLoginPage() {
   }
 
   return (
-    <main className="portfolio-shell min-h-screen px-6 py-12 text-[var(--color-foreground)] md:px-10">
-      <div className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-6xl items-center">
-        <section className="section-card max-w-xl p-8 md:p-10">
+    <main className="portfolio-shell grid min-h-svh place-items-center overflow-x-hidden px-4 py-8 text-[var(--color-foreground)] sm:px-6 md:px-10">
+      <div className="grid w-full max-w-2xl place-items-center">
+        <section className="section-card w-full p-6 sm:p-8 md:p-10">
           <p className="section-eyebrow">Admin</p>
-          <h1 className="section-title mt-5 text-4xl md:text-6xl">
+          <h1 className="section-title mt-5 max-w-full text-balance break-words text-4xl leading-none sm:text-5xl md:text-[3.5rem]">
             Acesso administrativo
           </h1>
           <p className="mt-6 font-[var(--font-body)] text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
@@ -48,7 +48,6 @@ export function AdminLoginPage() {
             do portfólio.
           </p>
           <AdminLoginForm
-            configError={configError}
             errorMessage={errorMessage}
             isSubmitting={isSubmitting || isLoading}
             onSubmit={handleSubmit}

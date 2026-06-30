@@ -102,7 +102,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       if (!client) {
         return {
           ok: false,
-          error: configError ?? genericLoginError,
+          error: genericLoginError,
         };
       }
 
@@ -121,7 +121,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       return { ok: true };
     },
-    [client, configError],
+    [client],
   );
 
   const signOut = useCallback(async () => {
