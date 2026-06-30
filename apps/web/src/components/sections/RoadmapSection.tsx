@@ -12,6 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import type { RoadmapItem } from "@/data/roadmap";
 
@@ -43,6 +44,7 @@ function getRoadmapImage(item: RoadmapItem) {
 
 export function RoadmapSection() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const { content, source } = usePortfolioData();
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
   const items = useMemo(
@@ -143,6 +145,36 @@ export function RoadmapSection() {
     return null;
   }
 
+  const roadmapCopy = {
+    copy: resolveCopy("roadmap.copy", dictionary.roadmap.copy),
+    evidence: resolveCopy("roadmap.evidence", dictionary.roadmap.evidence),
+    eyebrow: resolveCopy("roadmap.eyebrow", dictionary.roadmap.eyebrow),
+    figure: resolveCopy("roadmap.figure", dictionary.roadmap.figure),
+    selectItem: resolveCopy(
+      "roadmap.selectItem",
+      dictionary.roadmap.selectItem,
+    ),
+    technologies: resolveCopy(
+      "roadmap.technologies",
+      dictionary.roadmap.technologies,
+    ),
+    title: resolveCopy("roadmap.title", dictionary.roadmap.title),
+    types: {
+      carreira: resolveCopy(
+        "roadmap.types.carreira",
+        dictionary.roadmap.types.carreira,
+      ),
+      formacao: resolveCopy(
+        "roadmap.types.formacao",
+        dictionary.roadmap.types.formacao,
+      ),
+      projeto: resolveCopy(
+        "roadmap.types.projeto",
+        dictionary.roadmap.types.projeto,
+      ),
+    },
+  };
+
   return (
     <section
       id="roadmap"
@@ -153,13 +185,13 @@ export function RoadmapSection() {
           ref={headingRevealRef}
           className={`roadmap-heading scroll-reveal ${headingRevealed ? "is-revealed" : ""}`}
         >
-          <p className="section-eyebrow">{dictionary.roadmap.eyebrow}</p>
+          <p className="section-eyebrow">{roadmapCopy.eyebrow}</p>
 
           <h2 className="section-title mt-6 text-5xl md:text-7xl">
-            {dictionary.roadmap.title}
+            {roadmapCopy.title}
           </h2>
           <p className="mt-8 max-w-3xl font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl">
-            {dictionary.roadmap.copy}
+            {roadmapCopy.copy}
           </p>
         </div>
 
@@ -169,7 +201,7 @@ export function RoadmapSection() {
             const isActive = item.id === activeItemId;
             const period = formatPeriod(item.startDate, item.endDate);
             const evidenceCode = getEvidenceCode(item);
-            const figureLabel = getFigureLabel(dictionary.roadmap.figure, index);
+            const figureLabel = getFigureLabel(roadmapCopy.figure, index);
             const position = index % 2 === 0 ? "left" : "right";
             const imageUrl = getRoadmapImage(item);
             const panelId = `roadmap-panel-${item.id}`;
@@ -211,14 +243,14 @@ export function RoadmapSection() {
                     className="roadmap-item__trigger"
                     aria-controls={panelId}
                     aria-expanded={isActive}
-                    aria-label={`${dictionary.roadmap.selectItem}: ${itemTitle}`}
+                    aria-label={`${roadmapCopy.selectItem}: ${itemTitle}`}
                     onClick={() => setActiveId(item.id)}
                     onFocus={() => setActiveId(item.id)}
                     onMouseEnter={() => setActiveId(item.id)}
                   >
                     <span className="roadmap-item__period">{period}</span>
                     <span className="roadmap-item__type">
-                      {dictionary.roadmap.types[item.type]}
+                      {roadmapCopy.types[item.type]}
                     </span>
                     <span className="roadmap-item__title">{itemTitle}</span>
                   </button>
@@ -234,7 +266,7 @@ export function RoadmapSection() {
 
                       <div
                         className="roadmap-tech-list"
-                        aria-label={dictionary.roadmap.technologies}
+                        aria-label={roadmapCopy.technologies}
                       >
                         {item.technologies.map((technology) => (
                           <span key={technology}>{technology}</span>
@@ -249,13 +281,13 @@ export function RoadmapSection() {
                     >
                       <div className="roadmap-visual-card__topline">
                         <span>{figureLabel}</span>
-                        <span>{dictionary.roadmap.evidence}</span>
+                        <span>{roadmapCopy.evidence}</span>
                       </div>
                       <div className="roadmap-visual-card__media" aria-hidden="true">
                         <span>{evidenceCode}</span>
                       </div>
                       <figcaption>
-                        {dictionary.roadmap.types[item.type]} / {itemTitle}
+                        {roadmapCopy.types[item.type]} / {itemTitle}
                       </figcaption>
                     </figure>
                   </div>

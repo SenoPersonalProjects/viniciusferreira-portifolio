@@ -3,10 +3,12 @@
 import { FilmReelProjects } from "@/components/projects/FilmReelProjects";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function ProjectsSection() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const { content, source } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
 
@@ -18,11 +20,14 @@ export function ProjectsSection() {
     >
       <div className="mx-auto max-w-7xl">
         <p className={`section-eyebrow scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
-          {dictionary.projectsSection.eyebrow}
+          {resolveCopy(
+            "projectsSection.eyebrow",
+            dictionary.projectsSection.eyebrow,
+          )}
         </p>
 
         <h2 className={`section-title mt-5 text-4xl md:text-5xl scroll-reveal stagger-delay-1 ${isRevealed ? "is-revealed" : ""}`}>
-          {dictionary.projectsSection.title}
+          {resolveCopy("projectsSection.title", dictionary.projectsSection.title)}
         </h2>
 
         <FilmReelProjects

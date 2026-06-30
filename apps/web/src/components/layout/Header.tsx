@@ -4,16 +4,33 @@ import { useEffect, useState } from "react";
 import { ColorModeToggle } from "@/components/layout/ColorModeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 
 export function Header() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const [activeSection, setActiveSection] = useState("home");
   const navItems = [
-    { id: "about", label: dictionary.header.nav.about },
-    { id: "roadmap", label: dictionary.header.nav.roadmap },
-    { id: "stack", label: dictionary.header.nav.stack },
-    { id: "projects", label: dictionary.header.nav.projects },
-    { id: "contact", label: dictionary.header.nav.contact },
+    {
+      id: "about",
+      label: resolveCopy("header.nav.about", dictionary.header.nav.about),
+    },
+    {
+      id: "roadmap",
+      label: resolveCopy("header.nav.roadmap", dictionary.header.nav.roadmap),
+    },
+    {
+      id: "stack",
+      label: resolveCopy("header.nav.stack", dictionary.header.nav.stack),
+    },
+    {
+      id: "projects",
+      label: resolveCopy("header.nav.projects", dictionary.header.nav.projects),
+    },
+    {
+      id: "contact",
+      label: resolveCopy("header.nav.contact", dictionary.header.nav.contact),
+    },
   ] as const;
 
   useEffect(() => {
@@ -85,7 +102,7 @@ export function Header() {
         </a>
 
         <nav
-          aria-label={dictionary.header.navLabel}
+          aria-label={resolveCopy("header.navLabel", dictionary.header.navLabel)}
           className="hidden justify-self-center md:flex md:items-center md:gap-10"
         >
           {navItems.map((item) => (

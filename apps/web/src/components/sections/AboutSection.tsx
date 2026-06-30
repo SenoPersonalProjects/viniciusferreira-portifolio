@@ -6,11 +6,13 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function AboutSection() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const { content, source } = usePortfolioData();
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -57,19 +59,24 @@ export function AboutSection() {
     >
       <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-12">
         <div className="md:col-span-5 about-title-reveal">
-          <p className="section-eyebrow">{dictionary.about.eyebrow}</p>
+          <p className="section-eyebrow">
+            {resolveCopy("about.eyebrow", dictionary.about.eyebrow)}
+          </p>
 
           <h2 className="section-title mt-6 text-5xl md:text-7xl">
-            {dictionary.about.titleStart}{" "}
+            {resolveCopy("about.titleStart", dictionary.about.titleStart)}{" "}
             <span className="text-[var(--color-primary)]">
-              {dictionary.about.titleHighlight}
+              {resolveCopy(
+                "about.titleHighlight",
+                dictionary.about.titleHighlight,
+              )}
             </span>
           </h2>
 
           <div className="mt-10 hidden md:block">
             <div className="h-px w-24 bg-[var(--color-primary)]" />
             <p className="mt-4 font-[var(--font-industrial)] text-[10px] uppercase tracking-[0.4em] text-[var(--color-muted)]">
-              {dictionary.about.classified}
+              {resolveCopy("about.classified", dictionary.about.classified)}
             </p>
           </div>
         </div>
@@ -87,14 +94,14 @@ export function AboutSection() {
               </p>
 
               <p className="border-t border-[var(--color-border)] pt-8 opacity-90">
-                {dictionary.about.focus}
+                {resolveCopy("about.focus", dictionary.about.focus)}
               </p>
             </div>
 
             <div className="mt-12 flex items-center gap-4 opacity-40">
               <div className="h-px flex-1 bg-[var(--color-border)]" />
               <p className="font-[var(--font-industrial)] text-[9px] uppercase tracking-[0.5em]">
-                {dictionary.about.end}
+                {resolveCopy("about.end", dictionary.about.end)}
               </p>
             </div>
           </div>

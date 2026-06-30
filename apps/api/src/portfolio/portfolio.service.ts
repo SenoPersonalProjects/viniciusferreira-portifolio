@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma.service';
 import type { Locale, PortfolioContent } from './portfolio.types';
 
 type PublicDossierLocale = 'pt' | 'en';
+type PublicSiteCopyLocale = Locale;
 
 type PublicDossierRedaction = {
   h: number;
@@ -38,6 +39,15 @@ type PublicDossierResponse =
       source: 'empty';
     };
 
+type PublicSiteCopyResponse = {
+  items: Array<{
+    key: string;
+    locale: PublicSiteCopyLocale;
+    value: string;
+  }>;
+  source: 'database' | 'empty';
+};
+
 function resolveLocale(locale?: string): Locale {
   return locale === 'en' ? 'en' : 'pt-BR';
 }
@@ -54,6 +64,20 @@ function resolveDossierLocale(locale?: string): PublicDossierLocale {
   }
 
   throw new BadRequestException('Locale do dossie invalido');
+}
+
+function resolveSiteCopyLocale(locale?: string): PublicSiteCopyLocale {
+  if (!locale) {
+    return 'pt-BR';
+  }
+
+  const normalized = locale.trim();
+
+  if (normalized === 'pt-BR' || normalized === 'en') {
+    return normalized;
+  }
+
+  throw new BadRequestException('Locale de textos invalido');
 }
 
 function isEmailUrl(url: string) {
@@ -128,6 +152,30 @@ export class PortfolioService {
         subject: dossier.subject,
       },
       source: 'database',
+    };
+  }
+
+  async getPublicSiteCopy(
+    localeQuery?: string,
+  ): Promise<PublicSiteCopyResponse> {
+    const locale = resolveSiteCopyLocale(localeQuery);
+    const items = await this.prisma.siteCopy.findMany({
+      orderBy: { key: 'asc' },
+      select: {
+        key: true,
+        locale: true,
+        value: true,
+      },
+      where: { locale },
+    });
+
+    return {
+      items: items.map((item) => ({
+        key: item.key,
+        locale: item.locale as PublicSiteCopyLocale,
+        value: item.value,
+      })),
+      source: items.length > 0 ? 'database' : 'empty',
     };
   }
 

@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { PortfolioDataProvider } from "@/components/providers/PortfolioDataProvider";
+import { SiteCopyProvider } from "@/components/providers/SiteCopyProvider";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { HeroSection } from "@/components/sections/HeroSection";
@@ -53,18 +54,20 @@ export default function Home() {
         <div className="vintage-grain" />
 
         <PortfolioDataProvider>
-          <Header />
+          <SiteCopyProvider>
+            <Header />
 
-          <main className="relative">
-            <HeroSection />
-            <AboutSection />
-            <RoadmapSection />
-            <StackSection />
-            <ProjectsSection />
-            <ContactSection />
-          </main>
+            <main className="relative">
+              <HeroSection />
+              <AboutSection />
+              <RoadmapSection />
+              <StackSection />
+              <ProjectsSection />
+              <ContactSection />
+            </main>
 
-          <Footer />
+            <Footer />
+          </SiteCopyProvider>
         </PortfolioDataProvider>
       </div>
     </>

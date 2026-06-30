@@ -22,6 +22,9 @@ describe('PortfolioService', () => {
     roadmapItem: {
       findMany: jest.fn(),
     },
+    siteCopy: {
+      findMany: jest.fn(),
+    },
   };
 
   beforeEach(() => {
@@ -99,6 +102,7 @@ describe('PortfolioService', () => {
         published: true,
       },
     ]);
+    prisma.siteCopy.findMany.mockResolvedValue([]);
   });
 
   it('returns localized public content in Portuguese', async () => {
@@ -249,5 +253,88 @@ describe('PortfolioService', () => {
     if (result.content) {
       expect(result.content.redactions).toBeUndefined();
     }
+  });
+
+  it('returns public site copy for the requested locale without admin fields', async () => {
+    prisma.siteCopy.findMany.mockResolvedValue([
+      {
+        createdAt: new Date('2026-06-29T00:00:00.000Z'),
+        id: 'site-copy-1',
+        key: 'about.titleStart',
+        locale: 'pt-BR',
+        updatedAt: new Date('2026-06-29T00:00:00.000Z'),
+        value: 'Código com acento e <strong>texto</strong>',
+      },
+    ]);
+
+    const service = new PortfolioService(prisma as never);
+    const result = await service.getPublicSiteCopy('pt-BR');
+
+    expect(prisma.siteCopy.findMany).toHaveBeenCalledWith({
+      orderBy: { key: 'asc' },
+      select: {
+        key: true,
+        locale: true,
+        value: true,
+      },
+      where: { locale: 'pt-BR' },
+    });
+    expect(result).toEqual({
+      items: [
+        {
+          key: 'about.titleStart',
+          locale: 'pt-BR',
+          value: 'Código com acento e <strong>texto</strong>',
+        },
+      ],
+      source: 'database',
+    });
+    expect(JSON.stringify(result)).not.toContain('site-copy-1');
+    expect(JSON.stringify(result)).not.toContain('createdAt');
+  });
+
+  it('uses pt-BR as the default public site copy locale', async () => {
+    const service = new PortfolioService(prisma as never);
+
+    await expect(service.getPublicSiteCopy()).resolves.toEqual({
+      items: [],
+      source: 'empty',
+    });
+    expect(prisma.siteCopy.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { locale: 'pt-BR' },
+      }),
+    );
+  });
+
+  it('returns public site copy in English', async () => {
+    prisma.siteCopy.findMany.mockResolvedValue([
+      {
+        key: 'projectsSection.title',
+        locale: 'en',
+        value: 'Featured projects',
+      },
+    ]);
+
+    const service = new PortfolioService(prisma as never);
+
+    await expect(service.getPublicSiteCopy('en')).resolves.toEqual({
+      items: [
+        {
+          key: 'projectsSection.title',
+          locale: 'en',
+          value: 'Featured projects',
+        },
+      ],
+      source: 'database',
+    });
+  });
+
+  it('rejects invalid public site copy locales', async () => {
+    const service = new PortfolioService(prisma as never);
+
+    await expect(service.getPublicSiteCopy('pt')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 });
