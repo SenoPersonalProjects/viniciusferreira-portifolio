@@ -2,10 +2,12 @@
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function StackSection() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const { content, source } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
   const localizedStack = content.technologies.map((group, index) => ({
@@ -24,13 +26,13 @@ export function StackSection() {
     >
       <div className="mx-auto max-w-7xl">
         <p className={`section-eyebrow scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
-          {dictionary.stack.eyebrow}
+          {resolveCopy("stack.eyebrow", dictionary.stack.eyebrow)}
         </p>
 
         <h2 className={`section-title mt-6 text-5xl md:text-7xl scroll-reveal stagger-delay-1 ${isRevealed ? "is-revealed" : ""}`}>
-          {dictionary.stack.titleStart}{" "}
+          {resolveCopy("stack.titleStart", dictionary.stack.titleStart)}{" "}
           <span className="text-[var(--color-primary)]">
-            {dictionary.stack.titleHighlight}
+            {resolveCopy("stack.titleHighlight", dictionary.stack.titleHighlight)}
           </span>
         </h2>
 

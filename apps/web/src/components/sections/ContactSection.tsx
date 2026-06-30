@@ -2,11 +2,13 @@
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { usePortfolioData } from "@/components/providers/PortfolioDataProvider";
+import { useSiteCopy } from "@/components/providers/SiteCopyProvider";
 import { RotaryTelephoneProp } from "@/components/three/contact/RotaryTelephoneProp";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function ContactSection() {
   const { dictionary } = useLanguage();
+  const { resolveCopy } = useSiteCopy();
   const { content } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
   
@@ -33,18 +35,21 @@ export function ContactSection() {
 
           <div className="relative z-10">
             <p className={`section-eyebrow scroll-reveal stagger-delay-1 ${isRevealed ? "is-revealed" : ""}`}>
-              {dictionary.contact.eyebrow}
+              {resolveCopy("contact.eyebrow", dictionary.contact.eyebrow)}
             </p>
 
             <h2 className={`section-title mt-8 max-w-4xl text-5xl md:text-7xl scroll-reveal stagger-delay-2 ${isRevealed ? "is-revealed" : ""}`}>
-              {dictionary.contact.titleStart}{" "}
+              {resolveCopy("contact.titleStart", dictionary.contact.titleStart)}{" "}
               <span className="text-[var(--color-primary)]">
-                {dictionary.contact.titleHighlight}
+                {resolveCopy(
+                  "contact.titleHighlight",
+                  dictionary.contact.titleHighlight,
+                )}
               </span>
             </h2>
 
             <p className={`mt-8 max-w-2xl font-[var(--font-body)] text-lg leading-relaxed text-[var(--color-muted)] md:text-xl scroll-reveal stagger-delay-3 ${isRevealed ? "is-revealed" : ""}`}>
-              {dictionary.contact.copy}
+              {resolveCopy("contact.copy", dictionary.contact.copy)}
             </p>
 
             <div className={`mt-14 flex flex-col gap-6 sm:flex-row sm:flex-wrap scroll-reveal stagger-delay-4 ${isRevealed ? "is-revealed" : ""}`}>
@@ -53,7 +58,10 @@ export function ContactSection() {
                   href={emailLink.url}
                   className="primary-action h-14 min-w-[220px] text-[10px] font-bold uppercase tracking-[0.3em]"
                 >
-                  {dictionary.contact.messageCta}
+                  {resolveCopy(
+                    "contact.messageCta",
+                    dictionary.contact.messageCta,
+                  )}
                 </a>
               )}
 

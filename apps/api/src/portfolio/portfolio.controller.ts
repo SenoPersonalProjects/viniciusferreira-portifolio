@@ -11,6 +11,11 @@ export class PortfolioController {
     return this.portfolioService.getPublicDossier(locale);
   }
 
+  @Get('site-copy')
+  getSiteCopy(@Query('locale') locale?: string) {
+    return this.portfolioService.getPublicSiteCopy(locale);
+  }
+
   @Get()
   getPortfolio(@Query('locale') locale?: string) {
     return this.portfolioService.getPublicPortfolio(locale);
