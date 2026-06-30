@@ -28,7 +28,7 @@ function loadWorkspacePublicEnv() {
 
     const key = trimmedLine.slice(0, separatorIndex).trim();
 
-    if (!key.startsWith("NEXT_PUBLIC_") || process.env[key]) {
+    if (!key.startsWith("NEXT_PUBLIC_") || process.env[key] !== undefined) {
       continue;
     }
 
