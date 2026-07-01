@@ -21,7 +21,7 @@ export function getSupabaseServerClient() {
 }
 
 function getAllowedAdminEmails() {
-  return (Deno.env.get("SUPABASE_ADMIN_EMAILS") ?? "")
+  return (Deno.env.get("ADMIN_EMAILS") ?? Deno.env.get("SUPABASE_ADMIN_EMAILS") ?? "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
