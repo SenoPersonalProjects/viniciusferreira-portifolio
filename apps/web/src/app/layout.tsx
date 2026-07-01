@@ -12,6 +12,7 @@ import {
 
 import { AppearanceProvider } from "@/components/providers/AppearanceProvider";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
+import { ReducedMotionIndicator } from "@/components/layout/ReducedMotionIndicator";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 
 import "./globals.css";
@@ -132,12 +133,16 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${jetBrainsMono.variable} ${limelight.variable} ${pinyonScript.variable} ${bebasNeue.variable} ${courierPrime.variable} ${specialElite.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[var(--color-background)] text-[var(--color-foreground)]">
         <LanguageProvider>
-          <AppearanceProvider>{children}</AppearanceProvider>
+          <AppearanceProvider>
+            {children}
+            <ReducedMotionIndicator />
+          </AppearanceProvider>
         </LanguageProvider>
       </body>
     </html>

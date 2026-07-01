@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FilmFrame } from "@/components/projects/FilmFrame";
@@ -44,10 +45,10 @@ describe("FilmFrame", () => {
     vi.unstubAllGlobals();
   });
 
-  function renderFilmFrame() {
+  function renderFilmFrame(props: Partial<ComponentProps<typeof FilmFrame>> = {}) {
     return render(
       <LanguageProvider>
-        <FilmFrame project={projects[0]} index={0} />
+        <FilmFrame project={projects[0]} index={0} {...props} />
       </LanguageProvider>,
     );
   }
@@ -110,6 +111,24 @@ describe("FilmFrame", () => {
     expect(unavailable.getAttribute("aria-label")).toBe(
       "Demonstração indisponível: Portfólio Gerenciável",
     );
+  });
+
+  it("loads prioritized poster images eagerly", () => {
+    renderFilmFrame({ shouldLoadEager: true });
+
+    const image = screen.getByAltText(/Preview do projeto/i);
+
+    expect(image.getAttribute("loading")).toBe("eager");
+    expect(image.getAttribute("fetchpriority")).toBe("high");
+  });
+
+  it("keeps non-prioritized poster images lazy", () => {
+    renderFilmFrame({ shouldLoadEager: false });
+
+    const image = screen.getByAltText(/Preview do projeto/i);
+
+    expect(image.getAttribute("loading")).toBe("lazy");
+    expect(image.getAttribute("fetchpriority")).toBeNull();
   });
 
   it("removes inactive duplicate frames from the tab order", () => {
