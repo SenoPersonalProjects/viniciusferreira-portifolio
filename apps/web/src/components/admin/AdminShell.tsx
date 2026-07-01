@@ -66,8 +66,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="portfolio-shell min-h-screen text-[var(--color-foreground)]">
-      <div className="mx-auto grid max-w-7xl gap-6 px-6 py-6 md:grid-cols-[18rem_1fr] md:px-10">
-        <aside className="section-card h-fit p-5 md:sticky md:top-6">
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-5 sm:px-6 lg:grid-cols-[17rem_1fr] lg:px-8 xl:grid-cols-[18rem_1fr] xl:px-10">
+        <aside className="section-card h-fit min-w-0 p-5 lg:sticky lg:top-6">
           <Link
             href="/"
             className="font-[var(--font-display)] text-3xl text-[var(--color-foreground)]"
@@ -76,10 +76,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </Link>
           <p className="mt-4 font-[var(--font-body)] text-sm leading-relaxed text-[var(--color-muted)]">
             Painel administrativo com sessão Supabase. A autorização real dos
-            dados continua no AdminGuard da API.
+            dados continua na Edge Function admin.
           </p>
 
-          <nav aria-label="Navegação administrativa" className="mt-8 grid gap-3">
+          <nav
+            aria-label="Navegação administrativa"
+            className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-1"
+          >
             {adminNavItems.map((item) => {
               const isActive =
                 item.href === "/admin"
@@ -90,7 +93,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`border px-4 py-3 font-[var(--font-industrial)] text-[10px] uppercase tracking-[0.22em] transition ${
+                  className={`min-w-0 border px-4 py-3 font-[var(--font-industrial)] text-[10px] uppercase tracking-[0.18em] transition [overflow-wrap:anywhere] ${
                     isActive
                       ? "border-[var(--color-primary)] bg-[var(--color-surface-soft)] text-[var(--color-primary)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-foreground)]"

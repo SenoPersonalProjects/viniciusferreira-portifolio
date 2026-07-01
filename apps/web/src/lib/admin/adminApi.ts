@@ -17,6 +17,29 @@ export class AdminApiError extends Error {
   }
 }
 
+export function getAdminApiErrorMessage(
+  error: unknown,
+  fallbackMessage: string,
+) {
+  if (error instanceof AdminApiError) {
+    if (error.code === "unauthorized") {
+      return "A API administrativa recusou a sessão. Confirme se o login ainda está ativo, se o e-mail está autorizado em ADMIN_EMAILS e se NEXT_PUBLIC_API_URL aponta para /functions/v1.";
+    }
+
+    if (error.code === "forbidden") {
+      return "Usuário autenticado, mas sem permissão administrativa. Confirme o e-mail na allowlist ADMIN_EMAILS das Edge Functions.";
+    }
+
+    if (error.code === "unavailable") {
+      return "API administrativa indisponível. Em produção, confirme NEXT_PUBLIC_API_URL com /functions/v1; localmente, confirme o backend ou as Edge Functions.";
+    }
+
+    return error.message;
+  }
+
+  return fallbackMessage;
+}
+
 export function getAdminApiBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??

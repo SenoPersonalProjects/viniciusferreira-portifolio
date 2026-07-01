@@ -4,7 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { DossierLocale } from "@/data/dossier";
 import { useAdminSession } from "@/hooks/useAdminSession";
-import { AdminApiError, adminApiFetch } from "@/lib/admin/adminApi";
+import {
+  adminApiFetch,
+  getAdminApiErrorMessage,
+} from "@/lib/admin/adminApi";
 import {
   DOSSIER_LOCALES,
   type DossierFormValues,
@@ -29,19 +32,10 @@ type PageStatus = "idle" | "loading" | "ready" | "error";
 const initialDossierState = getDossierStateFromPersisted();
 
 function getAdminErrorMessage(error: unknown) {
-  if (error instanceof AdminApiError) {
-    if (error.code === "unauthorized" || error.code === "forbidden") {
-      return "A API recusou a sessao. Confirme o login e a allowlist SUPABASE_ADMIN_EMAILS.";
-    }
-
-    if (error.code === "unavailable") {
-      return "API administrativa indisponivel. Confirme se o backend esta em execucao.";
-    }
-
-    return error.message;
-  }
-
-  return "Nao foi possivel concluir a operacao do dossie.";
+  return getAdminApiErrorMessage(
+    error,
+    "Não foi possível concluir a operação do dossiê.",
+  );
 }
 
 function getOriginLabel(origin: DossierOrigin) {

@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAdminSession } from "@/hooks/useAdminSession";
-import { AdminApiError, adminApiFetch } from "@/lib/admin/adminApi";
+import {
+  adminApiFetch,
+  getAdminApiErrorMessage,
+} from "@/lib/admin/adminApi";
 import {
   type AdminProject,
   type ProjectPayload,
@@ -29,19 +32,10 @@ function pluralize(count: number, singular: string, plural: string) {
 }
 
 function getAdminErrorMessage(error: unknown) {
-  if (error instanceof AdminApiError) {
-    if (error.code === "unauthorized" || error.code === "forbidden") {
-      return "A API recusou a sessão. Confirme o login e a allowlist SUPABASE_ADMIN_EMAILS.";
-    }
-
-    if (error.code === "unavailable") {
-      return "API administrativa indisponível. Confirme se o backend está em execução.";
-    }
-
-    return error.message;
-  }
-
-  return "Não foi possível concluir a operação de projetos.";
+  return getAdminApiErrorMessage(
+    error,
+    "Não foi possível concluir a operação de projetos.",
+  );
 }
 
 function getProjectsSummary(projects: AdminProject[]) {

@@ -11,7 +11,7 @@ export function ContactSection() {
   const { resolveCopy } = useSiteCopy();
   const { content } = usePortfolioData();
   const { ref, isRevealed } = useScrollReveal();
-  
+
   const visibleLinks = content.contactLinks
     .filter((link) => link.visible && link.url)
     .sort((a, b) => a.order - b.order);
@@ -22,10 +22,10 @@ export function ContactSection() {
     <section
       id="contact"
       ref={ref}
-      className="section-border px-6 py-20 md:px-10 md:py-32"
+      className="section-border overflow-hidden px-6 py-20 md:px-10 md:pb-20 md:pt-32"
     >
-      <div className="relative mx-auto max-w-7xl overflow-visible">
-        <div className={`section-card relative z-10 overflow-visible p-10 md:p-20 scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
+      <div className="relative mx-auto max-w-7xl overflow-hidden pb-44 md:pb-52 lg:pb-56">
+        <div className={`section-card relative z-10 overflow-visible p-8 sm:p-10 md:p-16 lg:p-20 scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
           <div
             className="absolute -right-20 -top-20 hidden h-64 w-64 md:block"
             aria-hidden="true"
@@ -56,7 +56,7 @@ export function ContactSection() {
               {emailLink && (
                 <a
                   href={emailLink.url}
-                  className="primary-action h-14 min-w-[220px] text-[10px] font-bold uppercase tracking-[0.3em]"
+                  className="primary-action h-14 min-w-[min(100%,220px)] text-[10px] font-bold uppercase tracking-[0.3em]"
                 >
                   {resolveCopy(
                     "contact.messageCta",
@@ -65,14 +65,14 @@ export function ContactSection() {
                 </a>
               )}
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex min-w-0 flex-wrap gap-4">
                 {secondaryLinks.map((link) => (
                   <a
                     key={link.id}
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="secondary-action h-14 min-w-[160px] text-[10px] font-bold uppercase tracking-[0.3em]"
+                    className="secondary-action h-14 min-w-[min(100%,160px)] text-[10px] font-bold uppercase tracking-[0.3em]"
                   >
                     {link.label}
                   </a>

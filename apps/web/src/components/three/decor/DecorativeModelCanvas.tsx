@@ -366,13 +366,15 @@ class DecorativeModelRuntime {
   }
 
   setPointer(pointer: { inside: boolean; x: number; y: number }) {
+    const wasInside = this.pointer.inside;
+
     this.pointer = {
       inside: pointer.inside,
       x: pointer.inside ? pointer.x : 0,
       y: pointer.inside ? pointer.y : 0,
     };
 
-    if (pointer.inside) {
+    if (pointer.inside || wasInside) {
       this.startLoop();
     }
   }

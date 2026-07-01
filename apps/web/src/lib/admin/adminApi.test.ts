@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { AdminApiError, adminApiFetch } from "@/lib/admin/adminApi";
+import {
+  AdminApiError,
+  adminApiFetch,
+  getAdminApiErrorMessage,
+} from "@/lib/admin/adminApi";
 
 describe("adminApiFetch", () => {
   afterEach(() => {
@@ -66,5 +70,25 @@ describe("adminApiFetch", () => {
       code: "unauthorized",
     } satisfies Partial<AdminApiError>);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("getAdminApiErrorMessage", () => {
+  it("describes rejected sessions using the Edge Functions admin context", () => {
+    const message = getAdminApiErrorMessage(
+      new AdminApiError("Unauthorized", "unauthorized", 401),
+      "Fallback",
+    );
+
+    expect(message).toContain("ADMIN_EMAILS");
+    expect(message).toContain("/functions/v1");
+    expect(message).not.toContain("SUPABASE_ADMIN_EMAILS");
+    expect(message).not.toContain("AdminGuard");
+  });
+
+  it("keeps unknown errors on the caller fallback", () => {
+    expect(getAdminApiErrorMessage(new Error("Network failed"), "Fallback")).toBe(
+      "Fallback",
+    );
   });
 });
