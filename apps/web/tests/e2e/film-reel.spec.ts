@@ -385,6 +385,16 @@ test("hero 3d dossier skips intro and keeps reduced hover in reduced motion", as
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openHero(page);
 
+  const reducedMotionIndicator = page.getByRole("button", {
+    name: "Movimento reduzido ativo",
+  });
+
+  await expect(reducedMotionIndicator).toBeVisible();
+  await reducedMotionIndicator.hover();
+  await expect(page.getByRole("tooltip")).toContainText(
+    "Seu sistema está pedindo menos movimento",
+  );
+
   const dossier = page.getByTestId("dossier-hero-canvas");
   const toggle = page.getByTestId("dossier-toggle");
 

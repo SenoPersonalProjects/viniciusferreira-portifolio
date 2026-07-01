@@ -14,6 +14,7 @@ type FilmFrameProps = {
   isActive?: boolean;
   isInteractive?: boolean;
   position?: number;
+  shouldLoadEager?: boolean;
   total?: number;
 };
 
@@ -23,6 +24,7 @@ export function FilmFrame({
   isActive = true,
   isInteractive = true,
   position = index + 1,
+  shouldLoadEager = false,
   total = 1,
 }: FilmFrameProps) {
   const { dictionary } = useLanguage();
@@ -97,7 +99,8 @@ export function FilmFrame({
             src={currentImage}
             alt={`${dictionary.filmFrame.previewAltPrefix} ${project.title}`}
             fill
-            priority={index === 0}
+            loading={shouldLoadEager ? "eager" : "lazy"}
+            fetchPriority={shouldLoadEager ? "high" : undefined}
             sizes="(min-width: 1280px) 560px, (min-width: 768px) 48vw, 86vw"
             className="film-image object-cover"
             draggable={false}

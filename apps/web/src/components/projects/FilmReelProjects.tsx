@@ -319,6 +319,10 @@ export function FilmReelProjects({
             <div className="film-reel-track flex">
               {repeatedProjects.map((item) => {
                 const isActive = item.snapIndex === activeSnapIndex;
+                const isEarlyVisibleProject =
+                  item.displayIndex < Math.min(projectCount, 2);
+                const shouldLoadEager =
+                  isActive || isEarlyVisibleProject;
 
                 return (
                   <div
@@ -333,6 +337,7 @@ export function FilmReelProjects({
                       isActive={isActive}
                       isInteractive={isActive}
                       position={item.displayIndex + 1}
+                      shouldLoadEager={shouldLoadEager}
                       total={projectCount}
                     />
                   </div>

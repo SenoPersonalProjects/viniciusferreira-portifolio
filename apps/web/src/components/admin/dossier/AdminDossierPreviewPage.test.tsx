@@ -17,6 +17,7 @@ vi.mock("@/lib/admin/adminApi", () => ({
     code = "http";
   },
   adminApiFetch: vi.fn(),
+  getAdminApiErrorMessage: vi.fn((_error: unknown, fallback: string) => fallback),
 }));
 
 const persistedEn: PersistedDossierContent = {
@@ -179,7 +180,7 @@ describe("AdminDossierPreviewPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Salvar no banco" }));
 
-    await screen.findByText("Nao foi possivel concluir a operacao do dossie.");
+    await screen.findByText("Não foi possível concluir a operação do dossiê.");
     expect((screen.getByLabelText("Projeto") as HTMLInputElement).value).toBe(
       "PROJETO SEM API",
     );
