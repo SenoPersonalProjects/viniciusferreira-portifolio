@@ -98,8 +98,8 @@ export function RotaryTelephoneProp() {
       creditLabel="Crédito do modelo Ericsson DBH 1001 telephone"
       testId="rotary-telephone-3d"
       trackPointerGlobally
-      className="pointer-events-none absolute inset-0 z-20 hidden overflow-visible opacity-100 md:block"
-      stageClassName="absolute -bottom-8 -right-10 h-[32rem] w-[42rem]"
+      className="pointer-events-none absolute -right-10 bottom-0 z-20 hidden h-[32rem] w-[42rem] overflow-visible opacity-100 md:block"
+      stageClassName="absolute bottom-0 right-0 h-full w-full"
     />
   );
 }

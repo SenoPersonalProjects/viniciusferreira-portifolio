@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { AdminApiError, adminApiFetch } from "@/lib/admin/adminApi";
+import {
+  adminApiFetch,
+  getAdminApiErrorMessage,
+} from "@/lib/admin/adminApi";
 import { useAdminSession } from "@/hooks/useAdminSession";
 
 type AdminContent = {
@@ -32,19 +35,10 @@ const emptyAdminContent: AdminContent = {
 };
 
 function getErrorMessage(error: unknown) {
-  if (error instanceof AdminApiError) {
-    if (error.code === "unauthorized" || error.code === "forbidden") {
-      return "A API recusou a sessão. Confirme o login e a allowlist SUPABASE_ADMIN_EMAILS.";
-    }
-
-    if (error.code === "unavailable") {
-      return "API administrativa indisponível. Confirme se o backend está em execução.";
-    }
-
-    return error.message;
-  }
-
-  return "Não foi possível carregar o resumo administrativo.";
+  return getAdminApiErrorMessage(
+    error,
+    "Não foi possível carregar o resumo administrativo.",
+  );
 }
 
 function pluralize(count: number, singular: string, plural: string) {
@@ -288,8 +282,8 @@ export function AdminDashboard() {
               Painel administrativo
             </h1>
             <p className="mt-5 max-w-3xl font-[var(--font-body)] text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
-              Fundação segura para gerenciar o portfólio. Nesta etapa, o painel
-              apenas lê o resumo do conteúdo e prepara a navegação dos módulos.
+              Painel seguro para gerenciar o portfólio. A navegação está
+              conectada aos módulos editoriais e às Edge Functions do Supabase.
             </p>
           </div>
           <button
@@ -303,8 +297,9 @@ export function AdminDashboard() {
 
         <div className="mt-8 grid gap-3 font-[var(--font-mono)] text-xs text-[var(--color-muted)]">
           <p>
-            Segurança: a navegação client-side melhora a experiência, mas a API
-            continua protegida pelo AdminGuard com Supabase JWT e allowlist.
+            Segurança: a navegação client-side melhora a experiência, mas a
+            autorização real continua na Edge Function admin com Supabase Auth e
+            allowlist ADMIN_EMAILS.
           </p>
           {state.status === "loading" ? <p>Carregando resumo...</p> : null}
           {state.status === "error" ? (
@@ -317,16 +312,16 @@ export function AdminDashboard() {
 
       <section
         aria-label="Módulos administrativos"
-        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+        className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-4"
       >
         {modules.map((module) => {
           const card = (
-            <article className="section-card h-full p-6 transition hover:border-[var(--color-primary)]">
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="font-[var(--font-display)] text-3xl uppercase text-[var(--color-foreground)]">
+            <article className="section-card h-full min-w-0 p-5 transition hover:border-[var(--color-primary)] sm:p-6">
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <h2 className="min-w-0 [overflow-wrap:anywhere] font-[var(--font-display)] text-[clamp(1.75rem,5vw,2.25rem)] uppercase leading-none text-[var(--color-foreground)]">
                   {module.label}
                 </h2>
-                <span className="border border-[var(--color-border)] px-3 py-1 font-[var(--font-industrial)] text-[9px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
+                <span className="max-w-full shrink-0 border border-[var(--color-border)] px-3 py-1 font-[var(--font-industrial)] text-[9px] uppercase tracking-[0.16em] text-[var(--color-muted)]">
                   {module.status}
                 </span>
               </div>
