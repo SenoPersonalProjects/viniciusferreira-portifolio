@@ -26,13 +26,12 @@ The existing frontend paths continue to work:
 Set function secrets in Supabase, not in Vercel:
 
 ```bash
-npx supabase secrets set SUPABASE_ADMIN_EMAILS="viniciusfs.contato@gmail.com"
+npx supabase secrets set ADMIN_EMAILS="viniciusfs.contato@gmail.com"
 npx supabase secrets set ALLOWED_WEB_ORIGINS="http://localhost:3000,https://your-site.vercel.app"
-npx supabase secrets set SUPABASE_SECRET_KEY="<server-side-supabase-secret>"
 ```
 
-If the project uses `SUPABASE_SERVICE_ROLE_KEY` instead of
-`SUPABASE_SECRET_KEY`, set that name; the functions support both.
+Supabase injects `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` into Edge
+Functions automatically.
 
 ## Deploy
 
