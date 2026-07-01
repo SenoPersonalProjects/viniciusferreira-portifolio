@@ -1,0 +1,7 @@
+project_id = "viniciusferreira-portifolio"
+
+[functions.admin]
+verify_jwt = false
+
+[functions.portfolio]
+verify_jwt = false
