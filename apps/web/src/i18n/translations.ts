@@ -30,6 +30,11 @@ export const translations = {
       ariaSuffix: "Clique para alternar.",
       titlePrefix: "Modo",
     },
+    reducedMotionIndicator: {
+      title: "Movimento reduzido ativo",
+      description:
+        "Seu sistema está pedindo menos movimento. Animações e interações 3D foram suavizadas neste site.",
+    },
     profile: {
       role: "Desenvolvedor Full Stack",
       headline:
@@ -208,6 +213,11 @@ export const translations = {
       ariaPrefix: "Current mode",
       ariaSuffix: "Click to cycle.",
       titlePrefix: "Mode",
+    },
+    reducedMotionIndicator: {
+      title: "Reduced motion active",
+      description:
+        "Your system is requesting less motion. Animations and 3D interactions are softened on this site.",
     },
     profile: {
       role: "Full Stack Developer",
