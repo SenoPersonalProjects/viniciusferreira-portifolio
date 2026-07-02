@@ -39,6 +39,33 @@ describe("adminApiFetch", () => {
     ).toBe("Bearer secret-token");
   });
 
+  it("routes Supabase admin calls through Edge Functions when the env is only the project origin", async () => {
+    vi.stubEnv(
+      "NEXT_PUBLIC_API_URL",
+      "https://xejrqipeklznjzmqnriz.supabase.co",
+    );
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        headers: {
+          "content-type": "application/json",
+        },
+      }),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(adminApiFetch("/admin/content", {}, "token")).resolves.toEqual({
+      ok: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://xejrqipeklznjzmqnriz.supabase.co/functions/v1/admin/content",
+      expect.objectContaining({
+        headers: expect.any(Headers),
+      }),
+    );
+  });
+
   it("maps 401 and 403 responses to typed admin errors", async () => {
     vi.stubGlobal(
       "fetch",
@@ -81,7 +108,7 @@ describe("getAdminApiErrorMessage", () => {
     );
 
     expect(message).toContain("ADMIN_EMAILS");
-    expect(message).toContain("/functions/v1");
+    expect(message).toContain("projeto Supabase correto");
     expect(message).not.toContain("SUPABASE_ADMIN_EMAILS");
     expect(message).not.toContain("AdminGuard");
   });
