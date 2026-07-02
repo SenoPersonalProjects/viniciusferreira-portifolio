@@ -17,7 +17,13 @@ import { DecorativeModelCanvas } from "@/components/three/decor/DecorativeModelC
 const ERICSSON_CREDIT =
   '"Ericsson DBH 1001 telephone" (https://skfb.ly/ouFUW) by Museum of Engineering and Technology, Krakow is licensed under CC Attribution-NonCommercial-ShareAlike (http://creativecommons.org/licenses/by-nc-sa/4.0/).';
 
-export function RotaryTelephoneProp() {
+type RotaryTelephonePropProps = {
+  isSceneVisible?: boolean;
+};
+
+export function RotaryTelephoneProp({
+  isSceneVisible = false,
+}: RotaryTelephonePropProps) {
   const [phoneModelCalibration, setPhoneModelCalibration] = useState(() =>
     ERICSSON_PHONE_MODEL_CALIBRATION,
   );
@@ -97,9 +103,10 @@ export function RotaryTelephoneProp() {
       credit={ERICSSON_CREDIT}
       creditLabel="Crédito do modelo Ericsson DBH 1001 telephone"
       testId="rotary-telephone-3d"
+      forceVisible={isSceneVisible}
       trackPointerGlobally
-      className="pointer-events-none absolute -right-10 bottom-0 z-20 hidden h-[32rem] w-[42rem] overflow-visible opacity-100 md:block"
-      stageClassName="absolute bottom-0 right-0 h-full w-full"
+      className="pointer-events-none absolute -right-4 bottom-6 z-20 hidden h-[24rem] w-[32rem] overflow-visible opacity-100 md:block lg:-right-6 lg:bottom-8 lg:h-[28rem] lg:w-[38rem] xl:-right-8 xl:h-[30rem] xl:w-[40rem]"
+      stageClassName="absolute inset-0 h-full w-full"
     />
   );
 }

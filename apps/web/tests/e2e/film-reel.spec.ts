@@ -310,7 +310,7 @@ test("hero 3d dossier exposes camera hover diagnostics on demand", async ({
     .toBeGreaterThan(0.35);
 });
 
-test("hero 3d dossier keeps interactivity blocked during the first intro", async ({
+test("hero 3d dossier starts at the final hero pose without initial table intro", async ({
   page,
 }) => {
   await openHero(page);
@@ -329,7 +329,7 @@ test("hero 3d dossier keeps interactivity blocked during the first intro", async
     .poll(() => readNumericData(dossier, "data-intro-duration-ms"), {
       timeout: 2_000,
     })
-    .toBeGreaterThan(1_600);
+    .toBeLessThan(250);
 });
 
 test("hero 3d dossier preserves open state while leaving and re-entering the hero", async ({
@@ -828,6 +828,8 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   await page.locator("#contact").scrollIntoViewIfNeeded();
 
   const contactCard = page.locator("#contact .section-card");
+  const contactSection = page.locator("#contact");
+  const footer = page.locator("footer");
   const phoneProp = page.getByTestId("rotary-telephone-3d");
 
   await expect(contactCard).toHaveCSS("overflow", "visible");
@@ -844,17 +846,22 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   const phoneBox = await phoneProp.boundingBox();
   const phoneCanvasBox = await phoneProp.locator("canvas").boundingBox();
   const contactCardBox = await contactCard.boundingBox();
+  const contactSectionBox = await contactSection.boundingBox();
+  const footerBox = await footer.boundingBox();
 
   expect(phoneBox).not.toBeNull();
   expect(phoneCanvasBox).not.toBeNull();
   expect(contactCardBox).not.toBeNull();
-  expect(phoneBox!.width).toBeGreaterThan(380);
-  expect(phoneBox!.height).toBeGreaterThan(300);
-  expect(phoneCanvasBox!.width).toBeGreaterThan(650);
-  expect(phoneCanvasBox!.height).toBeGreaterThan(500);
-  expect(phoneCanvasBox!.x + phoneCanvasBox!.width).toBeGreaterThan(
-    contactCardBox!.x + contactCardBox!.width,
+  expect(contactSectionBox).not.toBeNull();
+  expect(footerBox).not.toBeNull();
+  expect(phoneBox!.width).toBeGreaterThan(480);
+  expect(phoneBox!.height).toBeGreaterThan(340);
+  expect(phoneCanvasBox!.width).toBeGreaterThan(480);
+  expect(phoneCanvasBox!.height).toBeGreaterThan(340);
+  expect(phoneBox!.y + phoneBox!.height).toBeLessThanOrEqual(
+    contactSectionBox!.y + contactSectionBox!.height + 2,
   );
+  expect(phoneBox!.y + phoneBox!.height).toBeLessThan(footerBox!.y + 2);
 
   await page.mouse.move(
     phoneBox!.x + phoneBox!.width * 0.78,
@@ -870,6 +877,17 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
       { timeout: 4_000 },
     )
     .toBeGreaterThan(0.015);
+
+  await page.mouse.move(10, 10, { steps: 8 });
+  await expect
+    .poll(() => phoneProp.getAttribute("data-receiver-state"), { timeout: 4_000 })
+    .toBe("rest");
+  await expect
+    .poll(
+      async () => Math.abs(await readNumericData(phoneProp, "data-receiver-x-delta")),
+      { timeout: 4_000 },
+    )
+    .toBeLessThan(0.01);
 
   expect(browserIssues).toEqual([]);
 });
