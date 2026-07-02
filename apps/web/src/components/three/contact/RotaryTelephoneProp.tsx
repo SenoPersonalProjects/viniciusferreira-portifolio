@@ -105,7 +105,7 @@ export function RotaryTelephoneProp({
       testId="rotary-telephone-3d"
       forceVisible={isSceneVisible}
       trackPointerGlobally
-      className="pointer-events-none absolute -right-4 bottom-6 z-20 hidden h-[24rem] w-[32rem] overflow-visible opacity-100 md:block lg:-right-6 lg:bottom-8 lg:h-[28rem] lg:w-[38rem] xl:-right-8 xl:h-[30rem] xl:w-[40rem]"
+      className="pointer-events-none absolute -bottom-10 -right-6 z-0 hidden h-[31rem] w-[34rem] overflow-visible opacity-100 md:block lg:-bottom-12 lg:-right-10 lg:h-[35rem] lg:w-[44rem] xl:-bottom-10 xl:-right-12 xl:h-[37rem] xl:w-[48rem]"
       stageClassName="absolute inset-0 h-full w-full"
     />
   );
