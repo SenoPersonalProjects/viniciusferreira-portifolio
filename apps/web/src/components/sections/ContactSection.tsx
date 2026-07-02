@@ -22,9 +22,9 @@ export function ContactSection() {
     <section
       id="contact"
       ref={ref}
-      className="section-border overflow-hidden px-6 py-20 md:px-10 md:pb-20 md:pt-32"
+      className="section-border overflow-visible px-6 py-20 md:px-10 md:pb-28 md:pt-32 lg:pb-36"
     >
-      <div className="relative mx-auto max-w-7xl overflow-visible pb-40 md:pb-56 lg:pb-64">
+      <div className="relative mx-auto max-w-7xl overflow-visible pb-10 md:pb-16 lg:pb-20">
         <div className={`section-card relative z-10 overflow-visible p-8 sm:p-10 md:p-16 lg:p-20 scroll-reveal ${isRevealed ? "is-revealed" : ""}`}>
           <div
             className="absolute -right-20 -top-20 hidden h-64 w-64 md:block"
@@ -80,8 +80,8 @@ export function ContactSection() {
               </div>
             </div>
           </div>
+          <RotaryTelephoneProp isSceneVisible={isRevealed} />
         </div>
-        <RotaryTelephoneProp isSceneVisible={isRevealed} />
       </div>
     </section>
   );
