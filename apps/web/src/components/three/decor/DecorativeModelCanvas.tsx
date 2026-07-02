@@ -268,6 +268,7 @@ class DecorativeModelRuntime {
   private resizeObserver: ResizeObserver | null = null;
   private frameId: number | null = null;
   private lastFrameAt = performance.now();
+  private restAnimationUntil = 0;
   private destroyed = false;
   private isVisible = false;
   private isActive = false;
@@ -374,7 +375,11 @@ class DecorativeModelRuntime {
       y: pointer.inside ? pointer.y : 0,
     };
 
-    if (pointer.inside || wasInside) {
+    if (!pointer.inside && wasInside) {
+      this.restAnimationUntil = performance.now() + 1200;
+    }
+
+    if (pointer.inside || wasInside || this.hasPendingRestAnimation()) {
       this.startLoop();
     }
   }
@@ -699,7 +704,7 @@ class DecorativeModelRuntime {
     if (
       this.frameId !== null ||
       this.destroyed ||
-      (!this.isVisible && !this.pointer.inside)
+      (!this.isVisible && !this.pointer.inside && !this.hasPendingRestAnimation())
     ) {
       return;
     }
@@ -714,8 +719,15 @@ class DecorativeModelRuntime {
       if (!this.isVisible && !this.pointer.inside) {
         const delta = Math.min((now - this.lastFrameAt) / 1000, 0.05);
         this.updateMotion(delta);
-        this.frameId = null;
         this.render();
+        this.lastFrameAt = now;
+
+        if (this.hasPendingRestAnimation()) {
+          this.frameId = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        this.frameId = null;
         return;
       }
 
@@ -727,6 +739,10 @@ class DecorativeModelRuntime {
     };
 
     this.frameId = window.requestAnimationFrame(tick);
+  }
+
+  private hasPendingRestAnimation() {
+    return performance.now() < this.restAnimationUntil;
   }
 
   private updateMotion(delta: number) {
