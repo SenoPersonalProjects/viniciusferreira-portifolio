@@ -494,10 +494,7 @@ export class DossierThreeRuntime {
     this.scene.add(this.motionGroup);
     this.scene.add(this.deskGroup);
     applyPose(this.deskGroup, this.deskLayout);
-    applyPose(
-      this.motionGroup,
-      this.state.prefersReducedMotion ? this.poses.hero : this.poses.table,
-    );
+    applyPose(this.motionGroup, this.poses.hero);
     this.root.dataset.modelRotationY = "0.0000";
     this.root.dataset.deskLoaded = "false";
     this.root.dataset.deskModelLoaded = "false";
@@ -1254,7 +1251,7 @@ export class DossierThreeRuntime {
       this.root.dataset.introState = this.hasPlayedIntro ? "table" : "pending";
 
       if (!this.hasPlayedIntro) {
-        applyPose(this.motionGroup, this.poses.table);
+        applyPose(this.motionGroup, this.poses.hero);
         return;
       }
 
@@ -1275,26 +1272,11 @@ export class DossierThreeRuntime {
     this.root.dataset.introDurationMs = "0";
 
     if (!this.hasPlayedIntro) {
-      const holdState = { progress: 0 };
-
-      applyPose(this.motionGroup, this.poses.table);
-      this.root.dataset.introState = "holding";
-      this.introTimeline = gsap
-        .timeline({
-          onComplete: () => {
-            this.finishIntro();
-          },
-        })
-        .to(holdState, {
-          progress: 1,
-          duration: 0.9,
-          ease: "none",
-        })
-        .call(() => {
-          this.root.dataset.introState = "animating";
-          this.hasPlayedIntro = true;
-        })
-        .add(this.createPoseTween(this.poses.hero, 1.15, "power3.out"));
+      this.hasPlayedIntro = true;
+      applyPose(this.motionGroup, this.poses.hero);
+      this.root.dataset.introState = "done";
+      this.root.dataset.introDurationMs = "0";
+      this.setInteractiveState(true);
       return;
     }
 
