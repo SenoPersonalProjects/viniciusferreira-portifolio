@@ -1,3 +1,5 @@
+import { buildApiUrl, getApiBaseUrl } from "@/lib/apiBaseUrl";
+
 export type AdminApiErrorCode =
   | "configuration"
   | "forbidden"
@@ -23,15 +25,15 @@ export function getAdminApiErrorMessage(
 ) {
   if (error instanceof AdminApiError) {
     if (error.code === "unauthorized") {
-      return "A API administrativa recusou a sessão. Confirme se o login ainda está ativo, se o e-mail está autorizado em ADMIN_EMAILS e se NEXT_PUBLIC_API_URL aponta para /functions/v1.";
+      return "A API administrativa recusou a sessao. Confirme se o login ainda esta ativo, se o e-mail esta autorizado em ADMIN_EMAILS e se a URL da API aponta para o projeto Supabase correto.";
     }
 
     if (error.code === "forbidden") {
-      return "Usuário autenticado, mas sem permissão administrativa. Confirme o e-mail na allowlist ADMIN_EMAILS das Edge Functions.";
+      return "Usuario autenticado, mas sem permissao administrativa. Confirme o e-mail na allowlist ADMIN_EMAILS das Edge Functions.";
     }
 
     if (error.code === "unavailable") {
-      return "API administrativa indisponível. Em produção, confirme NEXT_PUBLIC_API_URL com /functions/v1; localmente, confirme o backend ou as Edge Functions.";
+      return "API administrativa indisponivel. Em producao, confirme a URL do Supabase/Edge Functions; localmente, confirme o backend ou as Edge Functions.";
     }
 
     return error.message;
@@ -41,21 +43,15 @@ export function getAdminApiErrorMessage(
 }
 
 export function getAdminApiBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-    "http://localhost:3333"
-  );
+  return getApiBaseUrl("http://localhost:3333");
 }
 
 function resolveAdminApiUrl(path: string) {
-  const apiBaseUrl = getAdminApiBaseUrl();
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-
   try {
-    return new URL(normalizedPath, apiBaseUrl).toString();
+    return new URL(buildApiUrl(getAdminApiBaseUrl(), path)).toString();
   } catch {
     throw new AdminApiError(
-      "URL da API administrativa inválida.",
+      "URL da API administrativa invalida.",
       "configuration",
     );
   }
@@ -82,7 +78,7 @@ export async function adminApiFetch<TResponse>(
   accessToken: string,
 ) {
   if (!accessToken) {
-    throw new AdminApiError("Sessão administrativa ausente.", "unauthorized");
+    throw new AdminApiError("Sessao administrativa ausente.", "unauthorized");
   }
 
   let response: Response;
@@ -94,14 +90,14 @@ export async function adminApiFetch<TResponse>(
     });
   } catch {
     throw new AdminApiError(
-      "API administrativa indisponível.",
+      "API administrativa indisponivel.",
       "unavailable",
     );
   }
 
   if (response.status === 401) {
     throw new AdminApiError(
-      "Sessão recusada pela API administrativa.",
+      "Sessao recusada pela API administrativa.",
       "unauthorized",
       response.status,
     );
@@ -109,7 +105,7 @@ export async function adminApiFetch<TResponse>(
 
   if (response.status === 403) {
     throw new AdminApiError(
-      "Usuário sem permissão administrativa.",
+      "Usuario sem permissao administrativa.",
       "forbidden",
       response.status,
     );

@@ -15,6 +15,7 @@ import {
 } from "@/data/portfolioContent";
 import { type Language } from "@/i18n/translations";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { buildApiUrl, getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 type PortfolioDataContextValue = {
   content: PortfolioContent;
@@ -25,10 +26,6 @@ type PortfolioDataContextValue = {
 const PortfolioDataContext =
   createContext<PortfolioDataContextValue | null>(null);
 
-function getApiBaseUrl() {
-  return process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-}
-
 async function fetchPortfolioContent(language: Language) {
   const apiBaseUrl = getApiBaseUrl();
 
@@ -37,7 +34,9 @@ async function fetchPortfolioContent(language: Language) {
   }
 
   const response = await fetch(
-    `${apiBaseUrl}/portfolio?locale=${encodeURIComponent(language)}`,
+    `${buildApiUrl(apiBaseUrl, "/portfolio")}?locale=${encodeURIComponent(
+      language,
+    )}`,
     {
       cache: "no-store",
     },

@@ -833,6 +833,7 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   const phoneProp = page.getByTestId("rotary-telephone-3d");
 
   await expect(contactCard).toHaveCSS("overflow", "visible");
+  await expect(contactSection).toHaveCSS("overflow", "visible");
   await expect(phoneProp).toBeVisible();
   await expect(phoneProp.locator("canvas")).toBeVisible({ timeout: 15_000 });
   await expect(phoneProp).toHaveAttribute("data-visual-treatment", "vintage-noir");
@@ -855,13 +856,19 @@ test("film reel supports looped buttons, wheel, drag, CRT preview effects, and p
   expect(contactSectionBox).not.toBeNull();
   expect(footerBox).not.toBeNull();
   expect(phoneBox!.width).toBeGreaterThan(480);
-  expect(phoneBox!.height).toBeGreaterThan(340);
+  expect(phoneBox!.height).toBeGreaterThan(480);
   expect(phoneCanvasBox!.width).toBeGreaterThan(480);
-  expect(phoneCanvasBox!.height).toBeGreaterThan(340);
+  expect(phoneCanvasBox!.height).toBeGreaterThan(480);
+  expect(phoneBox!.y).toBeLessThan(
+    contactCardBox!.y + contactCardBox!.height * 0.62,
+  );
+  expect(phoneBox!.y + phoneBox!.height).toBeLessThanOrEqual(
+    contactCardBox!.y + contactCardBox!.height + 120,
+  );
   expect(phoneBox!.y + phoneBox!.height).toBeLessThanOrEqual(
     contactSectionBox!.y + contactSectionBox!.height + 2,
   );
-  expect(phoneBox!.y + phoneBox!.height).toBeLessThan(footerBox!.y + 2);
+  expect(phoneBox!.y + phoneBox!.height).toBeLessThan(footerBox!.y - 4);
 
   await page.mouse.move(
     phoneBox!.x + phoneBox!.width * 0.78,

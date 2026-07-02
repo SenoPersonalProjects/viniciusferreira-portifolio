@@ -3,6 +3,7 @@ import {
   type DossierContent,
   type DossierLocale,
 } from "@/data/dossier";
+import { buildApiUrl, getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 type PublicDossierApiRedaction = {
   h: number;
@@ -41,10 +42,6 @@ export type ResolvedDossierContent = {
   content: DossierContent;
   source: "database" | "fallback";
 };
-
-function getDossierApiBaseUrl() {
-  return process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-}
 
 function cloneDossierContent(content: DossierContent): DossierContent {
   return {
@@ -107,14 +104,16 @@ export async function fetchPublicDossierContent(
   locale: DossierLocale,
   fetcher: typeof fetch = fetch,
 ): Promise<ResolvedDossierContent | null> {
-  const apiBaseUrl = getDossierApiBaseUrl();
+  const apiBaseUrl = getApiBaseUrl();
 
   if (!apiBaseUrl) {
     return null;
   }
 
   const response = await fetcher(
-    `${apiBaseUrl}/portfolio/dossier?locale=${encodeURIComponent(locale)}`,
+    `${buildApiUrl(apiBaseUrl, "/portfolio/dossier")}?locale=${encodeURIComponent(
+      locale,
+    )}`,
     {
       cache: "no-store",
     },

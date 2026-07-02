@@ -35,7 +35,10 @@ describe("public dossier API helper", () => {
   });
 
   it("uses database content and maps stack to the public dossier shape", async () => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com/");
+    vi.stubEnv(
+      "NEXT_PUBLIC_API_URL",
+      "https://xejrqipeklznjzmqnriz.supabase.co",
+    );
     const fetcher = createFetchMock({
       content: {
         classification: "CLASSIFIED",
@@ -62,7 +65,7 @@ describe("public dossier API helper", () => {
     expect(result.content.stack).toBe("NEXT.JS / NESTJS / TYPESCRIPT");
     expect(result.content.redactions?.[0]).toEqual({ h: 4, w: 3, x: 1, y: 2 });
     expect(fetcher).toHaveBeenCalledWith(
-      "https://api.example.com/portfolio/dossier?locale=en",
+      "https://xejrqipeklznjzmqnriz.supabase.co/functions/v1/portfolio/dossier?locale=en",
       { cache: "no-store" },
     );
     expect(String(vi.mocked(fetcher).mock.calls[0]?.[0])).not.toContain(
