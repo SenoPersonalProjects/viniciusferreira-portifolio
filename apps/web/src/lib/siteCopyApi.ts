@@ -1,4 +1,5 @@
 import type { Language } from "@/i18n/translations";
+import { buildApiUrl, getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 export type PublicSiteCopyItem = {
   key: string;
@@ -14,10 +15,6 @@ type PublicSiteCopyResponse = {
 export type SiteCopyMap = Record<string, string>;
 
 const siteCopyKeyPattern = /^[a-z0-9._-]{3,120}$/;
-
-function getSiteCopyApiBaseUrl() {
-  return process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-}
 
 export function isValidSiteCopyKey(key: string) {
   return siteCopyKeyPattern.test(normalizeSiteCopyKey(key));
@@ -64,14 +61,16 @@ export async function fetchPublicSiteCopy(
   locale: Language,
   fetcher: typeof fetch = fetch,
 ): Promise<SiteCopyMap> {
-  const apiBaseUrl = getSiteCopyApiBaseUrl();
+  const apiBaseUrl = getApiBaseUrl();
 
   if (!apiBaseUrl) {
     return {};
   }
 
   const response = await fetcher(
-    `${apiBaseUrl}/portfolio/site-copy?locale=${encodeURIComponent(locale)}`,
+    `${buildApiUrl(apiBaseUrl, "/portfolio/site-copy")}?locale=${encodeURIComponent(
+      locale,
+    )}`,
     {
       cache: "no-store",
     },

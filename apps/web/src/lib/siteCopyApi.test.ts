@@ -52,7 +52,10 @@ describe("public site copy API helper", () => {
   });
 
   it("fetches public site copy without calling admin endpoints", async () => {
-    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com/");
+    vi.stubEnv(
+      "NEXT_PUBLIC_API_URL",
+      "https://xejrqipeklznjzmqnriz.supabase.co",
+    );
     const fetcher = createFetchMock({
       items: [
         {
@@ -70,7 +73,7 @@ describe("public site copy API helper", () => {
       "Texto com Acentos e <strong>HTML</strong>",
     );
     expect(fetcher).toHaveBeenCalledWith(
-      "https://api.example.com/portfolio/site-copy?locale=pt-BR",
+      "https://xejrqipeklznjzmqnriz.supabase.co/functions/v1/portfolio/site-copy?locale=pt-BR",
       { cache: "no-store" },
     );
     expect(String(vi.mocked(fetcher).mock.calls[0]?.[0])).not.toContain(
